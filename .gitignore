@@ -2,8 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-.html
-.qmd
-.woff
-.css
-.js
+*.html
+*.qmd
+*.woff
+*.css
+*.js
