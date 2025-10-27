@@ -23,16 +23,16 @@ source("nmfs_cols.R")
 addResourcePath("tmpuser", getwd())
 
 # Load most recent data file (manually taken from Seafood Dashboard)
-load('seafood_trade_data_munge_10_15_25.RData')
+load('hms_data_munge_10_27_25.RData')
 
 
 # filter out confidential data (no data contained therein)
-com_landings <- com_landings %>%
+landings <- landings %>%
   filter(CONFIDENTIALITY == 'Public')
 
 # create matrix of all categorization terms available in the data
 categorization_matrix <- bind_rows(trade_data, 
-                                   com_landings %>%
+                                   landings %>%
                                      filter(CONFIDENTIALITY != 'Confidential'), 
                                    pp_data %>%
                                      filter(CONFIDENTIAL == 0)) %>%
@@ -53,7 +53,7 @@ trade_categorization_matrix <- trade_data %>%
   ungroup()
 
 # create matrix of all landings categorization terms available in the data
-landings_categorization_matrix <- com_landings %>%
+landings_categorization_matrix <- landings %>%
   select(SPECIES_NAME, SPECIES_GROUP,
          SPECIES_CATEGORY, ECOLOGICAL_CATEGORY) %>%
   group_by(SPECIES_NAME, SPECIES_GROUP,
@@ -748,7 +748,7 @@ summarize_yr_spp <- function(species, region, units = NULL,  nominal = F) {
                           group_by(YEAR) %>%
                           summarise(across(where(is.numeric), sum),
                                     .groups = 'drop')),
-              summarize_landings_yr_spp(com_landings, species, region, units = units,
+              summarize_landings_yr_spp(landings, species, region, units = units,
                                         nominal = nominal)) 
   
   return(combined_data)
@@ -2337,7 +2337,7 @@ server <- function(input, output, session) {
       Sys.sleep(1)
       on.exit(removeModal())
       
-      write.csv(com_landings, con)
+      write.csv(landings, con)
     }
   )
   
@@ -2690,16 +2690,18 @@ server <- function(input, output, session) {
                      # remove NA category
                      filter(!is.na(ECOLOGICAL_CATEGORY)) %>%
                      # display strings as titles (first letter capitalized)
-                     mutate(ECOLOGICAL_CATEGORY = 
+                     mutate(ECOLOGICAL_CATEGORY =
                               str_to_title(ECOLOGICAL_CATEGORY)) %>%
                      pull())
     if (input$search_term == '') {
       selectInput('ecol_cat', 'or Choose a Category', ecol_cats)
     } else {
-      selectInput('ecol_cat', 'or Choose a Category', ecol_cats, 
+      selectInput('ecol_cat', 'or Choose a Category', ecol_cats,
                   selected = search_cats()[4])
     }
+    
   })
+  
   
   # creates input: species_cat
   # filter_2 appears once an ecological category (ecol_cat) is selected
@@ -3428,19 +3430,19 @@ server <- function(input, output, session) {
   
   # see notes above and within trade_filtered
   landings_filtered <- reactive({
-    new_data <- com_landings %>%
+    new_data <- landings %>%
       filter_species(input$ecol_cat)
     
     if(species_selection_landings() %in% 
        landings_categorization_matrix$SPECIES_CATEGORY &
        !(is.null(input$species_cat))) {
       
-      new_data <- com_landings %>%
+      new_data <- landings %>%
         filter_species(input$ecol_cat) %>%
         filter_species(input$species_cat)
       
       if(input$landings_button == T) {
-        new_data <- com_landings %>%
+        new_data <- landings %>%
           filter_species(input$ecol_cat)
       }
     }
@@ -3449,13 +3451,13 @@ server <- function(input, output, session) {
        landings_categorization_matrix$SPECIES_GROUP &
        !(is.null(input$species_grp))) {
       
-      new_data <- com_landings %>%
+      new_data <- landings %>%
         filter_species(input$ecol_cat) %>%
         filter_species(input$species_cat) %>%
         filter_species(input$species_grp)
       
       if(input$landings_button == T) {
-        new_data <- com_landings %>%
+        new_data <- landings %>%
           filter_species(input$ecol_cat) %>%
           filter_species(input$species_cat)
       }
@@ -3466,14 +3468,14 @@ server <- function(input, output, session) {
        landings_categorization_matrix$SPECIES_NAME &
        !(is.null(input$species_name))) {
       
-      new_data <- com_landings %>%
+      new_data <- landings %>%
         filter_species(input$ecol_cat) %>%
         filter_species(input$species_cat) %>%
         filter_species(input$species_grp) %>%
         filter_species(input$species_name)
       
       if(input$landings_button == T) {
-        new_data <- com_landings %>%
+        new_data <- landings %>%
           filter_species(input$ecol_cat) %>%
           filter_species(input$species_cat) %>%
           filter_species(input$species_grp)
