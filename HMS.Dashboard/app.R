@@ -1889,10 +1889,10 @@ ui <- page_sidebar(
     # Text
     div(
       style = 'flex: 1; text-align: left;',
-      h1('NOAA Fisheries Seafood Dashboard',
+      h1('NOAA Fisheries HMS Seafood Dashboard',
          style = 'font-family: "Gill Sans MT", sans-serif; font-size: clamp(2.5rem, 4vw, 4.5rem); margin-bottom: 0px;'),
       
-      p('Investigate 20 Years of U.S. Fisheries Data',
+      p('Investigate 20 Years of U.S. Fisheries Data for Highly Migratory Species',
         style = 'font-family: "Gill Sans MT", sans-serif; font-size: clamp(1.5rem, 2.6vw, 2.6rem); margin-top: 0px; margin-bottom: 0px; opacity: 0.9;')
     )),
   page_fluid(
