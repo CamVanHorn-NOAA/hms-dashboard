@@ -472,6 +472,15 @@ terr_landings <- terr_landings %>%
 landings <- bind_rows(com_landings, terr_landings)
 # Collection, Dollars 2024 per kg, dollars 2024 per lb, source, tsn
 # Export Data ------------------------------------------------------------------
+# Remove ECOLOGICAL_CATEGORY due to lack of info (they are all HMS)
+trade_data <- trade_data %>%
+  select(!ECOLOGICAL_CATEGORY)
+pp_data <- pp_data %>%
+  select(!ECOLOGICAL_CATEGORY)
+landings <- landings %>%
+  select(!ECOLOGICAL_CATEGORY)
+
+
 file_name <- paste0('hms_data_munge_',
                     format(Sys.Date(), '%m_%d_%y'),
                     '.RData')
