@@ -1209,7 +1209,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                        limits = factor(2004:2024)) +
       scale_y_continuous(name = ylab, 
                          labels = label,
-                         limits = c(0, y_max),
+                         limits = c(0, y_max + y_max*0.1),
                          sec.axis = sec_axis(~./scale_factor, name = ylab2,
                                              labels = label2)) +
       labs(x = '',
