@@ -2271,6 +2271,44 @@ ui <- page_sidebar(
           nav_panel(title = 'Resources',
                     htmlOutput('resource'))
         )
+      ),
+      nav_panel(
+        title = 'Coast Analysis',
+        icon = bsicons::bs_icon("tsunami"),
+        navset_card_pill(
+          nav_panel(title = 'Trade',
+                    div(
+                      style = "position: relative; min-width: 1200px;",
+                      withSpinner(
+                        plotOutput('exp_coast_value',
+                                   click = clickOpts('exp_coast_value_click'),
+                                   height = "400px", width = "100%"), 
+                        type = 7),
+                      # textOutput('balance_tooltip'),
+                      uiOutput('exp_coast_value_click_overlay'),
+                      div(
+                        style = "position: absolute; top: 0px; left: 5px",
+                        tooltip(
+                          icon("info-circle"),
+                          "Export value reflects the total value of product traded out of the U.S. into other countries. The left y-axis reflects the total value of exports and applies to the bars. The right y-axis reflects the average price of exported product per kilogram or pound and applies to the line and points."
+                        ))),
+                    div(
+                      style = "position: relative; min-width: 1200px;",
+                      withSpinner(
+                        plotOutput('imp_coast_value',
+                                   click = clickOpts('imp_coast_value_click'),
+                                   height = "400px", width = "100%"), 
+                        type = 7),
+                      # textOutput('balance_tooltip'),
+                      uiOutput('imp_coast_value_click_overlay'),
+                      div(
+                        style = "position: absolute; top: 0px; left: 5px",
+                        tooltip(
+                          icon("info-circle"),
+                          "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."
+                        ))))
+        )
+        
       )))
 )
 
