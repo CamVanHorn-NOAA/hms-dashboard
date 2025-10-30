@@ -5198,6 +5198,47 @@ server <- function(input, output, session) {
                 src = "tmpuser/dashboard_resources.html",
                 height = 800)
   })
+  # Coast Analysis plots -------------------------------------------------------
+  # creates trade data for plots
+  coast_trade_df <- reactive({
+    summarize_trade_yr_spp(
+      trade_filtered(),
+      species_selection_trade(),
+      coast = 'ALL',
+      'VALUE',
+      units = selected_units(),
+      nominal = selected_value())
+  })
+  
+  # creates export value plot
+  exp_coast_value_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), export = T, 
+               species = species_selection_trade(), nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs export value plot
+  output$exp_coast_value <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(exp_coast_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    exp_coast_value_plot()
+  })
+  
+  # creates import value plot
+  imp_coast_value_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), import = T, 
+               species = species_selection_trade(), nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs import value plot
+  output$imp_coast_value <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(imp_coast_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    imp_coast_value_plot()
+  })
 }
 
 # Run the app
