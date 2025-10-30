@@ -342,7 +342,7 @@ pp_data <- pp_processed %>%
          DOLLARS_2024_PER_KG = ifelse(CONFIDENTIAL == 1, 0, DOLLARS_2024_PER_KG)) %>%
   select(!c(CITY, STATE, DOLLARS_PER_LB, DOLLARS_PER_KG, DOLLARS_2024_PER_LB,
             DOLLARS_2024_PER_KG)) %>%
-  group_by(YEAR, SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY, 
+  group_by(YEAR, SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY, COAST,
            ECOLOGICAL_CATEGORY, PRODUCT_FORM, REGION, CONFIDENTIAL) %>%
   summarise(across(where(is.numeric), sum),
             .groups ='drop') %>%
@@ -471,6 +471,18 @@ terr_landings <- terr_landings %>%
 
 landings <- bind_rows(com_landings, terr_landings)
 # Collection, Dollars 2024 per kg, dollars 2024 per lb, source, tsn
+# Rename Coasts ----------------------------------------------------------------
+landings <- landings %>%
+  mutate(COAST = ifelse(COAST == 'PACIFIC', 'PACIFIC ISLANDS', COAST),
+         COAST = str_to_title(COAST))
+
+trade_data <- trade_data %>%
+  mutate(COAST = ifelse(COAST == 'HAWAII', 'PACIFIC ISLANDS', COAST),
+         COAST = str_to_title(COAST))
+
+pp_data <- pp_data %>%
+  mutate(COAST = str_to_title(COAST))
+
 # Export Data ------------------------------------------------------------------
 # Remove ECOLOGICAL_CATEGORY due to lack of info (they are all HMS)
 trade_data <- trade_data %>%
