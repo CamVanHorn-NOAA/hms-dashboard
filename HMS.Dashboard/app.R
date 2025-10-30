@@ -207,7 +207,7 @@ filter_coast <- function(data, coast) {
   # This filter is used in all summary functions to filter for selected coasts
   # Data is any data frame with a field specifying the data's coast of origin
   # coast is a character vector meant to match how coast is specified in data
-  if (coast == '' | is.null(coast)) {
+  if (coast == '' | is.null(coast) | coast == 'ALL') {
     return(data)
   }
   
@@ -246,10 +246,15 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
     species <- str_to_title(species)
   }
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+  } else {field <- NULL}
+  
   summarized_data <- trade_table %>%
     filter_species(species) %>%
     filter_coast(coast) %>%
-    select(YEAR, !!level, EXP_VALUE_2024USD, EXP_VOLUME_KG, EXP_CONVERTED_VOLUME,
+    select(YEAR, !!level, !!field, EXP_VALUE_2024USD, EXP_VOLUME_KG, EXP_CONVERTED_VOLUME,
            IMP_VALUE_2024USD, IMP_VOLUME_KG, IMP_CONVERTED_VOLUME, EXP_VALUE_USD, 
            IMP_VALUE_USD) %>%
     mutate(EXP_VALUE_2024USD = ifelse(is.na(EXP_VALUE_2024USD), 0,
@@ -268,7 +273,7 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
                                   EXP_VALUE_USD),
            IMP_VALUE_USD = ifelse(is.na(IMP_VALUE_USD), 0,
                                   IMP_VALUE_USD)) %>%
-    group_by(YEAR, !!level) %>%
+    group_by(YEAR, !!level, !!field) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
@@ -367,7 +372,7 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
       select(YEAR, EXP_VALUE, IMP_VALUE, EXP_VALUE_MILLIONS, IMP_VALUE_MILLIONS, 
              EXP_PRICE, IMP_PRICE, EXP_VOLUME_T, IMP_VOLUME_T, EXP_VOLUME,
              IMP_VOLUME, EXP_ROUND_VOLUME, IMP_ROUND_VOLUME, EXP_ROUND_VOLUME_T,
-             IMP_ROUND_VOLUME_T) %>%
+             IMP_ROUND_VOLUME_T, !!field) %>%
       mutate(RATIO = EXP_VOLUME_T / IMP_VOLUME_T)
     
     return(trade_data)
@@ -1078,7 +1083,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     shortform <- 'EXP'
     longform <- 'Exports'
     color <- export_color
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' from the ', coast)
     } else {coast_text <- ''}
   }
@@ -1087,12 +1092,17 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     shortform <- 'IMP'
     longform <- 'Imports'
     color <- import_color
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' to the ', coast)
     } else {coast_text <- ''}
   }
   # coerce plot_format to uppercase to work within function
   plot_format <- toupper(plot_format)
+  
+  if (coast == 'ALL') {
+    data <- data %>%
+      filter(!is.na(COAST))
+  }
   
   # set labels and y values for plots of VALUE
   if (plot_format == 'VALUE') {
@@ -1212,7 +1222,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     # plot of RATIO
     # RATIO is a line chart, so we need a column to group by
     data$GROUP <- 'group'
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' traded in the ', coast)
     } else {coast_text <- ''}
     
@@ -1236,7 +1246,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
             plot.title = element_text(size = 18),
             axis.title = element_text(size = 15))
   } else {
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' traded in the ', coast)
     } else {coast_text <- ''}
     
@@ -1865,10 +1875,9 @@ ui <- page_sidebar(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     selectizeInput(inputId = 'coast',
-                   label = 'Alternatively, select a FEUS Region',
-                   choices = c('', 'North Pacific', 'Pacific', 'West Pacific',
-                               'New England', 'Mid-Atlantic', 'South Atlantic',
-                               'Gulf', 'Great Lakes'),
+                   label = 'Alternatively, select a Coast',
+                   choices = c('', 'West Coast + Alaska', 'Atlantic', 
+                               'Pacific Islands', 'Gulf + Territories'),
                    options = list(
                      placeholder = 'Type here...'
                    )),
