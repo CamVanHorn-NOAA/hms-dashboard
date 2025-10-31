@@ -530,15 +530,20 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
   # coerce species to upper case to match data formatting
   species <- ifelse(species == 'All Species', 'All Species', toupper(species))
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+  } else {field <- NULL}
+  
   summarized_data <- product_data %>%
     filter_species(species) %>%
     filter_coast(coast) %>%
-    select(YEAR, PRODUCT_FORM, KG, DOLLARS_2024, DOLLARS, POUNDS) %>%
+    select(YEAR, PRODUCT_FORM, !!field, KG, DOLLARS_2024, DOLLARS, POUNDS) %>%
     mutate(DOLLARS = ifelse(is.na(DOLLARS), 0, DOLLARS),
            DOLLARS_2024 = ifelse(is.na(DOLLARS_2024), 0, DOLLARS_2024),
            KG = ifelse(is.na(KG), 0, KG),
            POUNDS = ifelse(is.na(POUNDS), 0, POUNDS)) %>%
-    group_by(YEAR, PRODUCT_FORM) %>%
+    group_by(YEAR, !!field, PRODUCT_FORM) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
@@ -604,7 +609,7 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
   new_data <- summarized_data %>%
     mutate(PRODUCT_FORM = ifelse(PRODUCT_FORM %in% c('OTHER', low_prop_types),
                                  'OTHER*', PRODUCT_FORM)) %>%
-    group_by(YEAR, PRODUCT_FORM) %>%
+    group_by(YEAR, !!field, PRODUCT_FORM) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop') %>%
     mutate(PP_VALUE_MILLIONS = PP_VALUE / 1000000,
@@ -648,14 +653,19 @@ summarize_landings_yr_spp <- function(landings_data, species, coast, full_data =
     species <- str_to_title(species)
   }
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+  } else {field <- NULL}
+  
   summarized_data <- landings_data %>%
     filter_species(species) %>%
     filter_coast(coast) %>%
     filter(CONFIDENTIALITY != 'Confidential',
            !is.na(DOLLARS),
            !is.na(KG)) %>%
-    select(YEAR, !!level, KG, DOLLARS_2024, DOLLARS) %>%
-    group_by(YEAR, !!level) %>%
+    select(YEAR, !!level, !!field, KG, DOLLARS_2024, DOLLARS) %>%
+    group_by(YEAR, !!level, !!field) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
