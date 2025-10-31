@@ -5396,6 +5396,142 @@ server <- function(input, output, session) {
                   '      Data for this species is insufficient to produce this plot'))
     imp_coast_value_plot()
   })
+  
+  # creates export volume plot
+  exp_coast_volume_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), export = T, 
+               species = species_selection_trade()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs export volume plot
+  output$exp_coast_volume <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(exp_coast_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    exp_coast_volume_plot()
+  })
+  
+  # creates import volume plot
+  imp_coast_volume_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), import = T, 
+               species = species_selection_trade()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs import volume plot
+  output$imp_coast_volume <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(imp_coast_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    imp_coast_volume_plot()
+  })
+  
+  
+  
+  
+  # creates landings data for plots
+  coast_landings_df <- reactive({
+    summarize_landings_yr_spp(
+      landings_filtered(),
+      species_selection_landings(),
+      coast = 'ALL',
+      units = selected_units(),
+      nominal = selected_value())
+  })
+  
+  # creates landings value plot
+  coast_landings_value_plot <- reactive({
+    plot_landings(coast_landings_df(), 'ALL', 'VALUE', units = selected_units(),
+                  species = species_selection_landings(),
+                  nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs landings value plot
+  output$coast_landings_value <- renderPlot({
+    landings_data_validation()
+    validate(need(try(!is.na(coast_landings_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_landings_value_plot()
+  })
+  
+  # creates landings volume plot
+  coast_landings_volume_plot <- reactive({
+    plot_landings(coast_landings_df(), 'ALL', 'VOLUME', units = selected_units(),
+                  species = species_selection_landings()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs landings volume plot
+  output$coast_landings_volume <- renderPlot({
+    landings_data_validation()
+    validate(need(try(!is.na(coast_landings_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_landings_volume_plot()
+  })
+  
+  
+  
+  # creates processed products data for plots
+  coast_pp_df <- reactive({
+    summarize_pp_yr_spp(
+      products_filtered(),
+      species_selection_products(),
+      'ALL',
+      units = selected_units(),
+      nominal = selected_value())
+  })
+  
+  # creates processed products value plot
+  coast_pp_value_plot <- reactive({
+    plot_spp_pp(coast_pp_df(), 'ALL', 'VALUE', 
+                units = selected_units(),
+                species = species_selection_products(),
+                nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs processed products value plot
+  output$coast_pp_value <- renderPlot({
+    pp_data_validation()
+    validate(need(try(!is.na(coast_pp_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_pp_value_plot()
+  })
+  
+  # creates processed products volume plot
+  coast_pp_volume_plot <- reactive({
+    plot_spp_pp(coast_pp_df(), 'ALL', 'VOLUME', 
+                units = selected_units(),
+                species = species_selection_products()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs processed products volume plot
+  output$coast_pp_volume <- renderPlot({
+    pp_data_validation()
+    validate(need(try(!is.na(coast_pp_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_pp_volume_plot()
+  })
+  
+  # creates processed products price plot
+  coast_pp_price_plot <- reactive({
+    plot_spp_pp(coast_pp_df(), 'ALL', 'PRICE', 
+                units = selected_units(),
+                species = species_selection_products(),
+                nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs processed products price plot
+  output$coast_pp_price <- renderPlot({
+    pp_data_validation()
+    validate(need(try(!is.na(coast_pp_price_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_pp_price_plot()
+  })
 }
 
 # Run the app
