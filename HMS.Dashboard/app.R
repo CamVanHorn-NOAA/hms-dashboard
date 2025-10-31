@@ -1345,10 +1345,23 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
     species <- 'Highly Migratory Species'
   }
   
+  if (coast == 'ALL') {
+    data <- data %>%
+      filter(!is.na(COAST))
+  }
+  
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+    
+    processed_product_data <- processed_product_data %>%
+      filter(!is.na(COAST))
+  } else {field <- NULL}
+  
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (coast != '') {
+  if (!(coast %in% c('', 'ALL'))) {
     coast_text <- paste0(coast, ' ')
   } else {coast_text <- ''}
   
@@ -1441,8 +1454,8 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
   
   # find upper limit for value/volume plots
   upper_limit <- processed_product_data %>%
-    select(YEAR, !!y) %>%
-    group_by(YEAR) %>%
+    select(YEAR, !!field, !!y) %>%
+    group_by(YEAR, !!field) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop') %>%
     filter(!!y == max(!!y)) %>%
@@ -1487,9 +1500,14 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (coast != '') {
+  if (!(coast %in% c('', 'ALL'))) {
     coast_text <- paste0(coast, ' ')
   } else {coast_text <- ''}
+  
+  if (coast == 'ALL') {
+    data <- data %>%
+      filter(!is.na(COAST))
+  }
   
   # set labels for VALUE plot
   if (plot.format == 'VALUE') {
