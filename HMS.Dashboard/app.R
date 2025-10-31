@@ -2345,8 +2345,136 @@ ui <- page_sidebar(
                                            style = "position: absolute; top: 0px; left: 5px",
                                            tooltip(
                                              icon("info-circle"),
-                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points.")))))
-        ))))
+                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points.")))),
+                             nav_panel(title = 'Volume',
+                                       div(
+                                         style = "position: relative; min-width: 1200px;",
+                                         withSpinner(
+                                           plotOutput('exp_coast_volume',
+                                                      click = clickOpts('exp_coast_volume_click'),
+                                                      height = '400px', width = '100%'),
+                                           type = 7),
+                                         uiOutput('exp_coast_volume_click_overlay'),
+                                         div(style = 'position: absolute; top: 0px; left: 5px',
+                                             tooltip(
+                                               icon('info-circle'),
+                                               'Export volume reflects the total volume of product traded out of the U.S. into other countries.'))),
+                                       div(
+                                         style = 'position: relative; min-width: 1200px;',
+                                         withSpinner(
+                                           plotOutput('imp_coast_volume',
+                                                      click = clickOpts('imp_coast_volume_click'),
+                                                      height = '400px', width = '100%'),
+                                           type = 7),
+                                         uiOutput('imp_coast_volume_click_overlay'),
+                                         div(
+                                           style = 'position: absolute; top: 0px; left: 5px',
+                                           tooltip(
+                                             icon('info-circle'),
+                                             'Import volume reflects the total volume of product traded into the U.S. from other countries.')))))
+                             )),
+        fluidRow(
+          div(
+            style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
+            div(
+              style = 'border: 3px solid #234515; border-radius: 12px;
+                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+              navset_card_pill(title = 'Commercial Landings',
+                               nav_panel(title = 'Value',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_landings_value',
+                                                        click = clickOpts(id = 'coast_landings_value_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('comvalue_tooltip')
+                                           uiOutput('coast_landings_value_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
+                                             ))),
+                                         downloadButton('download_landings_page1',
+                                                        'Download this plot and the data')),
+                               nav_panel(title = 'Volume',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_landings_volume',
+                                                        click = clickOpts(id = 'coast_landings_volume_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('comvolume_tooltip')
+                                           uiOutput('coast_landings_volume_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
+                                             ))),
+                                         downloadButton('download_landings_page2',
+                                                        'Download this plot and the data')))),
+            div(
+              style = 'border: 3px solid #681617; border-radius: 12px;
+                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+              navset_card_pill(title = 'Processed Products',
+                               nav_panel(title = 'Value',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_pp_value',
+                                                        click = clickOpts('coast_pp_value_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('ppvalue_tooltip')
+                                           uiOutput('coast_pp_value_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
+                                             ))),
+                                         downloadButton('download_products_page1',
+                                                        'Download this plot and the data')),
+                               nav_panel(title = 'Volume',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_pp_volume',
+                                                        click = clickOpts('coast_pp_volume_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('ppvolume_tooltip')
+                                           uiOutput('coast_pp_volume_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
+                                             ))),
+                                         downloadButton('download_products_page2',
+                                                        'Download this plot and the data')),
+                               nav_panel(title = 'Price',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_pp_price',
+                                                        click = clickOpts('coast_pp_price_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('ppprice_tooltip')
+                                           uiOutput('coast_pp_price_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
+                                             ))),
+                                         downloadButton('download_products_page3',
+                                                        'Download this plot and the data'))))))
+        ))
         
       ))
 
