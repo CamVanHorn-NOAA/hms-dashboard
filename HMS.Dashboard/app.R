@@ -1346,11 +1346,6 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
   }
   
   if (coast == 'ALL') {
-    data <- data %>%
-      filter(!is.na(COAST))
-  }
-  
-  if (coast == 'ALL') {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
     
