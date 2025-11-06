@@ -5923,6 +5923,246 @@ server <- function(input, output, session) {
   
   
   
+  #' *Processed Product Value*
+  coast_pp_value_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_pp_value_tooltip, {
+    coast_pp_value_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_pp_value_plot_click, {
+    coast_pp_value_clicked_point(TRUE)
+  })
+  
+  output$coast_pp_value_click_overlay <- renderUI({
+    if (!coast_pp_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    panel <- input$coast_pp_value_plot_click$panelvar1
+    
+    # SPECIFY GROUPS
+    # First, get data
+    pp_data <- coast_pp_df()
+    
+    year <- round(input$coast_pp_value_plot_click$x)
+    year_levels <- levels(factor(pp_data$YEAR))
+    factored_year <- year_levels[year]
+    
+    # Next, get product forms
+    products <- unique(str_to_title(pp_data$PRODUCT_FORM))
+    # Subset colors for these products
+    pp_colors <- pp_colors[names(pp_colors) %in% products]
+    pp_colors <- pp_colors[names(pp_colors)]
+    
+    # extract first year for only one row per product, arrange alphabetically
+    filtered_data <- pp_data %>% 
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # create icons (number will vary)
+    # begin with empty vector that will ultimately contain the full HTML code
+    coast_pp_val_tooltip <- vector()
+    for (i in 1:length(pp_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+      
+      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      
+      tooltip_data <- paste0(
+        dollar(filtered_data$PP_VALUE_MILLIONS[i]), " Million <br>")
+      
+      coast_pp_val_tooltip <- paste0(coast_pp_val_tooltip, tooltip_color, tooltip_text, tooltip_data)
+    }
+    
+    if (nrow(filtered_data) == 0) {
+      return(NULL)
+    }
+    
+    # Position tooltip near clicked point
+    left_pos <- input$coast_pp_value_plot_click$coords_css$x + 20 # Offset to right of point
+    top_pos <- input$coast_pp_value_plot_click$coords_css$y - 150 # Offset above point
+    
+    # Prevent tooltip from being off screen
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    # style the tooltip for clicked point
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes,
+        "max-width: 350px; ",
+        "min-width: 350px; "),
+      # tooltip close button
+      tags$button(
+        "x",
+        id = 'close_coast_pp_value_tooltip',
+        onclick = "Shiny.setInputValue('close_coast_pp_value_tooltip', Math.random());",
+        style = close_button_aes), 
+      HTML(paste0(tooltip_heading, filtered_data$YEAR[1], ": ", filtered_data$COAST[1], "<br>", 
+                  coast_pp_val_tooltip)))
+  })
+  
+  
+
+  #' *Processed Product Volume*
+  coast_pp_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_pp_volume_tooltip, {
+    coast_pp_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_pp_volume_plot_click, {
+    coast_pp_volume_clicked_point(TRUE)
+  })
+  
+  output$coast_pp_volume_click_overlay <- renderUI({
+    if (!coast_pp_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    panel <- input$coast_pp_volume_plot_click$panelvar1
+    
+    # SPECIFY GROUPS
+    # First, get data
+    pp_data <- coast_pp_df()
+    
+    year <- round(input$coast_pp_volume_plot_click$x)
+    year_levels <- levels(factor(pp_data$YEAR))
+    factored_year <- year_levels[year]
+    
+    # Next, get product forms
+    products <- unique(str_to_title(pp_data$PRODUCT_FORM))
+    # Subset colors for these products
+    pp_colors <- pp_colors[names(pp_colors) %in% products]
+    pp_colors <- pp_colors[names(pp_colors)]
+    
+    filtered_data <- pp_data %>% 
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # create icons (number will vary)
+    # begin with empty vector that will ultimately contain the full HTML code
+    coast_pp_vol_tooltip <- vector()
+    for (i in 1:length(pp_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+      
+      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      
+      tooltip_data <- paste0(
+        comma(filtered_data$PP_VOLUME_T[i]), ifelse(selected_units() == 'METRIC',
+                                                    " Metric Tons <br>",
+                                                    " Short Tons <br>"))
+      
+      coast_pp_vol_tooltip <- paste0(coast_pp_vol_tooltip, tooltip_color, tooltip_text, tooltip_data)
+    }
+    
+    # Position tooltip near clicked point
+    left_pos <- input$coast_pp_volume_plot_click$coords_css$x + 20 # Offset to right of point
+    top_pos <- input$coast_pp_volume_plot_click$coords_css$y - 150 # Offset above point
+    
+    # Prevent tooltip from being off screen
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    # style the tooltip for clicked point
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes,
+        "max-width: 350px; ",
+        "min-width: 350px; "),
+      # tooltip close button
+      tags$button(
+        "x",
+        id = 'close_coast_pp_volume_tooltip',
+        onclick = "Shiny.setInputValue('close_coast_pp_volume_tooltip', Math.random());",
+        style = close_button_aes), 
+      HTML(paste0(tooltip_heading, filtered_data$YEAR[1], ": ", filtered_data$COAST[1], "<br>",
+                  coast_pp_vol_tooltip)))
+  })
+  
+  
+  
+  #' *Processed Product Price*
+  coast_pp_price_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_pp_price_tooltip, {
+    coast_pp_price_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_pp_price_plot_click, {
+    coast_pp_price_clicked_point(TRUE)
+  })
+  
+  output$coast_pp_price_click_overlay <- renderUI({
+    if (!coast_pp_price_clicked_point()) {
+      return(NULL)
+    }
+    
+    panel <- input$coast_pp_price_plot_click$panelvar1
+    
+    # SPECIFY GROUPS
+    # First, get data
+    pp_data <- coast_pp_df()
+    
+    year <- round(input$coast_pp_price_plot_click$x)
+    year_levels <- levels(factor(pp_data$YEAR))
+    factored_year <- year_levels[year]
+    
+    # Next, get product forms
+    products <- unique(str_to_title(pp_data$PRODUCT_FORM))
+    # Subset colors for these products
+    pp_colors <- pp_colors[names(pp_colors) %in% products]
+    pp_colors <- pp_colors[names(pp_colors)]
+    
+    filtered_data <- pp_data %>% 
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # create icons (number will vary)
+    # begin with empty vector that will ultimately contain the full HTML code
+    coast_pp_price_tooltip <- vector()
+    for (i in 1:length(pp_colors)) {
+      tooltip_icon <- paste0(tooltip_line_icon(pp_colors[i], 16))
+      
+      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      
+      tooltip_data <- paste0(
+        dollar(filtered_data$PP_PRICE[i]), ifelse(selected_units() == 'METRIC',
+                                                  " per kilogram <br>",
+                                                  " per pound <br>"))
+      
+      coast_pp_price_tooltip <- paste0(coast_pp_price_tooltip, tooltip_icon, tooltip_text, tooltip_data)
+    }
+    
+    # Position tooltip near clicked point
+    left_pos <- input$coast_pp_price_plot_click$coords_css$x + 20 # Offset to right of point
+    top_pos <- input$coast_pp_price_plot_click$coords_css$y - 150 # Offset above point
+    
+    # Prevent tooltip from being off screen
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    # style the tooltip for clicked point
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes,
+        "max-width: 375px; ",
+        "min-width: 375px; "),
+      # tooltip close button
+      tags$button(
+        "x",
+        id = 'close_coast_pp_price_tooltip',
+        onclick = "Shiny.setInputValue('close_coast_pp_price_tooltip', Math.random());",
+        style = close_button_aes), 
+      HTML(paste0(tooltip_heading, filtered_data$YEAR[1], ": ", filtered_data$COAST[1], "<br>",
+                  coast_pp_price_tooltip)))
+  })
 }
 
 # Run the app
