@@ -2340,7 +2340,9 @@ ui <- page_sidebar(
                                            style = "position: absolute; top: 0px; left: 5px",
                                            tooltip(
                                              icon("info-circle"),
-                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points.")))),
+                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."))),
+                                       downloadButton('download_coast_trade_page1',
+                                                      'Download this plot and the data')),
                              nav_panel(title = 'Volume',
                                        div(
                                          style = "position: relative; min-width: 1200px;",
@@ -2366,7 +2368,9 @@ ui <- page_sidebar(
                                            style = 'position: absolute; top: 0px; left: 5px',
                                            tooltip(
                                              icon('info-circle'),
-                                             'Import volume reflects the total volume of product traded into the U.S. from other countries.')))))
+                                             'Import volume reflects the total volume of product traded into the U.S. from other countries.'))),
+                                       downloadButton('download_coast_trade_page2',
+                                                      'Download this plot and the data')))
                              )),
         fluidRow(
           div(
@@ -2391,7 +2395,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
                                              ))),
-                                         downloadButton('download_landings_page1',
+                                         downloadButton('download_coast_landings_page1',
                                                         'Download this plot and the data')),
                                nav_panel(title = 'Volume',
                                          div(
@@ -2409,7 +2413,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
                                              ))),
-                                         downloadButton('download_landings_page2',
+                                         downloadButton('download_coast_landings_page2',
                                                         'Download this plot and the data')))),
             div(
               style = 'border: 3px solid #681617; border-radius: 12px;
@@ -2431,7 +2435,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
                                              ))),
-                                         downloadButton('download_products_page1',
+                                         downloadButton('download_coast_products_page1',
                                                         'Download this plot and the data')),
                                nav_panel(title = 'Volume',
                                          div(
@@ -2449,7 +2453,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
                                              ))),
-                                         downloadButton('download_products_page2',
+                                         downloadButton('download_coast_products_page2',
                                                         'Download this plot and the data')),
                                nav_panel(title = 'Price',
                                          div(
@@ -2467,7 +2471,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
                                              ))),
-                                         downloadButton('download_products_page3',
+                                         downloadButton('download_coast_products_page3',
                                                         'Download this plot and the data'))))))
         ))
         
@@ -2833,6 +2837,177 @@ server <- function(input, output, session) {
       write.csv(pp_df_full(), 'products_plots_data.csv')
       ggsave('products_price.png', pp_price_plot(),
              width = 10,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 1 of coast trade data (value)
+  output$download_coast_trade_page1 <- downloadHandler(
+    filename = 'coastal_trade_value_page.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_export_value_plot.png', 'coastal_import_value_plot.png', 
+              'coastal_trade_plots_data.csv')
+      ggsave('coastal_export_value_plot.png', exp_coast_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      ggsave('coastal_import_value_plot.png', imp_coast_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      write.csv(coast_trade_df(), 'coastal_trade_plots_data.csv')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 2 of coast trade data (volume)
+  output$download_coast_trade_page2 <- downloadHandler(
+    filename = 'coastal_trade_volume_page.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_export_volume_plot.png', 'coastal_import_volume_plot.png',
+              'coastal_trade_plots_data.csv')
+      ggsave('coastal_export_volume_plot.png', exp_coast_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      ggsave('coastal_import_volume_plot.png', imp_coast_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      write.csv(coast_trade_df(), 'coastal_trade_plots_data.csv')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 1 of coast landings data (value/price)
+  output$download_coast_landings_page1 <- downloadHandler(
+    filename = 'coastal_commercial_landings_value.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_commercial_landings_plots_data.csv', 'coastal_landings_value.png')
+      write.csv(coast_landings_df(), 'coastal_commercial_landings_plots_data.csv')
+      ggsave('coastal_landings_value.png', coast_landings_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 2 of coast landings data (volume)
+  output$download_coast_landings_page2 <- downloadHandler(
+    filename = 'coastal_commercial_landings_volume.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_commercial_landings_plots_data.csv', 'coastal_landings_volume.png')
+      write.csv(coast_landings_df(), 'coastal_commercial_landings_plots_data.csv')
+      ggsave('coastal_landings_volume.png', coast_landings_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 1 of coast processed products data (value)
+  output$download_coast_products_page1 <- downloadHandler(
+    filename = 'coastal_processed_products_value.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_products_plots_data.csv', 'coastal_products_value.png')
+      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      ggsave('coastal_products_value.png', coast_pp_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 2 of coast processed products data (volume)
+  output$download_coast_products_page2 <- downloadHandler(
+    filename = 'coastal_processed_products_volume.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_products_plots_data.csv', 'coastal_products_volume.png')
+      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      ggsave('coastal_products_volume.png', coast_pp_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 3 of coast processed products data (price)
+  output$download_coast_products_page3 <- downloadHandler(
+    filename = 'coastal_processed_products_price.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_products_plots_data.csv', 'coastal_products_price.png')
+      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      ggsave('coastal_products_price.png', coast_pp_price_plot(),
+             width = 14,
              height = 8,
              device = 'png')
       
