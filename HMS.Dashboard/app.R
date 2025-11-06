@@ -2506,6 +2506,15 @@ server <- function(input, output, session) {
     pp_value_clicked_point(NULL)
     pp_volume_clicked_point(NULL)
     pp_price_clicked_point(NULL)
+    exp_coast_value_clicked_point(FALSE)
+    imp_coast_value_clicked_point(FALSE)
+    exp_coast_volume_clicked_point(FALSE)
+    imp_coast_volume_clicked_point(FALSE)
+    coast_landings_value_clicked_point(FALSE)
+    coast_landings_volume_clicked_point(FALSE)
+    coast_pp_value_clicked_point(FALSE)
+    coast_pp_volume_clicked_point(FALSE)
+    coast_pp_price_clicked_point(FALSE)
   })
   # Download buttons -----------------------------------------------------------
   # The following are a series of download buttons that provide the user the
