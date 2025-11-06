@@ -5797,6 +5797,132 @@ server <- function(input, output, session) {
   
   
   
+  #' *Landings Value*
+  coast_landings_value_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_landings_value_tooltip, {
+    coast_landings_value_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_landings_value_plot_click, {
+    coast_landings_value_clicked_point(TRUE)
+  })
+  
+  output$coast_landings_value_click_overlay <- renderUI({
+    if (!coast_landings_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_landings_df()
+    
+    year <- round(input$coast_landings_value_plot_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$coast_landings_value_plot_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$coast_landings_value_plot_click$coords_css$x + 10
+    top_pos <- input$coast_landings_value_plot_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_coast_landings_value_tooltip",
+        onclick = "Shiny.setInputValue('close_coast_landings_value_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR,  ": ", click_info$COAST, "<br>", 
+        tooltip_color_icon(landings_colors[1]), tooltip_subheading, "Ex-Vessel Value</span>:<br>",
+        dollar(click_info$COM_VALUE_MILLIONS), " Million<br>",
+        tooltip_line_icon(landings_colors[2], 16), tooltip_subheading, "Ex-Vessel Price</span>:<br>",
+        dollar(click_info$COM_PRICE), ifelse(selected_units() == 'METRIC', 
+                                                  " per kilogram", 
+                                                  " per pound"))))
+  })
+  
+  
+  
+  #' *Landings Volume*
+  coast_landings_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_landings_volume_tooltip, {
+    coast_landings_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_landings_volume_plot_click, {
+    coast_landings_volume_clicked_point(TRUE)
+  })
+  
+  output$coast_landings_volume_click_overlay <- renderUI({
+    if (!coast_landings_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_landings_df()
+    
+    year <- round(input$coast_landings_volume_plot_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$coast_landings_volume_plot_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$coast_landings_volume_plot_click$coords_css$x + 10
+    top_pos <- input$coast_landings_volume_plot_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_coast_landings_volume_tooltip",
+        onclick = "Shiny.setInputValue('close_coast_landings_volume_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(landings_colors[1]), tooltip_subheading, "Landed Volume</span>:<br>",
+        comma(click_info$COM_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+                                                    " Metric Tons", 
+                                                    " Short Tons"))))
+  })
+  
+  
+  
 }
 
 # Run the app
