@@ -2845,6 +2845,177 @@ server <- function(input, output, session) {
     contentType = 'application/zip'
   )
   
+  # download page 1 of coast trade data (value)
+  output$download_coast_trade_page1 <- downloadHandler(
+    filename = 'coastal_trade_value_page.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_export_value_plot.png', 'coastal_import_value_plot.png', 
+              'coastal_trade_plots_data.csv')
+      ggsave('coastal_export_value_plot.png', exp_coast_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      ggsave('coastal_import_value_plot.png', imp_coast_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      write.csv(coast_trade_df(), 'coastal_trade_plots_data.csv')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 2 of coast trade data (volume)
+  output$download_coast_trade_page2 <- downloadHandler(
+    filename = 'coastal_trade_volume_page.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_export_volume_plot.png', 'coastal_import_volume_plot.png',
+              'coastal_trade_plots_data.csv')
+      ggsave('coastal_export_volume_plot.png', exp_coast_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      ggsave('coastal_import_volume_plot.png', imp_coast_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      write.csv(coast_trade_df(), 'coastal_trade_plots_data.csv')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 1 of coast landings data (value/price)
+  output$download_coast_landings_page1 <- downloadHandler(
+    filename = 'coastal_commercial_landings_value.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_commercial_landings_plots_data.csv', 'coastal_landings_value.png')
+      write.csv(coast_landings_df(), 'coastal_commercial_landings_plots_data.csv')
+      ggsave('coastal_landings_value.png', coast_landings_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 2 of coast landings data (volume)
+  output$download_coast_landings_page2 <- downloadHandler(
+    filename = 'coastal_commercial_landings_volume.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_commercial_landings_plots_data.csv', 'coastal_landings_volume.png')
+      write.csv(coast_landings_df(), 'coastal_commercial_landings_plots_data.csv')
+      ggsave('coastal_landings_volume.png', coast_landings_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 1 of coast processed products data (value)
+  output$download_coast_products_page1 <- downloadHandler(
+    filename = 'coastal_processed_products_value.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_products_plots_data.csv', 'coastal_products_value.png')
+      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      ggsave('coastal_products_value.png', coast_pp_value_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 2 of coast processed products data (volume)
+  output$download_coast_products_page2 <- downloadHandler(
+    filename = 'coastal_processed_products_volume.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_products_plots_data.csv', 'coastal_products_volume.png')
+      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      ggsave('coastal_products_volume.png', coast_pp_volume_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
+  # download page 3 of coast processed products data (price)
+  output$download_coast_products_page3 <- downloadHandler(
+    filename = 'coastal_processed_products_price.zip',
+    content = function(fname) {
+      showModal(modalDialog('Downloading plots and data...', footer = NULL))
+      Sys.sleep(1)
+      on.exit(removeModal())
+      
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      
+      fs <- c('coastal_products_plots_data.csv', 'coastal_products_price.png')
+      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      ggsave('coastal_products_price.png', coast_pp_price_plot(),
+             width = 14,
+             height = 8,
+             device = 'png')
+      
+      zip(zipfile = fname, files = fs)
+    },
+    contentType = 'application/zip'
+  )
+  
   # species filter and search inputs -------------------------------------------
   # define search bar terms
   
