@@ -5527,6 +5527,276 @@ server <- function(input, output, session) {
                   '      Data for this species is insufficient to produce this plot'))
     coast_pp_price_plot()
   })
+  # Coast Analysis Tooltips ----------------------------------------------------
+  #' *Export Value*
+  # Set clicked point as reactive value, allows us to update later (T/F)
+  exp_coast_value_clicked_point <- reactiveVal(FALSE)
+  
+  # when the close button (X) is clicked, make tooltip disappear
+  observeEvent(input$close_exp_coast_value_tooltip, {
+    exp_coast_value_clicked_point(FALSE)
+  })
+  
+  # when the plot is clicked, make tooltip appear
+  observeEvent(input$exp_coast_value_click, {
+    exp_coast_value_clicked_point(TRUE)
+  })
+
+  # create tooltip
+  output$exp_coast_value_click_overlay <- renderUI({
+    # if reactive value is false, nothing shows
+    if (!exp_coast_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    # To get the data from the click, first store the data
+    data <- coast_trade_df()
+    
+    # get year (round the x-click to get a whole number)
+    year <- round(input$exp_coast_value_click$x)
+    # year is stored as factor in plot so get the years as a factor
+    year_levels <- levels(factor(data$YEAR))
+    # get the value for the clicked year as the factored value
+    factored_year <- year_levels[year]
+    
+    # get the facet panel clicked by the user
+    panel <- input$exp_coast_value_click$panelvar1
+    
+    # get the data from the click by factoring for YEAR and COAST (panel)
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # output a NULL if no click info data
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+
+    # position tooltip near clicked point
+    left_pos <- input$exp_coast_value_click$coords_css$x + 10
+    top_pos <- input$exp_coast_value_click$coords_css$y - 10
+
+    # keep tooltip within plot bounds
+
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+
+    # tooltip style
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+
+      # Close button
+      tags$button(
+        "x",
+        id = "close_exp_coast_value_tooltip",
+        onclick = "Shiny.setInputValue('close_exp_coast_value_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+
+      # Tooltip info
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(export_color), tooltip_subheading, "Export Value</span>:<br>",
+        dollar(click_info$EXP_VALUE_MILLIONS), " Million<br>",
+        tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Export Price</span>:<br>",
+        dollar(click_info$EXP_PRICE), ifelse(selected_units() == 'METRIC',
+                                                  " per kilogram",
+                                                  " per pound"))))
+  })
+  
+  
+  #' *Import Value*
+  imp_coast_value_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_imp_coast_value_tooltip, {
+    imp_coast_value_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$imp_coast_value_click, {
+    imp_coast_value_clicked_point(TRUE)
+  })
+  
+  output$imp_coast_value_click_overlay <- renderUI({
+    if (!imp_coast_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_trade_df()
+    
+    year <- round(input$imp_coast_value_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$imp_coast_value_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$imp_coast_value_click$coords_css$x + 10
+    top_pos <- input$imp_coast_value_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_imp_coast_value_tooltip",
+        onclick = "Shiny.setInputValue('close_imp_coast_value_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(import_color), tooltip_subheading, "Import Value</span>:<br>",
+        dollar(click_info$IMP_VALUE_MILLIONS), " Million<br>",
+        tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Import Price</span>:<br>",
+        dollar(click_info$IMP_PRICE), ifelse(selected_units() == 'METRIC',
+                                             " per kilogram",
+                                             " per pound"))))
+  })
+  
+  
+  
+  #' *Export Volume*
+  exp_coast_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_exp_coast_volume_tooltip, {
+    exp_coast_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$exp_coast_volume_click, {
+    exp_coast_volume_clicked_point(TRUE)
+  })
+  
+  output$exp_coast_volume_click_overlay <- renderUI({
+    if (!exp_coast_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_trade_df()
+    
+    year <- round(input$exp_coast_volume_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$exp_coast_volume_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$exp_coast_volume_click$coords_css$x + 10
+    top_pos <- input$exp_coast_volume_click$coords_css$y - 10
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_exp_coast_volume_tooltip",
+        onclick = "Shiny.setInputValue('close_exp_coast_volume_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(import_color), tooltip_subheading, "Export Volume</span>:<br>",
+        comma(click_info$EXP_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+                                                    " Metric Tons", 
+                                                    " Short Tons"))))
+  })
+  
+  
+  
+  #' *Import Volume*
+  imp_coast_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_imp_coast_volume_tooltip, {
+    imp_coast_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$imp_coast_volume_click, {
+    imp_coast_volume_clicked_point(TRUE)
+  })
+  
+  output$imp_coast_volume_click_overlay <- renderUI({
+    if (!imp_coast_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_trade_df()
+    
+    year <- round(input$imp_coast_volume_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$imp_coast_volume_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$imp_coast_volume_click$coords_css$x + 10
+    top_pos <- input$imp_coast_volume_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_imp_coast_volume_tooltip",
+        onclick = "Shiny.setInputValue('close_imp_coast_volume_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR,  ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(import_color), tooltip_subheading, "Export Volume</span>:<br>",
+        comma(click_info$EXP_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+                                               " Metric Tons", 
+                                               " Short Tons"))))
+  })
+  
+  
+  
 }
 
 # Run the app
