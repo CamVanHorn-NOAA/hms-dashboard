@@ -23,7 +23,7 @@ source("nmfs_cols.R")
 addResourcePath("tmpuser", getwd())
 
 # Load most recent data file (manually taken from Seafood Dashboard)
-load('hms_data_munge_10_28_25.RData')
+load('hms_data_munge_10_29_25.RData')
 
 
 # filter out confidential data (no data contained therein)
@@ -207,7 +207,7 @@ filter_coast <- function(data, coast) {
   # This filter is used in all summary functions to filter for selected coasts
   # Data is any data frame with a field specifying the data's coast of origin
   # coast is a character vector meant to match how coast is specified in data
-  if (coast == '' | is.null(coast)) {
+  if (coast == '' | is.null(coast) | coast == 'ALL') {
     return(data)
   }
   
@@ -246,10 +246,15 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
     species <- str_to_title(species)
   }
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+  } else {field <- NULL}
+  
   summarized_data <- trade_table %>%
     filter_species(species) %>%
     filter_coast(coast) %>%
-    select(YEAR, !!level, EXP_VALUE_2024USD, EXP_VOLUME_KG, EXP_CONVERTED_VOLUME,
+    select(YEAR, !!level, !!field, EXP_VALUE_2024USD, EXP_VOLUME_KG, EXP_CONVERTED_VOLUME,
            IMP_VALUE_2024USD, IMP_VOLUME_KG, IMP_CONVERTED_VOLUME, EXP_VALUE_USD, 
            IMP_VALUE_USD) %>%
     mutate(EXP_VALUE_2024USD = ifelse(is.na(EXP_VALUE_2024USD), 0,
@@ -268,7 +273,7 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
                                   EXP_VALUE_USD),
            IMP_VALUE_USD = ifelse(is.na(IMP_VALUE_USD), 0,
                                   IMP_VALUE_USD)) %>%
-    group_by(YEAR, !!level) %>%
+    group_by(YEAR, !!level, !!field) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
@@ -367,7 +372,7 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
       select(YEAR, EXP_VALUE, IMP_VALUE, EXP_VALUE_MILLIONS, IMP_VALUE_MILLIONS, 
              EXP_PRICE, IMP_PRICE, EXP_VOLUME_T, IMP_VOLUME_T, EXP_VOLUME,
              IMP_VOLUME, EXP_ROUND_VOLUME, IMP_ROUND_VOLUME, EXP_ROUND_VOLUME_T,
-             IMP_ROUND_VOLUME_T) %>%
+             IMP_ROUND_VOLUME_T, !!field) %>%
       mutate(RATIO = EXP_VOLUME_T / IMP_VOLUME_T)
     
     return(trade_data)
@@ -525,15 +530,20 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
   # coerce species to upper case to match data formatting
   species <- ifelse(species == 'All Species', 'All Species', toupper(species))
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+  } else {field <- NULL}
+  
   summarized_data <- product_data %>%
     filter_species(species) %>%
     filter_coast(coast) %>%
-    select(YEAR, PRODUCT_FORM, KG, DOLLARS_2024, DOLLARS, POUNDS) %>%
+    select(YEAR, PRODUCT_FORM, !!field, KG, DOLLARS_2024, DOLLARS, POUNDS) %>%
     mutate(DOLLARS = ifelse(is.na(DOLLARS), 0, DOLLARS),
            DOLLARS_2024 = ifelse(is.na(DOLLARS_2024), 0, DOLLARS_2024),
            KG = ifelse(is.na(KG), 0, KG),
            POUNDS = ifelse(is.na(POUNDS), 0, POUNDS)) %>%
-    group_by(YEAR, PRODUCT_FORM) %>%
+    group_by(YEAR, !!field, PRODUCT_FORM) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
@@ -599,7 +609,7 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
   new_data <- summarized_data %>%
     mutate(PRODUCT_FORM = ifelse(PRODUCT_FORM %in% c('OTHER', low_prop_types),
                                  'OTHER*', PRODUCT_FORM)) %>%
-    group_by(YEAR, PRODUCT_FORM) %>%
+    group_by(YEAR, !!field, PRODUCT_FORM) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop') %>%
     mutate(PP_VALUE_MILLIONS = PP_VALUE / 1000000,
@@ -643,14 +653,19 @@ summarize_landings_yr_spp <- function(landings_data, species, coast, full_data =
     species <- str_to_title(species)
   }
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+  } else {field <- NULL}
+  
   summarized_data <- landings_data %>%
     filter_species(species) %>%
     filter_coast(coast) %>%
     filter(CONFIDENTIALITY != 'Confidential',
            !is.na(DOLLARS),
            !is.na(KG)) %>%
-    select(YEAR, !!level, KG, DOLLARS_2024, DOLLARS) %>%
-    group_by(YEAR, !!level) %>%
+    select(YEAR, !!level, !!field, KG, DOLLARS_2024, DOLLARS) %>%
+    group_by(YEAR, !!level, !!field) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
@@ -1078,7 +1093,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     shortform <- 'EXP'
     longform <- 'Exports'
     color <- export_color
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' from the ', coast)
     } else {coast_text <- ''}
   }
@@ -1087,12 +1102,17 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     shortform <- 'IMP'
     longform <- 'Imports'
     color <- import_color
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' to the ', coast)
     } else {coast_text <- ''}
   }
   # coerce plot_format to uppercase to work within function
   plot_format <- toupper(plot_format)
+  
+  if (coast == 'ALL') {
+    data <- data %>%
+      filter(!is.na(COAST))
+  }
   
   # set labels and y values for plots of VALUE
   if (plot_format == 'VALUE') {
@@ -1199,7 +1219,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                        limits = factor(2004:2024)) +
       scale_y_continuous(name = ylab, 
                          labels = label,
-                         limits = c(0, y_max),
+                         limits = c(0, y_max + y_max*0.1),
                          sec.axis = sec_axis(~./scale_factor, name = ylab2,
                                              labels = label2)) +
       labs(x = '',
@@ -1212,7 +1232,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     # plot of RATIO
     # RATIO is a line chart, so we need a column to group by
     data$GROUP <- 'group'
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' traded in the ', coast)
     } else {coast_text <- ''}
     
@@ -1236,7 +1256,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
             plot.title = element_text(size = 18),
             axis.title = element_text(size = 15))
   } else {
-    if (coast != '') {
+    if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' traded in the ', coast)
     } else {coast_text <- ''}
     
@@ -1325,10 +1345,18 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
     species <- 'Highly Migratory Species'
   }
   
+  if (coast == 'ALL') {
+    field <- as.symbol('COAST')
+    field <- rlang::enquo(field)
+    
+    processed_product_data <- processed_product_data %>%
+      filter(!is.na(COAST))
+  } else {field <- NULL}
+  
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (coast != '') {
+  if (!(coast %in% c('', 'ALL'))) {
     coast_text <- paste0(coast, ' ')
   } else {coast_text <- ''}
   
@@ -1421,8 +1449,8 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
   
   # find upper limit for value/volume plots
   upper_limit <- processed_product_data %>%
-    select(YEAR, !!y) %>%
-    group_by(YEAR) %>%
+    select(YEAR, !!field, !!y) %>%
+    group_by(YEAR, !!field) %>%
     summarise(across(where(is.numeric), sum),
               .groups = 'drop') %>%
     filter(!!y == max(!!y)) %>%
@@ -1467,9 +1495,14 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (coast != '') {
+  if (!(coast %in% c('', 'ALL'))) {
     coast_text <- paste0(coast, ' ')
   } else {coast_text <- ''}
+  
+  if (coast == 'ALL') {
+    data <- data %>%
+      filter(!is.na(COAST))
+  }
   
   # set labels for VALUE plot
   if (plot.format == 'VALUE') {
@@ -1865,10 +1898,9 @@ ui <- page_sidebar(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     selectizeInput(inputId = 'coast',
-                   label = 'Alternatively, select a FEUS Region',
-                   choices = c('', 'North Pacific', 'Pacific', 'West Pacific',
-                               'New England', 'Mid-Atlantic', 'South Atlantic',
-                               'Gulf', 'Great Lakes'),
+                   label = 'Alternatively, select a Coast',
+                   choices = c('', 'West Coast + Alaska', 'Atlantic', 
+                               'Pacific Islands', 'Gulf + Territories'),
                    options = list(
                      placeholder = 'Type here...'
                    )),
@@ -2271,8 +2303,175 @@ ui <- page_sidebar(
           nav_panel(title = 'Resources',
                     htmlOutput('resource'))
         )
-      )))
-)
+      ),
+      nav_panel(
+        title = 'Coast Analysis',
+        icon = bsicons::bs_icon("tsunami"),
+        fluidRow(
+          div(
+            style = 'border: 3px solid #005761; border-radius: 12px;
+               min-width: 800px; width: 100%; display: flex; flex-direction: column;',
+            navset_card_pill(title = 'Trade',
+                             nav_panel(title = 'Value',
+                                       div(
+                                         style = "position: relative; min-width: 1200px;",
+                                         withSpinner(
+                                           plotOutput('exp_coast_value',
+                                                      click = clickOpts('exp_coast_value_click'),
+                                                      height = "400px", width = "100%"), 
+                                           type = 7),
+                                         # textOutput('balance_tooltip'),
+                                         uiOutput('exp_coast_value_click_overlay'),
+                                         div(
+                                           style = "position: absolute; top: 0px; left: 5px",
+                                           tooltip(
+                                             icon("info-circle"),
+                                             "Export value reflects the total value of product traded out of the U.S. into other countries. The left y-axis reflects the total value of exports and applies to the bars. The right y-axis reflects the average price of exported product per kilogram or pound and applies to the line and points."))),
+                                       div(
+                                         style = "position: relative; min-width: 1200px;",
+                                         withSpinner(
+                                           plotOutput('imp_coast_value',
+                                                      click = clickOpts('imp_coast_value_click'),
+                                                      height = "400px", width = "100%"), 
+                                           type = 7),
+                                         # textOutput('balance_tooltip'),
+                                         uiOutput('imp_coast_value_click_overlay'),
+                                         div(
+                                           style = "position: absolute; top: 0px; left: 5px",
+                                           tooltip(
+                                             icon("info-circle"),
+                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points.")))),
+                             nav_panel(title = 'Volume',
+                                       div(
+                                         style = "position: relative; min-width: 1200px;",
+                                         withSpinner(
+                                           plotOutput('exp_coast_volume',
+                                                      click = clickOpts('exp_coast_volume_click'),
+                                                      height = '400px', width = '100%'),
+                                           type = 7),
+                                         uiOutput('exp_coast_volume_click_overlay'),
+                                         div(style = 'position: absolute; top: 0px; left: 5px',
+                                             tooltip(
+                                               icon('info-circle'),
+                                               'Export volume reflects the total volume of product traded out of the U.S. into other countries.'))),
+                                       div(
+                                         style = 'position: relative; min-width: 1200px;',
+                                         withSpinner(
+                                           plotOutput('imp_coast_volume',
+                                                      click = clickOpts('imp_coast_volume_click'),
+                                                      height = '400px', width = '100%'),
+                                           type = 7),
+                                         uiOutput('imp_coast_volume_click_overlay'),
+                                         div(
+                                           style = 'position: absolute; top: 0px; left: 5px',
+                                           tooltip(
+                                             icon('info-circle'),
+                                             'Import volume reflects the total volume of product traded into the U.S. from other countries.')))))
+                             )),
+        fluidRow(
+          div(
+            style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
+            div(
+              style = 'border: 3px solid #234515; border-radius: 12px;
+                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+              navset_card_pill(title = 'Commercial Landings',
+                               nav_panel(title = 'Value',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_landings_value',
+                                                        click = clickOpts(id = 'coast_landings_value_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('comvalue_tooltip')
+                                           uiOutput('coast_landings_value_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
+                                             ))),
+                                         downloadButton('download_landings_page1',
+                                                        'Download this plot and the data')),
+                               nav_panel(title = 'Volume',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_landings_volume',
+                                                        click = clickOpts(id = 'coast_landings_volume_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('comvolume_tooltip')
+                                           uiOutput('coast_landings_volume_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
+                                             ))),
+                                         downloadButton('download_landings_page2',
+                                                        'Download this plot and the data')))),
+            div(
+              style = 'border: 3px solid #681617; border-radius: 12px;
+                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+              navset_card_pill(title = 'Processed Products',
+                               nav_panel(title = 'Value',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_pp_value',
+                                                        click = clickOpts('coast_pp_value_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('ppvalue_tooltip')
+                                           uiOutput('coast_pp_value_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
+                                             ))),
+                                         downloadButton('download_products_page1',
+                                                        'Download this plot and the data')),
+                               nav_panel(title = 'Volume',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_pp_volume',
+                                                        click = clickOpts('coast_pp_volume_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('ppvolume_tooltip')
+                                           uiOutput('coast_pp_volume_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
+                                             ))),
+                                         downloadButton('download_products_page2',
+                                                        'Download this plot and the data')),
+                               nav_panel(title = 'Price',
+                                         div(
+                                           style = "position: relative; min-width: 600px; width: 100%",
+                                           withSpinner(
+                                             plotOutput('coast_pp_price',
+                                                        click = clickOpts('coast_pp_price_plot_click'),
+                                                        height = "500px"),
+                                             type = 7),
+                                           # textOutput('ppprice_tooltip')
+                                           uiOutput('coast_pp_price_click_overlay'),
+                                           div(
+                                             style = "position: absolute; top: 0px; left: 5px",
+                                             tooltip(
+                                               icon("info-circle"),
+                                               "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
+                                             ))),
+                                         downloadButton('download_products_page3',
+                                                        'Download this plot and the data'))))))
+        ))
+        
+      ))
 
 
 # Define server logic ----------------------------------------------------------
@@ -2307,6 +2506,15 @@ server <- function(input, output, session) {
     pp_value_clicked_point(NULL)
     pp_volume_clicked_point(NULL)
     pp_price_clicked_point(NULL)
+    exp_coast_value_clicked_point(FALSE)
+    imp_coast_value_clicked_point(FALSE)
+    exp_coast_volume_clicked_point(FALSE)
+    imp_coast_volume_clicked_point(FALSE)
+    coast_landings_value_clicked_point(FALSE)
+    coast_landings_volume_clicked_point(FALSE)
+    coast_pp_value_clicked_point(FALSE)
+    coast_pp_volume_clicked_point(FALSE)
+    coast_pp_price_clicked_point(FALSE)
   })
   # Download buttons -----------------------------------------------------------
   # The following are a series of download buttons that provide the user the
@@ -5150,6 +5358,819 @@ server <- function(input, output, session) {
     tags$iframe(seamless = "seamless",
                 src = "tmpuser/dashboard_resources.html",
                 height = 800)
+  })
+  # Coast Analysis plots -------------------------------------------------------
+  # creates trade data for plots
+  coast_trade_df <- reactive({
+    summarize_trade_yr_spp(
+      trade_filtered(),
+      species_selection_trade(),
+      coast = 'ALL',
+      'VALUE',
+      units = selected_units(),
+      nominal = selected_value())
+  })
+  
+  # creates export value plot
+  exp_coast_value_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), export = T, 
+               species = species_selection_trade(), nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs export value plot
+  output$exp_coast_value <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(exp_coast_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    exp_coast_value_plot()
+  })
+  
+  # creates import value plot
+  imp_coast_value_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), import = T, 
+               species = species_selection_trade(), nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs import value plot
+  output$imp_coast_value <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(imp_coast_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    imp_coast_value_plot()
+  })
+  
+  # creates export volume plot
+  exp_coast_volume_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), export = T, 
+               species = species_selection_trade()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs export volume plot
+  output$exp_coast_volume <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(exp_coast_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    exp_coast_volume_plot()
+  })
+  
+  # creates import volume plot
+  imp_coast_volume_plot <- reactive({
+    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), import = T, 
+               species = species_selection_trade()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs import volume plot
+  output$imp_coast_volume <- renderPlot({
+    trade_data_validation()
+    validate(need(try(!is.na(imp_coast_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    imp_coast_volume_plot()
+  })
+  
+  
+  
+  
+  # creates landings data for plots
+  coast_landings_df <- reactive({
+    summarize_landings_yr_spp(
+      landings_filtered(),
+      species_selection_landings(),
+      coast = 'ALL',
+      units = selected_units(),
+      nominal = selected_value())
+  })
+  
+  # creates landings value plot
+  coast_landings_value_plot <- reactive({
+    plot_landings(coast_landings_df(), 'ALL', 'VALUE', units = selected_units(),
+                  species = species_selection_landings(),
+                  nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs landings value plot
+  output$coast_landings_value <- renderPlot({
+    landings_data_validation()
+    validate(need(try(!is.na(coast_landings_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_landings_value_plot()
+  })
+  
+  # creates landings volume plot
+  coast_landings_volume_plot <- reactive({
+    plot_landings(coast_landings_df(), 'ALL', 'VOLUME', units = selected_units(),
+                  species = species_selection_landings()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs landings volume plot
+  output$coast_landings_volume <- renderPlot({
+    landings_data_validation()
+    validate(need(try(!is.na(coast_landings_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_landings_volume_plot()
+  })
+  
+  
+  
+  # creates processed products data for plots
+  coast_pp_df <- reactive({
+    summarize_pp_yr_spp(
+      products_filtered(),
+      species_selection_products(),
+      'ALL',
+      units = selected_units(),
+      nominal = selected_value())
+  })
+  
+  # creates processed products value plot
+  coast_pp_value_plot <- reactive({
+    plot_spp_pp(coast_pp_df(), 'ALL', 'VALUE', 
+                units = selected_units(),
+                species = species_selection_products(),
+                nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs processed products value plot
+  output$coast_pp_value <- renderPlot({
+    pp_data_validation()
+    validate(need(try(!is.na(coast_pp_value_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_pp_value_plot()
+  })
+  
+  # creates processed products volume plot
+  coast_pp_volume_plot <- reactive({
+    plot_spp_pp(coast_pp_df(), 'ALL', 'VOLUME', 
+                units = selected_units(),
+                species = species_selection_products()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs processed products volume plot
+  output$coast_pp_volume <- renderPlot({
+    pp_data_validation()
+    validate(need(try(!is.na(coast_pp_volume_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_pp_volume_plot()
+  })
+  
+  # creates processed products price plot
+  coast_pp_price_plot <- reactive({
+    plot_spp_pp(coast_pp_df(), 'ALL', 'PRICE', 
+                units = selected_units(),
+                species = species_selection_products(),
+                nominal = selected_value()) +
+      facet_grid(cols = vars(COAST))
+  })
+  
+  # outputs processed products price plot
+  output$coast_pp_price <- renderPlot({
+    pp_data_validation()
+    validate(need(try(!is.na(coast_pp_price_plot())),
+                  '      Data for this species is insufficient to produce this plot'))
+    coast_pp_price_plot()
+  })
+  # Coast Analysis Tooltips ----------------------------------------------------
+  #' *Export Value*
+  # Set clicked point as reactive value, allows us to update later (T/F)
+  exp_coast_value_clicked_point <- reactiveVal(FALSE)
+  
+  # when the close button (X) is clicked, make tooltip disappear
+  observeEvent(input$close_exp_coast_value_tooltip, {
+    exp_coast_value_clicked_point(FALSE)
+  })
+  
+  # when the plot is clicked, make tooltip appear
+  observeEvent(input$exp_coast_value_click, {
+    exp_coast_value_clicked_point(TRUE)
+  })
+
+  # create tooltip
+  output$exp_coast_value_click_overlay <- renderUI({
+    # if reactive value is false, nothing shows
+    if (!exp_coast_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    # To get the data from the click, first store the data
+    data <- coast_trade_df()
+    
+    # get year (round the x-click to get a whole number)
+    year <- round(input$exp_coast_value_click$x)
+    # year is stored as factor in plot so get the years as a factor
+    year_levels <- levels(factor(data$YEAR))
+    # get the value for the clicked year as the factored value
+    factored_year <- year_levels[year]
+    
+    # get the facet panel clicked by the user
+    panel <- input$exp_coast_value_click$panelvar1
+    
+    # get the data from the click by factoring for YEAR and COAST (panel)
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # output a NULL if no click info data
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+
+    # position tooltip near clicked point
+    left_pos <- input$exp_coast_value_click$coords_css$x + 10
+    top_pos <- input$exp_coast_value_click$coords_css$y - 10
+
+    # keep tooltip within plot bounds
+
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+
+    # tooltip style
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+
+      # Close button
+      tags$button(
+        "x",
+        id = "close_exp_coast_value_tooltip",
+        onclick = "Shiny.setInputValue('close_exp_coast_value_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+
+      # Tooltip info
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(export_color), tooltip_subheading, "Export Value</span>:<br>",
+        dollar(click_info$EXP_VALUE_MILLIONS), " Million<br>",
+        tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Export Price</span>:<br>",
+        dollar(click_info$EXP_PRICE), ifelse(selected_units() == 'METRIC',
+                                                  " per kilogram",
+                                                  " per pound"))))
+  })
+  
+  
+  #' *Import Value*
+  imp_coast_value_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_imp_coast_value_tooltip, {
+    imp_coast_value_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$imp_coast_value_click, {
+    imp_coast_value_clicked_point(TRUE)
+  })
+  
+  output$imp_coast_value_click_overlay <- renderUI({
+    if (!imp_coast_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_trade_df()
+    
+    year <- round(input$imp_coast_value_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$imp_coast_value_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$imp_coast_value_click$coords_css$x + 10
+    top_pos <- input$imp_coast_value_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_imp_coast_value_tooltip",
+        onclick = "Shiny.setInputValue('close_imp_coast_value_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(import_color), tooltip_subheading, "Import Value</span>:<br>",
+        dollar(click_info$IMP_VALUE_MILLIONS), " Million<br>",
+        tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Import Price</span>:<br>",
+        dollar(click_info$IMP_PRICE), ifelse(selected_units() == 'METRIC',
+                                             " per kilogram",
+                                             " per pound"))))
+  })
+  
+  
+  
+  #' *Export Volume*
+  exp_coast_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_exp_coast_volume_tooltip, {
+    exp_coast_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$exp_coast_volume_click, {
+    exp_coast_volume_clicked_point(TRUE)
+  })
+  
+  output$exp_coast_volume_click_overlay <- renderUI({
+    if (!exp_coast_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_trade_df()
+    
+    year <- round(input$exp_coast_volume_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$exp_coast_volume_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$exp_coast_volume_click$coords_css$x + 10
+    top_pos <- input$exp_coast_volume_click$coords_css$y - 10
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_exp_coast_volume_tooltip",
+        onclick = "Shiny.setInputValue('close_exp_coast_volume_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(import_color), tooltip_subheading, "Export Volume</span>:<br>",
+        comma(click_info$EXP_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+                                                    " Metric Tons", 
+                                                    " Short Tons"))))
+  })
+  
+  
+  
+  #' *Import Volume*
+  imp_coast_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_imp_coast_volume_tooltip, {
+    imp_coast_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$imp_coast_volume_click, {
+    imp_coast_volume_clicked_point(TRUE)
+  })
+  
+  output$imp_coast_volume_click_overlay <- renderUI({
+    if (!imp_coast_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_trade_df()
+    
+    year <- round(input$imp_coast_volume_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$imp_coast_volume_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$imp_coast_volume_click$coords_css$x + 10
+    top_pos <- input$imp_coast_volume_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_imp_coast_volume_tooltip",
+        onclick = "Shiny.setInputValue('close_imp_coast_volume_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR,  ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(import_color), tooltip_subheading, "Export Volume</span>:<br>",
+        comma(click_info$EXP_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+                                               " Metric Tons", 
+                                               " Short Tons"))))
+  })
+  
+  
+  
+  #' *Landings Value*
+  coast_landings_value_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_landings_value_tooltip, {
+    coast_landings_value_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_landings_value_plot_click, {
+    coast_landings_value_clicked_point(TRUE)
+  })
+  
+  output$coast_landings_value_click_overlay <- renderUI({
+    if (!coast_landings_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_landings_df()
+    
+    year <- round(input$coast_landings_value_plot_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$coast_landings_value_plot_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$coast_landings_value_plot_click$coords_css$x + 10
+    top_pos <- input$coast_landings_value_plot_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_coast_landings_value_tooltip",
+        onclick = "Shiny.setInputValue('close_coast_landings_value_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR,  ": ", click_info$COAST, "<br>", 
+        tooltip_color_icon(landings_colors[1]), tooltip_subheading, "Ex-Vessel Value</span>:<br>",
+        dollar(click_info$COM_VALUE_MILLIONS), " Million<br>",
+        tooltip_line_icon(landings_colors[2], 16), tooltip_subheading, "Ex-Vessel Price</span>:<br>",
+        dollar(click_info$COM_PRICE), ifelse(selected_units() == 'METRIC', 
+                                                  " per kilogram", 
+                                                  " per pound"))))
+  })
+  
+  
+  
+  #' *Landings Volume*
+  coast_landings_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_landings_volume_tooltip, {
+    coast_landings_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_landings_volume_plot_click, {
+    coast_landings_volume_clicked_point(TRUE)
+  })
+  
+  output$coast_landings_volume_click_overlay <- renderUI({
+    if (!coast_landings_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    data <- coast_landings_df()
+    
+    year <- round(input$coast_landings_volume_plot_click$x)
+    year_levels <- levels(factor(data$YEAR))
+    factored_year <- year_levels[year]
+    
+    panel <- input$coast_landings_volume_plot_click$panelvar1
+    
+    click_info <- data %>%
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    if (nrow(click_info) == 0) {
+      return(NULL)
+    }
+    
+    left_pos <- input$coast_landings_volume_plot_click$coords_css$x + 10
+    top_pos <- input$coast_landings_volume_plot_click$coords_css$y - 100
+    
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes
+      ),
+      
+      tags$button(
+        "x",
+        id = "close_coast_landings_volume_tooltip",
+        onclick = "Shiny.setInputValue('close_coast_landings_volume_tooltip', Math.random());",
+        style = close_button_aes
+      ),
+      
+      HTML(paste0(
+        tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
+        tooltip_color_icon(landings_colors[1]), tooltip_subheading, "Landed Volume</span>:<br>",
+        comma(click_info$COM_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+                                                    " Metric Tons", 
+                                                    " Short Tons"))))
+  })
+  
+  
+  
+  #' *Processed Product Value*
+  coast_pp_value_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_pp_value_tooltip, {
+    coast_pp_value_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_pp_value_plot_click, {
+    coast_pp_value_clicked_point(TRUE)
+  })
+  
+  output$coast_pp_value_click_overlay <- renderUI({
+    if (!coast_pp_value_clicked_point()) {
+      return(NULL)
+    }
+    
+    panel <- input$coast_pp_value_plot_click$panelvar1
+    
+    # SPECIFY GROUPS
+    # First, get data
+    pp_data <- coast_pp_df()
+    
+    year <- round(input$coast_pp_value_plot_click$x)
+    year_levels <- levels(factor(pp_data$YEAR))
+    factored_year <- year_levels[year]
+    
+    # Next, get product forms
+    products <- unique(str_to_title(pp_data$PRODUCT_FORM))
+    # Subset colors for these products
+    pp_colors <- pp_colors[names(pp_colors) %in% products]
+    pp_colors <- pp_colors[names(pp_colors)]
+    
+    # extract first year for only one row per product, arrange alphabetically
+    filtered_data <- pp_data %>% 
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # create icons (number will vary)
+    # begin with empty vector that will ultimately contain the full HTML code
+    coast_pp_val_tooltip <- vector()
+    for (i in 1:length(pp_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+      
+      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      
+      tooltip_data <- paste0(
+        dollar(filtered_data$PP_VALUE_MILLIONS[i]), " Million <br>")
+      
+      coast_pp_val_tooltip <- paste0(coast_pp_val_tooltip, tooltip_color, tooltip_text, tooltip_data)
+    }
+    
+    if (nrow(filtered_data) == 0) {
+      return(NULL)
+    }
+    
+    # Position tooltip near clicked point
+    left_pos <- input$coast_pp_value_plot_click$coords_css$x + 20 # Offset to right of point
+    top_pos <- input$coast_pp_value_plot_click$coords_css$y - 150 # Offset above point
+    
+    # Prevent tooltip from being off screen
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    # style the tooltip for clicked point
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes,
+        "max-width: 350px; ",
+        "min-width: 350px; "),
+      # tooltip close button
+      tags$button(
+        "x",
+        id = 'close_coast_pp_value_tooltip',
+        onclick = "Shiny.setInputValue('close_coast_pp_value_tooltip', Math.random());",
+        style = close_button_aes), 
+      HTML(paste0(tooltip_heading, filtered_data$YEAR[1], ": ", filtered_data$COAST[1], "<br>", 
+                  coast_pp_val_tooltip)))
+  })
+  
+  
+
+  #' *Processed Product Volume*
+  coast_pp_volume_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_pp_volume_tooltip, {
+    coast_pp_volume_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_pp_volume_plot_click, {
+    coast_pp_volume_clicked_point(TRUE)
+  })
+  
+  output$coast_pp_volume_click_overlay <- renderUI({
+    if (!coast_pp_volume_clicked_point()) {
+      return(NULL)
+    }
+    
+    panel <- input$coast_pp_volume_plot_click$panelvar1
+    
+    # SPECIFY GROUPS
+    # First, get data
+    pp_data <- coast_pp_df()
+    
+    year <- round(input$coast_pp_volume_plot_click$x)
+    year_levels <- levels(factor(pp_data$YEAR))
+    factored_year <- year_levels[year]
+    
+    # Next, get product forms
+    products <- unique(str_to_title(pp_data$PRODUCT_FORM))
+    # Subset colors for these products
+    pp_colors <- pp_colors[names(pp_colors) %in% products]
+    pp_colors <- pp_colors[names(pp_colors)]
+    
+    filtered_data <- pp_data %>% 
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # create icons (number will vary)
+    # begin with empty vector that will ultimately contain the full HTML code
+    coast_pp_vol_tooltip <- vector()
+    for (i in 1:length(pp_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+      
+      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      
+      tooltip_data <- paste0(
+        comma(filtered_data$PP_VOLUME_T[i]), ifelse(selected_units() == 'METRIC',
+                                                    " Metric Tons <br>",
+                                                    " Short Tons <br>"))
+      
+      coast_pp_vol_tooltip <- paste0(coast_pp_vol_tooltip, tooltip_color, tooltip_text, tooltip_data)
+    }
+    
+    # Position tooltip near clicked point
+    left_pos <- input$coast_pp_volume_plot_click$coords_css$x + 20 # Offset to right of point
+    top_pos <- input$coast_pp_volume_plot_click$coords_css$y - 150 # Offset above point
+    
+    # Prevent tooltip from being off screen
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    # style the tooltip for clicked point
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes,
+        "max-width: 350px; ",
+        "min-width: 350px; "),
+      # tooltip close button
+      tags$button(
+        "x",
+        id = 'close_coast_pp_volume_tooltip',
+        onclick = "Shiny.setInputValue('close_coast_pp_volume_tooltip', Math.random());",
+        style = close_button_aes), 
+      HTML(paste0(tooltip_heading, filtered_data$YEAR[1], ": ", filtered_data$COAST[1], "<br>",
+                  coast_pp_vol_tooltip)))
+  })
+  
+  
+  
+  #' *Processed Product Price*
+  coast_pp_price_clicked_point <- reactiveVal(FALSE)
+  
+  observeEvent(input$close_coast_pp_price_tooltip, {
+    coast_pp_price_clicked_point(FALSE)
+  })
+  
+  observeEvent(input$coast_pp_price_plot_click, {
+    coast_pp_price_clicked_point(TRUE)
+  })
+  
+  output$coast_pp_price_click_overlay <- renderUI({
+    if (!coast_pp_price_clicked_point()) {
+      return(NULL)
+    }
+    
+    panel <- input$coast_pp_price_plot_click$panelvar1
+    
+    # SPECIFY GROUPS
+    # First, get data
+    pp_data <- coast_pp_df()
+    
+    year <- round(input$coast_pp_price_plot_click$x)
+    year_levels <- levels(factor(pp_data$YEAR))
+    factored_year <- year_levels[year]
+    
+    # Next, get product forms
+    products <- unique(str_to_title(pp_data$PRODUCT_FORM))
+    # Subset colors for these products
+    pp_colors <- pp_colors[names(pp_colors) %in% products]
+    pp_colors <- pp_colors[names(pp_colors)]
+    
+    filtered_data <- pp_data %>% 
+      filter(YEAR == factored_year,
+             COAST == panel)
+    
+    # create icons (number will vary)
+    # begin with empty vector that will ultimately contain the full HTML code
+    coast_pp_price_tooltip <- vector()
+    for (i in 1:length(pp_colors)) {
+      tooltip_icon <- paste0(tooltip_line_icon(pp_colors[i], 16))
+      
+      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      
+      tooltip_data <- paste0(
+        dollar(filtered_data$PP_PRICE[i]), ifelse(selected_units() == 'METRIC',
+                                                  " per kilogram <br>",
+                                                  " per pound <br>"))
+      
+      coast_pp_price_tooltip <- paste0(coast_pp_price_tooltip, tooltip_icon, tooltip_text, tooltip_data)
+    }
+    
+    # Position tooltip near clicked point
+    left_pos <- input$coast_pp_price_plot_click$coords_css$x + 20 # Offset to right of point
+    top_pos <- input$coast_pp_price_plot_click$coords_css$y - 150 # Offset above point
+    
+    # Prevent tooltip from being off screen
+    left_pos <- max(10, left_pos)
+    top_pos <- max(10, top_pos)
+    
+    # style the tooltip for clicked point
+    div(
+      style = paste0(
+        "left: ", left_pos, "px;",
+        "top: ", top_pos, "px;",
+        tooltip_aes,
+        "max-width: 375px; ",
+        "min-width: 375px; "),
+      # tooltip close button
+      tags$button(
+        "x",
+        id = 'close_coast_pp_price_tooltip',
+        onclick = "Shiny.setInputValue('close_coast_pp_price_tooltip', Math.random());",
+        style = close_button_aes), 
+      HTML(paste0(tooltip_heading, filtered_data$YEAR[1], ": ", filtered_data$COAST[1], "<br>",
+                  coast_pp_price_tooltip)))
   })
 }
 
