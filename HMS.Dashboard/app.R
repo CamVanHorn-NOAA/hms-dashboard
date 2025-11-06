@@ -2340,7 +2340,9 @@ ui <- page_sidebar(
                                            style = "position: absolute; top: 0px; left: 5px",
                                            tooltip(
                                              icon("info-circle"),
-                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points.")))),
+                                             "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."))),
+                                       downloadButton('download_coast_trade_page1',
+                                                      'Download this plot and the data')),
                              nav_panel(title = 'Volume',
                                        div(
                                          style = "position: relative; min-width: 1200px;",
@@ -2366,7 +2368,9 @@ ui <- page_sidebar(
                                            style = 'position: absolute; top: 0px; left: 5px',
                                            tooltip(
                                              icon('info-circle'),
-                                             'Import volume reflects the total volume of product traded into the U.S. from other countries.')))))
+                                             'Import volume reflects the total volume of product traded into the U.S. from other countries.'))),
+                                       downloadButton('download_coast_trade_page2',
+                                                      'Download this plot and the data')))
                              )),
         fluidRow(
           div(
@@ -2391,7 +2395,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
                                              ))),
-                                         downloadButton('download_landings_page1',
+                                         downloadButton('download_coast_landings_page1',
                                                         'Download this plot and the data')),
                                nav_panel(title = 'Volume',
                                          div(
@@ -2409,7 +2413,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
                                              ))),
-                                         downloadButton('download_landings_page2',
+                                         downloadButton('download_coast_landings_page2',
                                                         'Download this plot and the data')))),
             div(
               style = 'border: 3px solid #681617; border-radius: 12px;
@@ -2431,7 +2435,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
                                              ))),
-                                         downloadButton('download_products_page1',
+                                         downloadButton('download_coast_products_page1',
                                                         'Download this plot and the data')),
                                nav_panel(title = 'Volume',
                                          div(
@@ -2449,7 +2453,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
                                              ))),
-                                         downloadButton('download_products_page2',
+                                         downloadButton('download_coast_products_page2',
                                                         'Download this plot and the data')),
                                nav_panel(title = 'Price',
                                          div(
@@ -2467,7 +2471,7 @@ ui <- page_sidebar(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
                                              ))),
-                                         downloadButton('download_products_page3',
+                                         downloadButton('download_coast_products_page3',
                                                         'Download this plot and the data'))))))
         ))
         
