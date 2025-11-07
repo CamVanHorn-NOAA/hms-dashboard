@@ -485,12 +485,25 @@ pp_data <- pp_data %>%
 
 # Export Data ------------------------------------------------------------------
 # Remove ECOLOGICAL_CATEGORY due to lack of info (they are all HMS)
+  # also change NAs to Species Name Not Provided
 trade_data <- trade_data %>%
-  select(!ECOLOGICAL_CATEGORY)
+  select(!ECOLOGICAL_CATEGORY) %>%
+  mutate(SPECIES_GROUP = ifelse(is.na(SPECIES_GROUP), 'SPECIES GROUP NOT PROVIDED',
+                                SPECIES_GROUP),
+         SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
+                               SPECIES_NAME))
 pp_data <- pp_data %>%
-  select(!ECOLOGICAL_CATEGORY)
+  select(!ECOLOGICAL_CATEGORY) %>%
+  mutate(SPECIES_GROUP = ifelse(is.na(SPECIES_GROUP), 'SPECIES GROUP NOT PROVIDED',
+                                SPECIES_GROUP),
+         SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
+                               SPECIES_NAME))
 landings <- landings %>%
-  select(!ECOLOGICAL_CATEGORY)
+  select(!ECOLOGICAL_CATEGORY) %>%
+  mutate(SPECIES_GROUP = ifelse(is.na(SPECIES_GROUP), 'SPECIES GROUP NOT PROVIDED',
+                                SPECIES_GROUP),
+         SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
+                               SPECIES_NAME))
 
 
 file_name <- paste0('hms_data_munge_',
