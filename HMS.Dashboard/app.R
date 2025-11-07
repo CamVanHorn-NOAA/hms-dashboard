@@ -2292,8 +2292,8 @@ ui <- page_sidebar(
                     htmlOutput('sourcing')),
           nav_panel(title = 'Data Management',
                     htmlOutput('management')),
-          nav_panel(title = 'Regional Consolidation',
-                    htmlOutput('coast')),
+          nav_panel(title = 'Coastal Consolidation',
+                    htmlOutput('region')),
           nav_panel(title = 'Species Classification',
                     htmlOutput('classification')),
           nav_panel(title = 'Metrics',
@@ -5505,9 +5505,9 @@ server <- function(input, output, session) {
                 height = 800)
   })
   
-  output$coast <- renderUI({
+  output$region <- renderUI({
     tags$iframe(seamless = "seamless",
-                src = "tmpuser/dashboard_coast_doc.html",
+                src = "tmpuser/dashboard_region_doc.html",
                 height = 800)
   })
   
