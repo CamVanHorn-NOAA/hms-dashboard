@@ -187,7 +187,6 @@ confid_pacific <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'Pacific')
 # West Pacific Confidentials
@@ -197,7 +196,6 @@ confid_westpacific <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'West Pacific')
 # North Pacific Confidentials
@@ -207,7 +205,6 @@ confid_norpac <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'North Pacific')
 # New England Confidentials
@@ -217,7 +214,6 @@ confid_newengland <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'New England')
 # Mid-Atlantic Confidentials
@@ -227,7 +223,6 @@ confid_midatlantic <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'Mid-Atlantic')
 # South Atlantic Confidentials
@@ -237,7 +232,6 @@ confid_southatlantic <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'South Atlantic')
 # Gulf Confidentials
@@ -247,7 +241,6 @@ confid_gulf <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'Gulf')
 # Great Lakes Confidentials
@@ -257,7 +250,6 @@ confid_greatlakes <- processed_confids %>%
          PRODUCT_FORM, PLANT_STREET) %>%
   group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
            PRODUCT_FORM) %>%
-  distinct() %>%
   count() %>%
   mutate(REGION = 'Great Lakes')
 # combine
