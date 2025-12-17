@@ -160,7 +160,7 @@ grlake_cities <- great_lakes_cities %>%
   mutate(MILES_TO_LAKE = as.numeric(MILES_TO_LAKE)) %>%
   filter(MILES_TO_LAKE <= 75)
 
-processed_confids <- left_join(pp_processed, pp_map) %>%
+products <- left_join(pp_processed, pp_map) %>%
   # split florida by east and west
   left_join(florida_coast_map %>%
               rename(CITY = PLANT_CITY,
@@ -179,89 +179,351 @@ processed_confids <- left_join(pp_processed, pp_map) %>%
          REGION = ifelse(STATE %in% grlake, 'Great Lakes', REGION),
          REGION = ifelse(STATE %in% grlake_cities$PLANT_STATE_ABRV &
                            CITY %in% grlake_cities$PLANT_CITY,
-                         'Great Lakes', REGION))
-# Pacific Confidentials
-confid_pacific <- processed_confids %>%
-  filter(REGION == 'Pacific') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'Pacific')
-# West Pacific Confidentials
-confid_westpacific <- processed_confids %>%
-  filter(REGION == 'West Pacific') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'West Pacific')
-# North Pacific Confidentials
-confid_norpac <- processed_confids %>%
-  filter(REGION == 'North Pacific') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'North Pacific')
-# New England Confidentials
-confid_newengland <- processed_confids %>%
-  filter(REGION == 'New England') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'New England')
-# Mid-Atlantic Confidentials
-confid_midatlantic <- processed_confids %>%
-  filter(REGION == 'Mid-Atlantic') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'Mid-Atlantic')
-# South Atlantic Confidentials
-confid_southatlantic <- processed_confids %>%
-  filter(REGION == 'South Atlantic') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'South Atlantic')
-# Gulf Confidentials
-confid_gulf <- processed_confids %>%
-  filter(REGION == 'Gulf') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'Gulf')
-# Great Lakes Confidentials
-confid_greatlakes <- processed_confids %>%
-  filter(REGION == 'Great Lakes') %>%
-  select(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-         PRODUCT_FORM, PLANT_STREET) %>%
-  group_by(ECOLOGICAL_CATEGORY, SPECIES_CATEGORY, SPECIES_GROUP, SPECIES_NAME,
-           PRODUCT_FORM) %>%
-  count() %>%
-  mutate(REGION = 'Great Lakes')
-# combine
-confid_products <- rbind(confid_pacific, confid_westpacific, confid_norpac,
-                         confid_newengland, confid_midatlantic, confid_southatlantic,
-                         confid_gulf, confid_greatlakes) %>%
-  ungroup() %>%
-  filter(n < 3) %>%
-  select(!n) %>%
-  mutate(CONFIDENTIAL = 1)
+                         'Great Lakes', REGION),
+         # NEW_PRODUCT_FORM will store updated product conditions so that
+         # PRODUCT_FORM can retain prior, more specific data
+         NEW_PRODUCT_FORM = PRODUCT_FORM,
+         # CONFIDENTIAL is a placeholder for labeling data as confidential
+         CONFIDENTIAL = NA)
 
+# Filter for only highly migratory species -------------------------------------
+# set billfish
+billfishes <- c('BLACK MARLIN', 'BLUE MARLIN', 'WHITE MARLIN', 'STRIPED MARLIN', 
+                'SAILFISH', 'SWORDFISH', 'SHORTBILL SPEARFISH')
+com_landings <- com_landings %>%
+  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
+                                   SPECIES_CATEGORY))
+trade_data <- trade_data %>%
+  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
+                                   SPECIES_CATEGORY))
+products <- products %>%
+  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
+                                   SPECIES_CATEGORY))
+terr_landings <- terr_landings %>%
+  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
+                                   SPECIES_CATEGORY))
+
+# no need to set tunas, already a category
+
+# set sharks
+sharks <- c('BLACKNOSE SHARK', 'BONNETHEAD SHARK', 'FINETOOTH SHARK', 
+            'OCEANIC WHITETIP SHARK', 'THRESHER SHARK', 'SHORTFIN MAKO SHARK',
+            'SANDBAR SHARK', 'SCALLOPED HAMMERHEAD', 'WHITE SHARK')
+
+com_landings <- com_landings %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+products <- products %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+trade_data <- trade_data %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+terr_landings <- terr_landings %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+# include mahi mahi
+com_landings <- com_landings %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+products <- products %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+trade_data <- trade_data %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+terr_landings <- terr_landings %>%
+  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
+                                      ECOLOGICAL_CATEGORY))
+
+
+# Filter for the HMS
+com_landings <- com_landings %>%
+  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') | 
+           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
+  select(!ECOLOGICAL_CATEGORY)
+
+products <- products %>%
+  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') |
+           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
+  select(!ECOLOGICAL_CATEGORY)
+
+trade_data <- trade_data %>%
+  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') |
+           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
+  select(!ECOLOGICAL_CATEGORY)
+
+terr_landings <- terr_landings %>%
+  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') |
+           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
+  select(!ECOLOGICAL_CATEGORY)
+
+# Attach coasts ----------------------------------------------------------------
+# Assign coasts by state abbreviation
+pacific <- c('CA', 'OR', 'WA', 'AK')
+atlantic <- c('ME', 'NH', 'MA', 'RI', 
+              'CT', 'DE', 'MD', 'NY', 
+              'VA', 'NC', 'SC', 'GA', 
+              'NJ', 'PA', 'DC', 'FL-E')
+gulf <- c('AL', 'MS', 'LA', 'TX', 'PR', 'VI', 'FL-W', 'FL')
+hawaii <- c('HI', 'CM', 'MP', 'GU', 'AS')
+
+products <- products %>%
+  # add coasts
+  mutate(COAST = ifelse(STATE %in% pacific, 'WEST COAST + ALASKA',
+                        ifelse(STATE %in% atlantic, 'ATLANTIC',
+                               ifelse(STATE %in% gulf, 'GULF + TERRITORIES',
+                                      ifelse(STATE %in% hawaii, 'PACIFIC ISLANDS',
+                                             NA)))))
   
+
+# Remove confidential data -----------------------------------------------------
+overwrite_prodform <- function(data, cols = '', coast = '') {
+  # here, data should be processed product data as formatted above 
+  # cols is a vector of columns to group by and is defaulted as an empty string;
+  # acceptable inputs are columns that exist in the inputted data
+  # ORDER MATTERS: the last column included in the vector should be the finest
+  # level of resolution within the species hierarchy
+  # This is because we need to remove any NAs in that column such that the
+  # data only includes products with 
+  # coast is defaulted as an empty string; acceptable inputs are specific
+  # coasts
+  
+  # if cols is empty (i.e., no desired columns to group by), set cols to be 
+  # NEW_PRODUCT_FORM 
+  if ('' %in% cols) {
+    cols <- c('NEW_PRODUCT_FORM')
+  }
+  # Identify what the last column in cols is (this should be the lowest level
+  # of the classification hierarchy) and set it as object of type quosure
+  # to work in dplyr pipe
+  level_filter <- cols[length(cols)]
+  level_filter <- as.symbol(level_filter)
+  level_filter <- rlang::enquo(level_filter)
+  
+  # there are two possible ways to munge the data:
+  # 1) if no coast is provided
+  if (coast == '') {
+    data %>%
+      # all inputted columns and non-negotiable columns
+      # all_of() allows us to use a vector of strings in a dplyr pipe
+      select(YEAR, NEW_PRODUCT_FORM, all_of(cols), PLANT_STREET) %>%
+      # Some plant addresses are blank or NA, so we don't worry about those for 
+      # confidentiality
+      # We also don't want any NAs of the finest level of classification - this
+      # ensures that we aren't accidentally marking confidential data that
+      # is nonspecific to the desired classification level
+      # In the event that no columns are provided, this will be NEW_PRODUCT_FORM
+      # which will ensure that we leave out products without a provided condition
+      filter(PLANT_STREET != '',
+             !is.na(PLANT_STREET),
+             !is.na(!!level_filter)) %>%
+      # remove duplicates from the data so plants are NOT double-counted
+      distinct() %>%
+      # group by all columns except plant street so we count the number of plants
+      # for our desired group of columns
+      group_by(across(c(-PLANT_STREET))) %>%
+      count() %>%
+      # filter for combos that have fewer than 3 plants 
+      filter(n < 3) %>%
+      ungroup() %>%
+      # join back to the original data so now there is an extra column of 'n'
+      # this column will have a number for any product found to have less than
+      # 3 plants which process said product, and NA for any others
+      right_join(data) %>%
+      # we now want to overwrite NEW_PRODUCT_FORM to be OTHER for any products
+      # listed at less than 3 plants
+      # In the event a product was listed at less than 3 plants for one group
+      # and more than 3 for another, we do not want to lose that work and overwrite
+      # back to the previous product form, so we also check to see if CONFIDENTIAL
+      # is NA or not to preserve prior confidentiality checks
+      mutate(NEW_PRODUCT_FORM = ifelse(!is.na(n), 'OTHER', 
+                                       ifelse(!is.na(CONFIDENTIAL), 'OTHER', PRODUCT_FORM)),
+             # we update CONFIDENTIAL to 1 if the product was found to be
+             # confidential in the current grouping
+             CONFIDENTIAL = ifelse(!is.na(n), 1, CONFIDENTIAL)) %>%
+      # remove the 'n' column so now data is same structure as inputted
+      select(!n)
+    
+    # 2) if coast is provided
+  } else {
+    # we filter for the inputted coast and add the column for coast later
+    # for joining
+    data %>%
+      filter(COAST == coast) %>%
+      select(YEAR, NEW_PRODUCT_FORM, all_of(cols), PLANT_STREET) %>%
+      filter(PLANT_STREET != '',
+             !is.na(PLANT_STREET),
+             !is.na(!!level_filter)) %>%
+      distinct() %>%
+      group_by(across(c(-PLANT_STREET))) %>%
+      count() %>%
+      filter(n < 3) %>%
+      ungroup() %>%
+      mutate(COAST = coast) %>%
+      right_join(data) %>%
+      mutate(NEW_PRODUCT_FORM = ifelse(!is.na(n), 'OTHER', 
+                                       ifelse(!is.na(CONFIDENTIAL), 'OTHER', PRODUCT_FORM)),
+             CONFIDENTIAL = ifelse(!is.na(n), 1, CONFIDENTIAL)) %>%
+      select(!n)
+  }
+}
+# the end result of the above function is a dataset identical in structure to
+# the inputted data, with some changes made to NEW_PRODUCT_FORM and CONFIDENTIAL
+# the function is designed where it can be used in a pipe and no prior effort
+# is lost
+
+# pipe for overwriting product forms to OTHER
+overwritten_products <- products %>%
+  # first identify data that is confidential without aggregation (i.e., 
+  # product conditions that are only processed at 1 or 2 plants)
+  overwrite_prodform() %>%
+  # FIRST SECTION: Each level of the classification hierarchy without coast
+  overwrite_prodform(c('SPECIES_CATEGORY')) %>%
+  overwrite_prodform(c('SPECIES_CATEGORY', 'SPECIES_GROUP')) %>%
+  overwrite_prodform(c('SPECIES_CATEGORY', 'SPECIES_GROUP', 'SPECIES_NAME')) %>%
+  # SECOND SECTION: Each level of the classification hierarchy for EACH coast
+  # WEST COAST + ALASKA
+  overwrite_prodform(coast = 'WEST COAST + ALASKA') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY'), 
+                     coast = 'WEST COAST + ALASKA') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY', 
+                       'SPECIES_GROUP'), coast = 'WEST COAST + ALASKA') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY',
+                       'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'WEST COAST + ALASKA') %>%
+  # ATLANTIC
+  overwrite_prodform(coast = 'ATLANTIC') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY'), 
+                     coast = 'ATLANTIC') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY', 
+                       'SPECIES_GROUP'), coast = 'ATLANTIC') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY',
+                       'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'ATLANTIC') %>%
+  # PACIFIC ISLANDS
+  overwrite_prodform(coast = 'PACIFIC ISLANDS') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY'), 
+                     coast = 'PACIFIC ISLANDS') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY', 
+                       'SPECIES_GROUP'), coast = 'PACIFIC ISLANDS') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY',
+                       'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'PACIFIC ISLANDS') %>%
+  # GULF + TERRITORIES
+  overwrite_prodform(coast = 'GULF + TERRITORIES') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY'), 
+                     coast = 'GULF + TERRITORIES') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY', 
+                       'SPECIES_GROUP'), coast = 'GULF + TERRITORIES') %>%
+  overwrite_prodform(c('SPECIES_CATEGORY',
+                       'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'GULF + TERRITORIES') %>%
+  # reset confidential column
+  mutate(CONFIDENTIAL = NA)
+
+# The next step is to identify which products, after attempting to consolidate
+# into less specific product conditions, are confidential (with a function)
+set_confids <- function(data, cols = '', coast = '') {
+  # this function is nearly identical to overwrite_prodforms
+  # data can be raw products data or that formatted by overwrite_prodforms
+  # cols are columns to group the data by
+  # coast is an empty string that accepts specific coasts as strings
+  
+  # the only difference between set_confids and overwrite_prodforms is the 
+  # absence of changing product forms to other. Instead, any products 
+  # identified to less than 3 plants will have CONFIDENTIAL as 1
+  
+  if ('' %in% cols) {
+    cols <- c('NEW_PRODUCT_FORM')
+  }
+  
+  level_filter <- cols[length(cols)]
+  level_filter <- as.symbol(level_filter)
+  level_filter <- rlang::enquo(level_filter)
+  
+  if (coast == '') {
+    data %>%
+      select(YEAR, NEW_PRODUCT_FORM, all_of(cols), PLANT_STREET) %>%
+      filter(PLANT_STREET != '',
+             !is.na(PLANT_STREET),
+             !is.na(!!level_filter)) %>%
+      distinct() %>%
+      group_by(across(c(-PLANT_STREET))) %>%
+      count() %>%
+      filter(n < 3) %>%
+      ungroup() %>%
+      right_join(data) %>%
+      mutate(CONFIDENTIAL = ifelse(!is.na(n), 1, CONFIDENTIAL)) %>%
+      select(!n)
+  } else {
+    data %>%
+      filter(COAST == coast) %>%
+      select(YEAR, NEW_PRODUCT_FORM, all_of(cols), PLANT_STREET) %>%
+      filter(PLANT_STREET != '',
+             !is.na(PLANT_STREET),
+             !is.na(!!level_filter)) %>%
+      distinct() %>%
+      group_by(across(c(-PLANT_STREET))) %>%
+      count() %>%
+      filter(n < 3) %>%
+      ungroup() %>%
+      mutate(COAST = coast) %>%
+      right_join(data) %>%
+      mutate(CONFIDENTIAL = ifelse(!is.na(n), 1, CONFIDENTIAL)) %>%
+      select(!n)
+  }
+}
+
+# pipe for identifying confidential products
+products_marked <- overwritten_products %>%
+  set_confids() %>%
+  # FIRST SECTION: Each level of the classification hierarchy without coast
+  set_confids(c('SPECIES_CATEGORY')) %>%
+  set_confids(c('SPECIES_CATEGORY', 
+                'SPECIES_GROUP')) %>%
+  set_confids(c('SPECIES_CATEGORY',
+                'SPECIES_GROUP', 'SPECIES_NAME')) %>%
+# SECOND SECTION: Each level of the classification hierarchy for EACH coast
+# WEST COAST + ALASKA
+set_confids(coast = 'WEST COAST + ALASKA') %>%
+  set_confids(c('SPECIES_CATEGORY'), 
+              coast = 'WEST COAST + ALASKA') %>%
+  set_confids(c('SPECIES_CATEGORY', 
+                'SPECIES_GROUP'), coast = 'WEST COAST + ALASKA') %>%
+  set_confids(c('SPECIES_CATEGORY',
+                'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'WEST COAST + ALASKA') %>%
+  # ATLANTIC
+  set_confids(coast = 'ATLANTIC') %>%
+  set_confids(c('SPECIES_CATEGORY'), 
+              coast = 'ATLANTIC') %>%
+  set_confids(c('SPECIES_CATEGORY', 
+                'SPECIES_GROUP'), coast = 'ATLANTIC') %>%
+  set_confids(c('SPECIES_CATEGORY',
+                'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'ATLANTIC') %>%
+  # PACIFIC ISLANDS
+  set_confids(coast = 'PACIFIC ISLANDS') %>%
+  set_confids(c('SPECIES_CATEGORY'), 
+              coast = 'PACIFIC ISLANDS') %>%
+  set_confids(c('SPECIES_CATEGORY', 
+                'SPECIES_GROUP'), coast = 'PACIFIC ISLANDS') %>%
+  set_confids(c('SPECIES_CATEGORY',
+                'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'PACIFIC ISLANDS') %>%
+  # GULF + TERRITORIES
+  set_confids(coast = 'GULF + TERRITORIES') %>%
+  set_confids(c('SPECIES_CATEGORY'), 
+              coast = 'GULF + TERRITORIES') %>%
+  set_confids(c('SPECIES_CATEGORY', 
+                'SPECIES_GROUP'), coast = 'GULF + TERRITORIES') %>%
+  set_confids(c('SPECIES_CATEGORY',
+                'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'GULF + TERRITORIES') %>%
+  # if there is no provided street address, then a product should not be confidential
+  mutate(CONFIDENTIAL = ifelse(PLANT_STREET == '', NA, CONFIDENTIAL))
+
+
 # Attach coasts ----------------------------------------------------------------
 # Assign coasts by state abbreviation
 pacific <- c('CA', 'OR', 'WA', 'AK')
@@ -285,18 +547,16 @@ trade_data <- trade_data %>%
                                       ifelse(STATE %in% hawaii, 'HAWAII', NA)))))
 
 # Recreate pp data
-pp_data <- pp_processed %>%
-  # connect groups from map
-  left_join(pp_map) %>%
-  mutate(YEAR = as.numeric(YEAR),
-         POUNDS = as.numeric(gsub(',', '', POUNDS)),
-         DOLLARS = as.numeric(gsub(',', '', DOLLARS)),
-         # convert pounds to kilograms in separate column
-         KG = POUNDS * 0.45359237) %>%
-  arrange(YEAR, SPECIES_NAME, PRODUCT_FORM) %>%
+pp_data <- products_marked %>%
+  mutate(POUNDS = ifelse(is.na(POUNDS), 0, POUNDS),
+         KG = POUNDS * 0.45359237,
+         KG = ifelse(is.na(KG), 0, KG),
+         DOLLARS = ifelse(is.na(DOLLARS), 0, DOLLARS)) %>%
+  arrange(YEAR, SPECIES_NAME, NEW_PRODUCT_FORM, PRODUCT_FORM) %>%
   # reorder columns so species is left of PRODUCT_FORM for ease of viewing
   select(YEAR, SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY, STATE, CITY,
-         ECOLOGICAL_CATEGORY, PRODUCT_FORM, POUNDS, DOLLARS, KG) %>%
+         NEW_PRODUCT_FORM, PRODUCT_FORM, POUNDS, DOLLARS, KG, COAST,
+         CONFIDENTIAL) %>%
   left_join(def_index %>% select(YEAR, INDEX)) %>%
   mutate(DOLLARS_2024 = DOLLARS * INDEX,
          DOLLARS_PER_LB = DOLLARS / POUNDS,
@@ -304,32 +564,6 @@ pp_data <- pp_processed %>%
          DOLLARS_2024_PER_LB = DOLLARS_2024 / POUNDS,
          DOLLARS_2024_PER_KG = DOLLARS_2024 / KG) %>%
   select(-INDEX) %>%
-  # split florida by east and west
-  left_join(florida_coast_map %>%
-              rename(CITY = PLANT_CITY,
-                     FLORIDA_STATE = PLANT_STATE_ABRV) %>%
-              select(!c(PLANT_COAST_GEMINI, PLANT_COAST))) %>%
-  mutate(STATE = ifelse(!is.na(FLORIDA_STATE), FLORIDA_STATE, STATE)) %>%
-  select(!FLORIDA_STATE) %>%
-  # add regions
-  mutate(REGION = ifelse(STATE %in% norpac, 'North Pacific', NA),
-         REGION = ifelse(STATE %in% pac, 'Pacific', REGION),
-         REGION = ifelse(STATE %in% pacisl, 'West Pacific', REGION),
-         REGION = ifelse(STATE %in% neweng, 'New England', REGION),
-         REGION = ifelse(STATE %in% midatl, 'Mid-Atlantic', REGION),
-         REGION = ifelse(STATE %in% souatl, 'South Atlantic', REGION),
-         REGION = ifelse(STATE %in% gulf, 'Gulf', REGION),
-         REGION = ifelse(STATE %in% grlake, 'Great Lakes', REGION),
-         REGION = ifelse(STATE %in% grlake_cities$PLANT_STATE_ABRV &
-                           CITY %in% grlake_cities$PLANT_CITY,
-                         'Great Lakes', REGION)) %>%
-  # add coasts
-  mutate(COAST = ifelse(STATE %in% pacific, 'WEST COAST + ALASKA',
-                        ifelse(STATE %in% atlantic, 'ATLANTIC',
-                               ifelse(STATE %in% gulf, 'GULF + TERRITORIES',
-                                      ifelse(STATE %in% hawaii, 'PACIFIC ISLANDS',
-                                             NA))))) %>%
-  left_join(confid_products) %>%
   # mark confidential records' values as 0
   mutate(CONFIDENTIAL = ifelse(is.na(CONFIDENTIAL), 0, CONFIDENTIAL),
          POUNDS = ifelse(CONFIDENTIAL == 1, 0, POUNDS),
@@ -343,7 +577,7 @@ pp_data <- pp_processed %>%
   select(!c(CITY, STATE, DOLLARS_PER_LB, DOLLARS_PER_KG, DOLLARS_2024_PER_LB,
             DOLLARS_2024_PER_KG)) %>%
   group_by(YEAR, SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY, COAST,
-           ECOLOGICAL_CATEGORY, PRODUCT_FORM, REGION, CONFIDENTIAL) %>%
+           PRODUCT_FORM, CONFIDENTIAL) %>%
   summarise(across(where(is.numeric), sum),
             .groups ='drop') %>%
   mutate(DOLLARS_PER_LB = DOLLARS / POUNDS,
@@ -373,85 +607,6 @@ com_landings <- com_landings %>%
                                       ifelse(STATE %in% hawaii, 'PACIFIC ISLANDS',
                                              NA)))))
 
-
-# Filter for only highly migratory species -------------------------------------
-# set billfish
-billfishes <- c('BLACK MARLIN', 'BLUE MARLIN', 'WHITE MARLIN', 'STRIPED MARLIN', 
-                'SAILFISH', 'SWORDFISH', 'SHORTBILL SPEARFISH')
-com_landings <- com_landings %>%
-  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
-                                    SPECIES_CATEGORY))
-trade_data <- trade_data %>%
-  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
-                                    SPECIES_CATEGORY))
-pp_data <- pp_data %>%
-  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
-                                    SPECIES_CATEGORY))
-terr_landings <- terr_landings %>%
-  mutate(SPECIES_CATEGORY = ifelse(SPECIES_NAME %in% billfishes, 'BILLFISHES',
-                                    SPECIES_CATEGORY))
-
-# no need to set tunas, already a category
-
-# set sharks
-sharks <- c('BLACKNOSE SHARK', 'BONNETHEAD SHARK', 'FINETOOTH SHARK', 
-            'OCEANIC WHITETIP SHARK', 'THRESHER SHARK', 'SHORTFIN MAKO SHARK',
-            'SANDBAR SHARK', 'SCALLOPED HAMMERHEAD', 'WHITE SHARK')
-
-com_landings <- com_landings %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-pp_data <- pp_data %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-trade_data <- trade_data %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-terr_landings <- terr_landings %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_NAME %in% sharks, 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-# include mahi mahi
-com_landings <- com_landings %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-pp_data <- pp_data %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-trade_data <- trade_data %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-terr_landings <- terr_landings %>%
-  mutate(ECOLOGICAL_CATEGORY = ifelse(SPECIES_GROUP == 'DOLPHINFISH', 'HIGHLY MIGRATORY SPECIES',
-                                      ECOLOGICAL_CATEGORY))
-
-
-# Filter for the HMS
-com_landings <- com_landings %>%
-  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') | 
-           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
-  mutate(ECOLOGICAL_CATEGORY = 'HIGHLY MIGRATORY SPECIES')
-
-pp_data <- pp_data %>%
-  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') |
-           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
-  mutate(ECOLOGICAL_CATEGORY = 'HIGHLY MIGRATORY SPECIES')
-
-trade_data <- trade_data %>%
-  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') |
-           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
-  mutate(ECOLOGICAL_CATEGORY = 'HIGHLY MIGRATORY SPECIES')
-
-terr_landings <- terr_landings %>%
-  filter(SPECIES_CATEGORY %in% c('TUNAS', 'BILLFISHES') |
-           ECOLOGICAL_CATEGORY == 'HIGHLY MIGRATORY SPECIES') %>%
-  mutate(ECOLOGICAL_CATEGORY = 'HIGHLY MIGRATORY SPECIES')
 
 
 # Attach territorial and commercial landings -----------------------------------
@@ -487,19 +642,16 @@ pp_data <- pp_data %>%
 # Remove ECOLOGICAL_CATEGORY due to lack of info (they are all HMS)
   # also change NAs to Species Name Not Provided
 trade_data <- trade_data %>%
-  select(!ECOLOGICAL_CATEGORY) %>%
   mutate(SPECIES_GROUP = ifelse(is.na(SPECIES_GROUP), 'SPECIES GROUP NOT PROVIDED',
                                 SPECIES_GROUP),
          SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
                                SPECIES_NAME))
 pp_data <- pp_data %>%
-  select(!ECOLOGICAL_CATEGORY) %>%
   mutate(SPECIES_GROUP = ifelse(is.na(SPECIES_GROUP), 'SPECIES GROUP NOT PROVIDED',
                                 SPECIES_GROUP),
          SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
                                SPECIES_NAME))
 landings <- landings %>%
-  select(!ECOLOGICAL_CATEGORY) %>%
   mutate(SPECIES_GROUP = ifelse(is.na(SPECIES_GROUP), 'SPECIES GROUP NOT PROVIDED',
                                 SPECIES_GROUP),
          SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
