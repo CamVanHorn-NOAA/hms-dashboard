@@ -1,0 +1,27 @@
+---
+title: "Data Sourcing"
+format: html
+editor: visual
+---
+
+## Commercial Landings
+
+The NOAA publishes nationwide commercial landings data to the FOSS database. Commercial landings data reflect the volume of catch (in pounds) landed at port and the ex-vessel sale (value in U.S. dollars) of the catch. All landings are wild caught products save for some clam, mussel, and oyster products, which may be products of aquaculture but are not otherwise stated as such.
+
+The FOSS typically reports catch volume in rounded live weight. Exceptions include molluscs which are instead reported as pounds of meat that excludes shell weight. Many at-sea vessels can process their catch onboard shortly after gear retrieval and thus directly affect the reported weight of their catch upon landing. For species in which at-sea processing is common, the FOSS applies a conversion factor to landed weights to more accurately reflect their weight upon catch.
+
+The FOSS reports the value of catch, or the ex-vessel sale paid to fishermen, in U.S. dollars. These dollar values reflect market conditions (i.e., variables that impact the strength and thus value of the U.S. dollar) at time of sale and are not adjusted for inflation within the FOSS database.
+
+We downloaded commercial landings data from the FOSS in a conventional manner using the public webpage. We first selected the 'Landings' tab from the sidebar on the left side of the page. Therein, we selected the 'Commercial' data set and left the 'Recreational' data set unchecked. We selected years 2004 through 2023 inclusive and selected all 'State Landed' options as well as 'Species' options. We then selected 'Totals by Year/State/Species' as the report format, to return the most detailed data set possible, and selected 'Run Report'. Finally, we downloaded the generated data set as a .csv file.
+
+We also present commercial landings data from U.S. territories in the Pacific (e.g., American Samoa, Guam, the Northern Marianas). At present, we do not have information regarding the collection or transmission of this data.
+
+## Processed Products
+
+\[need information on how to describe accessing\]
+
+## Trade
+
+The NOAA sources all trade data presented in the FOSS from the U.S. Census Bureau, which receives foreign fishery trade collected by the U.S. Customs and Border Protection. Reported dollar values of exports and imports differ in their respective contexts. Export values are the free alongside ship value (i.e., the value at the port of entry) which reflect all costs (transportation or otherwise) that brought the product to port; this excludes loading costs and those incurred beyond the port of export. On the other hand, import values are the customs value, or the price paid when exported to the U.S. that, similar to free alongside ship value, excludes costs incurred from transporting the product to the U.S. (e.g., duties, freight, and insurance costs).
+
+We downloaded data from the FOSS in a conventional manner using the public webpage. Because of the large volume of cumulative trade data, we downloaded exports and imports separately but with an identical methodology. We first selected the 'Foreign Trade' tab from the sidebar on the left side of the page. We selected either 'Exports' or 'Imports', but never 'Re-Exports', and left 'Time Range' as 'Annual'. Below that option, we selected years 2004 through 2024 inclusive, all countries, and all products. We did not change the default selections of 'Country' for 'Geographic Scale' and 'Product' for 'Product Type'. We then selected 'Detailed Report - No Aggregation' for 'Report Type' and thereafter 'Run Report'. Finally, we downloaded the generated data set as a .csv file.

@@ -1,0 +1,53 @@
+---
+title: "Calculating Metrics"
+format: html
+editor: visual
+---
+
+We present summative metrics to visualize trends in seafood catch, production, and trade over time. Specifically, we investigate value ($D$), volume ($V$), and price ($P$) among commercial landings ($C$), domestic production (i.e., processed products; $J$), and trade (i.e., exports ($E$), imports ($I$), and their difference) as well as more complex trade metrics. Our chosen metrics mirror those investigated in Fissel et al. (2023).
+
+Some metrics we present are simple to derive. Both value and volume require a simple summation of their respective quantities. Price relates value and volume as a rate in dollars per kilogram. In the case of domestic production, we group value and volume quantities, and thus price rates, by the condition of the product (e.g., canned, smoked, etc.). For trade, we calculated value, volume, and price for exports and imports separately. We relate export and import trade values by calculating the balance, or the difference, of exports and imports through time ($\Delta B$). Also, we relate exports and imports by calculating the ratio of export to import volumes through time. Other metrics we present are more complex to calculate and present their methods below.
+
+Top Five Trading Partners
+
+:   We summarize the net trade value of the top five trading partners (i.e., nations; $c$) for a given species, group, or category of interest over the five-year period from 2020 to 2024 ($T$). We determine the top five trading partners by first filtering the data to reflect our chosen time period. Within this period, we sum the total value of product (i.e., species) imported and exported for each trading partner (individual years = $t$): $$
+    D_{T,c} = \sum_{i = t} D_{I,c,t} + D_{E,c,t}
+    $$
+
+This is contrary to trade balance, which takes the difference of exports and imports rather than the sum. We then identify the five nations (trading partners) that traded the greatest sum of value and filter our original data to only include their trade data during the time period. We finish by calculating the trade balance, or the net export value, for the top five trading partners within each year of the time period. $$
+\Delta B_{c,t} = \Sigma I_{c,t} - \Sigma E_{c,t}
+$$ <br>
+
+Multilateral Trade Index (MLTI)
+
+:   The multilateral trade index (MLTI) is a parameter that relates trade value and volume among trading partners through time. The MLTI is a complex metric that compares how trade amongst the most recent dominant trading partners (i.e., the top trading partners by value of the last calendar year) has changed through time. The MLTI uses the normalized price of a traded product, or the average price of a good traded over some time period ($\bar P_{T}$), to compare traded value of the product among trading partners relative to a base index. Calculating the base index is not straightforward and requires several steps. We first filter our trade data for exports or imports as desired and summarise the annual value and volume traded for each trading partner therein. $$
+    D_{T,c} = \sum_{i = t} D_{I or E,c,t}
+    $$ $$
+    V_{T,c} = \sum_{i = t}V_{IorE,c,t}
+    $$ We then calculate the average trade price, in units of real (i.e., inflation-adjusted) 2024 U.S. dollars per kilogram, for each trading partner from each year. $$
+    P_{T,c} = \frac {D_{T,c}}{V_{T,c}}
+    $$ This yields at most 21 (as there are 21 years inclusive of the time period 2004 to 2024) average prices for each trading partner. We emphasize "at most" in the prior sentence because not all trading partners necessarily engage in trade with the U.S. for every given year for any given product. We then calculate the average price across the time period by first summing the average annual trade prices per country and then dividing this sum by the product of the number of years and trading partners represented; the final product is a single average price of the traded species across the time period ($\bar P_{T}$). $$
+    \bar P_{T} = \frac {\sum P_{T,c}}{(\sum^n_t t)(\sum^n_c c)}
+    $$ The MLTI requires a nation to be selected as the base for the index; we selected the trading partner with the third greatest value traded in 2024 (i.e., the median nation $c_m$). With this median nation, we derive the Q-index ($Q_b$), or the normalized value of traded product per year for a given country, by calculating the product of the median nation's trade volume in the first year of the study period and $\bar P_{T}$. $$
+    Q_b = V_{c_m,t=1} * \bar P_{T}
+    $$ This is termed the base Q-index. Finally, we compute a Q-index ($Q$) for each of 2024's top trading partners for each year that trade of the product occurred. The dividend of a Q-index and the base Q-index is the MLTI ($M$). $$
+    M = \frac {Q}{Q_b}
+    $$ MLTIs that are less than one indicate the relative value of the trading partner's imports or exports for the given year is less than the base country's import or export value for the same product in the first year of the time period. Contrarily, MLTIs greater than one indicate the relative value of the trading partner's imports or exports for the given year is more than the base country's import or export value for the same product in the first year of the time period. The MLTI of the base country equals 1.00 for the first year of the time period. <br><br><br>
+
+Herfindahl Index (HI)
+
+:   The Herfindahl Index (HI) is a parameter that interprets the density of export or import value among trading partners through time. Calculating the HI for exports or imports begins with summing the total trade value (export or import) for each trading partner of the given product in a given year ($D_{c,t}$). We then calculate the dividend of the annual trade values for each trading partner and the total annual trade value of the traded product to yield a proportion of trade value for each trading partner ($\hat P(D_{EorI,c,t})$). $$
+    \hat P(D_{EorI,c,t}) = \frac {D_{EorI,c,t}}{\Sigma D_{EorI,c,t}}
+    $$ The sum of the squares of these proportions is the HI ($H$)for the given year. $$
+    H_{EorI} = \sum_{i = c} (\hat P(D_{EorI,c,t}))^2
+    $$ Low HIs indicate that total trade value is split up (i.e., not concentrated) among many trade partners, whereas high HIs indicate that total trade value is more concentrated among fewer trade partners. <br><br><br>
+
+Supply Metrics
+
+:   We calculate several metrics that communicate characteristics of domestic supply of a specified species, group, or category. Apparent supply is the volume of product available in domestic markets through time ($A$); we calculate apparent supply by summing the volume of processed products and imports and subtracting the volume of exports for a given species. $$
+    A_t = V_{J,t} + V_{I,t} - V_{E,t}
+    $$ We also present apparent supply relative to domestic production ($R$), a ratio of apparent supply to the volume of processed products for the given product. $$
+    R_t = \frac {A_t}{V_{J,t}}
+    $$ Ratios greater than one indicate a greater volume of imports than exports, and ratios less than one indicate a greater volume of exports than imports. The last metric we present is the unexported domestic production relative to apparent supply ($U$). This communicates what percentage of the domestic volume (apparent supply) of a product derives from retained domestic production (i.e., the volume of processed products not exported, or processed product volume less export volume). $$
+    U_{t} = \frac {V_{J,t} - V_{E,t}}{A_t} * 100\%
+    $$ This is a rough approximation because exports can be of raw catch, which do not undergo processing and are thus not reflected in processed production volume. Low percentages suggest imports comprise most domestic supply, whereas high percentages suggest domestic production comprises most domestic supply.

@@ -1,0 +1,34 @@
+---
+title: "Species Classification Hierarchy"
+format: html
+editor: visual
+---
+
+Several sources collect federal fisheries data along the supply chain using nonuniform methods. This generates variability in how species information is reported, which poses a barrier to comparing how catch, processing, and trade of a species varies through time. We thus standardized species identification and organization across our data sets by creating a classification hierarchy consisting of three levels: (1) species category, (2) species group, and (3) species name (Figure 1). The first level primarily reflects species conglomerates (i.e., collections of species organized by specific shared characteristics), and the final two levels primarily reflect species identification. This effort increases the power of the data set by enabling investigation of seafood characteristics at different degrees of species classification (e.g., Albacore Tuna, pacific tunas, or all tunas).
+
+```{mermaid}
+%%| label: fig-simple
+%%| fig-cap: "Flow chart of the classification hierarchy."
+flowchart LR
+  A[Species Category] --> B[Species Group]
+  B --> C[Species Name]
+
+```
+
+We organized our hierarchy as a progressive filter, where the first level (species category) comprises species conglomerates and each progressive level gains specificity until the final level (species name). Species groups, the second level of the hierarchy, provide further nuance to a species classification without specifying the exact species. For highly migratory species, we specify endemic oceans and regions as well as subgroups of conglomerates to enhance analytical power. Examples of these species groups include Hawaii tuna, and Marlins. Finally, species names are the most specific attribution possible that have a scientific name, such as skipjack tuna (*Katsuwonus pelamis*) and Thresher Shark (*Alopias vulpinas*). Figure 2 below illustrates an example of species classifications.
+
+```{mermaid}
+%%| label: fig-simple
+%%| fig-cap: "Flow chart of the classification hierarchy detailed with example species. Note: this flow chart is truncated and incomplete for simplicity."
+
+flowchart TB
+  A[Tunas] --> B[Hawaii Tuna]
+  A --> C[Pacific Tuna]
+  B --> D[Yellowfin Tuna]
+  B --> E[Bigeye Tuna]
+  C --> F[Skipjack Tuna]
+  C --> G[Albacore Tuna]
+
+```
+
+Classification relied solely on information available in the product label, which varied considerably. Commercial landings, for instance, report some degree of scientific classification, most commonly the scientific name of the species in the product. These made classifications straightforward. However, several products provided minimal species information, often labeled simply as 'Tuna' or 'Swordfish'. Products without sufficient species information were labeled up to the most appropriate category (the prior examples would classify up to species category and species group, respectively) and all sub categories were therefore labeled as 'Species \[Name or Group\] Not Provided'.

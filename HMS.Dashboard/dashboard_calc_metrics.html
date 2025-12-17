@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Calculating Metrics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="dashboard_calc_metrics_files/libs/clipboard/clipboard.min.js"></script>
+<script src="dashboard_calc_metrics_files/libs/quarto-html/quarto.js"></script>
+<script src="dashboard_calc_metrics_files/libs/quarto-html/popper.min.js"></script>
+<script src="dashboard_calc_metrics_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="dashboard_calc_metrics_files/libs/quarto-html/anchor.min.js"></script>
+<link href="dashboard_calc_metrics_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="dashboard_calc_metrics_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="dashboard_calc_metrics_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="dashboard_calc_metrics_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="dashboard_calc_metrics_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Calculating Metrics</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>We present summative metrics to visualize trends in seafood catch, production, and trade over time. Specifically, we investigate value (<span class="math inline">\(D\)</span>), volume (<span class="math inline">\(V\)</span>), and price (<span class="math inline">\(P\)</span>) among commercial landings (<span class="math inline">\(C\)</span>), domestic production (i.e., processed products; <span class="math inline">\(J\)</span>), and trade (i.e., exports (<span class="math inline">\(E\)</span>), imports (<span class="math inline">\(I\)</span>), and their difference) as well as more complex trade metrics. Our chosen metrics mirror those investigated in Fissel et al.&nbsp;(2023).</p>
+<p>Some metrics we present are simple to derive. Both value and volume require a simple summation of their respective quantities. Price relates value and volume as a rate in dollars per kilogram. In the case of domestic production, we group value and volume quantities, and thus price rates, by the condition of the product (e.g., canned, smoked, etc.). For trade, we calculated value, volume, and price for exports and imports separately. We relate export and import trade values by calculating the balance, or the difference, of exports and imports through time (<span class="math inline">\(\Delta B\)</span>). Also, we relate exports and imports by calculating the ratio of export to import volumes through time. Other metrics we present are more complex to calculate and present their methods below.</p>
+<dl>
+<dt>Top Five Trading Partners</dt>
+<dd>
+<p>We summarize the net trade value of the top five trading partners (i.e., nations; <span class="math inline">\(c\)</span>) for a given species, group, or category of interest over the five-year period from 2020 to 2024 (<span class="math inline">\(T\)</span>). We determine the top five trading partners by first filtering the data to reflect our chosen time period. Within this period, we sum the total value of product (i.e., species) imported and exported for each trading partner (individual years = <span class="math inline">\(t\)</span>): <span class="math display">\[
+D_{T,c} = \sum_{i = t} D_{I,c,t} + D_{E,c,t}
+\]</span></p>
+</dd>
+</dl>
+<p>This is contrary to trade balance, which takes the difference of exports and imports rather than the sum. We then identify the five nations (trading partners) that traded the greatest sum of value and filter our original data to only include their trade data during the time period. We finish by calculating the trade balance, or the net export value, for the top five trading partners within each year of the time period. <span class="math display">\[
+\Delta B_{c,t} = \Sigma I_{c,t} - \Sigma E_{c,t}
+\]</span> <br></p>
+<dl>
+<dt>Multilateral Trade Index (MLTI)</dt>
+<dd>
+<p>The multilateral trade index (MLTI) is a parameter that relates trade value and volume among trading partners through time. The MLTI is a complex metric that compares how trade amongst the most recent dominant trading partners (i.e., the top trading partners by value of the last calendar year) has changed through time. The MLTI uses the normalized price of a traded product, or the average price of a good traded over some time period (<span class="math inline">\(\bar P_{T}\)</span>), to compare traded value of the product among trading partners relative to a base index. Calculating the base index is not straightforward and requires several steps. We first filter our trade data for exports or imports as desired and summarise the annual value and volume traded for each trading partner therein. <span class="math display">\[
+D_{T,c} = \sum_{i = t} D_{I or E,c,t}
+\]</span> <span class="math display">\[
+V_{T,c} = \sum_{i = t}V_{IorE,c,t}
+\]</span> We then calculate the average trade price, in units of real (i.e., inflation-adjusted) 2024 U.S. dollars per kilogram, for each trading partner from each year. <span class="math display">\[
+P_{T,c} = \frac {D_{T,c}}{V_{T,c}}
+\]</span> This yields at most 21 (as there are 21 years inclusive of the time period 2004 to 2024) average prices for each trading partner. We emphasize “at most” in the prior sentence because not all trading partners necessarily engage in trade with the U.S. for every given year for any given product. We then calculate the average price across the time period by first summing the average annual trade prices per country and then dividing this sum by the product of the number of years and trading partners represented; the final product is a single average price of the traded species across the time period (<span class="math inline">\(\bar P_{T}\)</span>). <span class="math display">\[
+\bar P_{T} = \frac {\sum P_{T,c}}{(\sum^n_t t)(\sum^n_c c)}
+\]</span> The MLTI requires a nation to be selected as the base for the index; we selected the trading partner with the third greatest value traded in 2024 (i.e., the median nation <span class="math inline">\(c_m\)</span>). With this median nation, we derive the Q-index (<span class="math inline">\(Q_b\)</span>), or the normalized value of traded product per year for a given country, by calculating the product of the median nation’s trade volume in the first year of the study period and <span class="math inline">\(\bar P_{T}\)</span>. <span class="math display">\[
+Q_b = V_{c_m,t=1} * \bar P_{T}
+\]</span> This is termed the base Q-index. Finally, we compute a Q-index (<span class="math inline">\(Q\)</span>) for each of 2024’s top trading partners for each year that trade of the product occurred. The dividend of a Q-index and the base Q-index is the MLTI (<span class="math inline">\(M\)</span>). <span class="math display">\[
+M = \frac {Q}{Q_b}
+\]</span> MLTIs that are less than one indicate the relative value of the trading partner’s imports or exports for the given year is less than the base country’s import or export value for the same product in the first year of the time period. Contrarily, MLTIs greater than one indicate the relative value of the trading partner’s imports or exports for the given year is more than the base country’s import or export value for the same product in the first year of the time period. The MLTI of the base country equals 1.00 for the first year of the time period. <br><br><br></p>
+</dd>
+<dt>Herfindahl Index (HI)</dt>
+<dd>
+<p>The Herfindahl Index (HI) is a parameter that interprets the density of export or import value among trading partners through time. Calculating the HI for exports or imports begins with summing the total trade value (export or import) for each trading partner of the given product in a given year (<span class="math inline">\(D_{c,t}\)</span>). We then calculate the dividend of the annual trade values for each trading partner and the total annual trade value of the traded product to yield a proportion of trade value for each trading partner (<span class="math inline">\(\hat P(D_{EorI,c,t})\)</span>). <span class="math display">\[
+\hat P(D_{EorI,c,t}) = \frac {D_{EorI,c,t}}{\Sigma D_{EorI,c,t}}
+\]</span> The sum of the squares of these proportions is the HI (<span class="math inline">\(H\)</span>)for the given year. <span class="math display">\[
+H_{EorI} = \sum_{i = c} (\hat P(D_{EorI,c,t}))^2
+\]</span> Low HIs indicate that total trade value is split up (i.e., not concentrated) among many trade partners, whereas high HIs indicate that total trade value is more concentrated among fewer trade partners. <br><br><br></p>
+</dd>
+<dt>Supply Metrics</dt>
+<dd>
+<p>We calculate several metrics that communicate characteristics of domestic supply of a specified species, group, or category. Apparent supply is the volume of product available in domestic markets through time (<span class="math inline">\(A\)</span>); we calculate apparent supply by summing the volume of processed products and imports and subtracting the volume of exports for a given species. <span class="math display">\[
+A_t = V_{J,t} + V_{I,t} - V_{E,t}
+\]</span> We also present apparent supply relative to domestic production (<span class="math inline">\(R\)</span>), a ratio of apparent supply to the volume of processed products for the given product. <span class="math display">\[
+R_t = \frac {A_t}{V_{J,t}}
+\]</span> Ratios greater than one indicate a greater volume of imports than exports, and ratios less than one indicate a greater volume of exports than imports. The last metric we present is the unexported domestic production relative to apparent supply (<span class="math inline">\(U\)</span>). This communicates what percentage of the domestic volume (apparent supply) of a product derives from retained domestic production (i.e., the volume of processed products not exported, or processed product volume less export volume). <span class="math display">\[
+U_{t} = \frac {V_{J,t} - V_{E,t}}{A_t} * 100\%
+\]</span> This is a rough approximation because exports can be of raw catch, which do not undergo processing and are thus not reflected in processed production volume. Low percentages suggest imports comprise most domestic supply, whereas high percentages suggest domestic production comprises most domestic supply.</p>
+</dd>
+</dl>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

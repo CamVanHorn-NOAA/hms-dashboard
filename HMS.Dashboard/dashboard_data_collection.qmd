@@ -1,0 +1,23 @@
+---
+title: "Data Collection"
+format: html
+editor: visual
+---
+
+## Commercial Landings
+
+The NOAA aggregates the data presented in the FOSS from several state and federal agencies. Commercial landings data reflect the volume and value of fish and shellfish landed in the domestic United States by U.S. fishers; by definition, this excludes landings from U.S. territories and those caught by foreign fishers. State fishery agencies and NOAA Fisheries jointly collect and manage landings data. State fishery agencies census the aggregate value and volume of commercially landed species via the collection of mandatory trip-tickets from fishers and seafood dealers as well as monthly reports of value and volume landed by vessel. Trip-tickets are similar to receipts in that they document the landed volume and ex-vessel fee of each species caught during a commercial fishing trip. These are completed by individual vessels (i.e., fishers) as well as seafood dealers that may aggregate catch by several vessels at-sea or shoreside. This, coupled with the fact that data reported at port lack the precise location of where the catch occurred, can corrupt associations with catch statistics and their associated port of landing. Overall, the landings data reflect the census of finfish value and volume landed and sold at domestic ports (aggregated by state) and are not estimates made from sampled fishery data.
+
+Additionally, we present landings data from U.S territories in the Pacific (e.g., American Samoa, Guam, and the Northern Marianas) collected from 2011-2024. We do not presently have information regarding the collection of these data and how their methods may or may not be distinct from national standards conducted by state fishery agencies and NOAA Fisheries.
+
+## Processed Products
+
+Processed products data provided by the FOSS derives from annual surveys of U.S.-based seafood processors conducted by NOAA Fisheries and collaborators. Seafood processors receive the survey in the form of a paper copy and therein provide statistics of value and volume aggregated by product type for all products processed in the previous year. Additionally, seafood processors provide logistical data for both the processing plant and the company office should these differ. This effort represents the only comprehensive data collection effort of domestic seafood processors and is inclusive of all companies regardless of processing plant size.
+
+## Trade
+
+The NOAA does not collect nor facilitate the collection of foreign fishery trade data. Instead, the U.S. Customs and Border Protection collects trade data from importers and exporters upon entry and expedition from the country and provides the data to the U.S. Census Bureau; NOAA Fisheries purchases this data and presents it in the FOSS. Importers and exporters record and submit all transactions in accordance with the Harmonized Commodity Description and Coding System, an international system developed by the World Customs Organization for the classification of internationally traded goods. Importers classify goods along the Harmonized Tariff Schedule (HTS) of the U.S. maintained by the International Trade Commission. Exporters classify goods along schedule B, a commodity classification system administered by the U.S. Census Bureau. Imports and exports do not necessarily reflect whether a product's true origin derives from outside or inside the trading country, respectively, as countries may initially import a product, substantially change the product (i.e., process into some condition), and then export the product to a different country. Furthermore, the U.S. Census Bureau aggregates import and export data by the U.S. Customs District associated with the port of entry (where shipments enter and leave the country) rather than the port of consignment (where shipments ultimately arrive at or originally depart from). This is important to consider when interpreting trade statistics by geographic region.
+
+##### Disclaimer
+
+The contents of this dashboard are intentionally summative and do not reflect an analytical effort. Interpretations of the presented metrics are unique to the user and do not necessarily reflect the interpretations of the authors nor the NOAA. Should the user seek to perform further analysis, the raw data can be downloaded from the app interface.
