@@ -131,7 +131,11 @@ tooltip_subheading <- paste0(
   "</span><span style = 'font-size: 18px; font-weight: bold;'>")
 
 ###
-
+# Plot Aesthetic Objects -------------------------------------------------------
+plot_title_size <- 22
+plot_title_color <- '#002364'
+axis_title_size <- 15
+axis_value_size <- 13
 # Custom Functions -------------------------------------------------------------
 # stop functions without outputting error message
 stop_quietly <- function() {
@@ -1176,8 +1180,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
              aes(x = factor(YEAR),
                  # call for unique y value set earlier (see RLang)
                  y = !!y)) + 
-      geom_col(color = 'black',
-               fill = color) +
+      geom_col(fill = color) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       scale_y_continuous(labels = label,
@@ -1186,9 +1189,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
            y = ylab,
            title = paste0(species, ' ', longform, coast_text)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            axis.title = element_text(size = 15))
+      theme(axis.text = element_text(size = axis_value_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
+            axis.title = element_text(size = axis_title_size))
   } else if (plot_format == 'VALUE') {
     # plot of Value with Price overlayed as a line chart
     # because we have a line chart, we need a column to group by
@@ -1206,15 +1211,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       ggplot(data = data,
              aes(x = factor(YEAR))) +
       geom_col(aes(y = !!y),
-               fill = color,
-               color = 'black') +
+               fill = color) +
       geom_line(aes(y = !!y2 * scale_factor,
                     group = GROUP),
                 color = trade_price_color,
                 linewidth = 1.5) +
-      geom_point(aes(y = !!y2 * scale_factor),
-                 color = 'black',
-                 size = 2) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       scale_y_continuous(name = ylab, 
@@ -1225,9 +1226,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       labs(x = '',
            title = paste0(species, ' ', longform, coast_text)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            axis.title = element_text(size = 15))
+      theme(axis.text = element_text(size = axis_value_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
+            axis.title = element_text(size = axis_title_size))
   } else if (plot_format == 'RATIO') {
     # plot of RATIO
     # RATIO is a line chart, so we need a column to group by
@@ -1244,17 +1247,17 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       geom_line(aes(group = GROUP),
                 color = 'black',
                 linewidth = 1.5) +
-      geom_point(color = 'black',
-                 size = 2) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       labs(x = '', 
            y = 'Export / Import',
            title = paste0('Volume Ratio of ', species, coast_text)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            axis.title = element_text(size = 15))
+      theme(axis.text = element_text(size = axis_value_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
+            axis.title = element_text(size = axis_title_size))
   } else {
     if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' traded in the ', coast)
@@ -1266,8 +1269,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                  y = VALUE_MILLIONS)) +
       geom_bar(aes(fill = TRADE),
                stat = 'identity',
-               position = 'dodge',
-               color = 'black') +
+               position = 'dodge') +
       labs(x = '',
            # y = 'Billions (Real 2024 USD)',
            y = 'Millions (Real 2024 USD)',
@@ -1282,12 +1284,14 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       theme(legend.position = 'top',
             axis.line.y = element_line(color = 'black'),
             axis.text.x = element_text(hjust = 0.8,
-                                       size = 12),
-            axis.text.y = element_text(size = 12),
+                                       size = axis_value_size),
+            axis.text.y = element_text(size = axis_value_size),
             axis.title.y = element_text(vjust = 23,
-                                        size = 15),
+                                        size = axis_title_size),
             legend.text = element_text(size = 15),
-            plot.title = element_text(size = 18),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
             plot.background = element_rect(fill = 'white',
                                            color = 'white'),
             panel.grid = element_blank(),
@@ -1319,8 +1323,7 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
          aes(x = factor(gsub(' ', '\n', str_to_title(COUNTRY_NAME))),
              y = NET_VALUE_MILLIONS, 
              fill = factor(YEAR))) +
-    geom_col(position = 'dodge',
-             color = 'black') +
+    geom_col(position = 'dodge') +
     scale_fill_manual(values = top5_colors) +
     labs(x = '',
          y = ylab,
@@ -1330,11 +1333,13 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
     scale_y_continuous(labels = label_currency(suffix = 'M')) +
     theme_bw() +
     geom_hline(yintercept = 0, 'black') +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
           legend.title = element_text(size = 15),
           legend.text = element_text(size = 12),
-          plot.title = element_text(size = 18))
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
 }
 plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL, species, nominal = F) {
   # function that plots processed product data 
@@ -1425,8 +1430,6 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                        color = PRODUCT_FORM)) +
       geom_line(aes(group = PRODUCT_FORM),
                 linewidth = 1.5) +
-      geom_point(color = 'black',
-                 size = 1.5) +
       scale_color_manual(values = pp_colors,
                          name = 'Product Condition') +
       labs(x = '',
@@ -1438,11 +1441,13 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                          expand = c(0, 0),
                          labels = label) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
             legend.text = element_text(size = 12),
             legend.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
     
     return(plot)
   }
@@ -1463,8 +1468,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                  aes(x = factor(YEAR),
                      y = !!y,
                      fill = PRODUCT_FORM)) +
-    geom_col(position = 'stack',
-             color = 'black') +
+    geom_col(position = 'stack') +
     scale_fill_manual(values = pp_colors,
                       name = 'Product Condition') +
     labs(x = '',
@@ -1476,11 +1480,13 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                        expand = c(0, 0),
                        labels = label) +
     theme_bw() +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
           legend.text = element_text(size = 12),
           legend.title = element_text(size = 15),
-          plot.title = element_text(size = 18))
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
   
   return(plot)
 }
@@ -1561,15 +1567,11 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
       ggplot(data = data,
              aes(x = factor(YEAR))) +
       geom_col(aes(y = COM_VALUE_MILLIONS),
-               fill = landings_colors[1],
-               color = 'black') +
+               fill = landings_colors[1]) +
       geom_line(aes(y = COM_PRICE * scale_factor,
                     group = GROUP),
                 color = landings_colors[2],
                 linewidth = 1.5) +
-      geom_point(aes(y = COM_PRICE * scale_factor),
-                 color = 'black',
-                 size = 2) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2023)) +
       scale_y_continuous(name = ylab, 
@@ -1579,9 +1581,11 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
       labs(x = '',
            title = paste0(coast_text, tlab, species)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
     
     return(plot)
   }
@@ -1591,8 +1595,7 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
     ggplot(data = data,
            aes(x = factor(YEAR),
                y = COM_VOLUME_T)) +
-    geom_col(color = 'black',
-             fill = landings_colors[1]) +
+    geom_col(fill = landings_colors[1]) +
     scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                      limits = factor(2004:2023)) +
     scale_y_continuous(labels = label) +
@@ -1600,9 +1603,11 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
          y = ylab,
          title = paste0(coast_text, tlab, species)) +
     theme_bw() +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
-          plot.title = element_text(size = 18))
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
   
   return(plot)
 }
@@ -1649,9 +1654,11 @@ plot_mlti <- function(mlti_data, coast, exports = F, imports = F, species) {
          color = '',
          shape = '') +
     theme_bw() +
-    theme(axis.text = element_text(size = 15),
-          axis.title.y = element_text(size = 18),
-          plot.title = element_text(size = 20),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title.y = element_text(size = axis_title_size),
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'),
           strip.text = element_text(size = 15,
                                     color = 'white'),
           legend.text = element_text(size = 15),
@@ -1683,8 +1690,6 @@ plot_hi <- function(hi_data, coast, species) {
     geom_line(aes(group = name, 
                   colour = name),
               linewidth = 1.5) +
-    geom_point(size = 2,
-               color = 'black') +
     scale_color_discrete(name = NULL, 
                          type = c(export_color, import_color)) +
     labs(x = '',
@@ -1692,13 +1697,17 @@ plot_hi <- function(hi_data, coast, species) {
          title = paste0('Herfindahl Index of \n', species, coast_text)) +
     scale_x_discrete(breaks = seq(2006, 2022, by = 4)) +
     theme_bw() +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
           legend.text = element_text(size = 15),
           legend.position = 'inside',
           legend.position.inside = c(0.87, 0.93),
-          legend.box.background = element_rect(color = 'black', linetype = 'solid', linewidth = 1),
-          plot.title = element_text(size = 16))
+          legend.box.background = element_rect(color = 'black', 
+                                               linetype = 'solid', 
+                                               linewidth = 1),
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
   
 }
 plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, species) {
@@ -1730,17 +1739,18 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                filter(YEAR < 2024),
              aes(x = factor(YEAR),
                  y = APPARENT_SUPPLY)) +
-      geom_col(color = 'black',
-               fill = c(supply_color)) +
+      geom_col(fill = c(supply_color)) +
       labs(x = '',
            y = ylab,
            title = paste0('Apparent Supply of \n', species, coast_text)) +
       scale_x_discrete(limits = factor(c(2004:2023)),
                        breaks = seq(2006, 2022, by = 4)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
   }
   
   if (metric == 'RATIO') {
@@ -1750,8 +1760,6 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
              aes(x = factor(YEAR),
                  y = APPARENT_SUPPLY_REL_US_PROD,
                  group = SPECIES)) +
-      geom_point(color = 'black', 
-                 size = 3) +
       geom_line(color = 'black',
                 linewidth = 1) +
       labs(x = '',
@@ -1761,9 +1769,11 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
       scale_x_discrete(limits = factor(c(2004:2023)),
                        breaks = seq(2006, 2022, by = 4)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
   }
   
   if (metric == 'SHARE') {
@@ -1772,8 +1782,7 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                filter(YEAR < 2024),
              aes(x = factor(YEAR),
                  y = UNEXPORTED_US_PROD_REL_APPARENT_SUPPLY)) +
-      geom_col(color = 'black',
-               fill = share_color) +
+      geom_col(fill = share_color) +
       labs(x = '',
            y = 'Share of Apparent Supply',
            title = paste0('Unexported Domestic \nProduction Relative \nto Apparent Supply of \n', 
@@ -1782,9 +1791,11 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                        breaks = seq(2006, 2022, by = 4)) +
       scale_y_continuous(labels = label_percent()) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
   }
   
   return(plot)
