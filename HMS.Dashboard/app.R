@@ -23,7 +23,7 @@ source("nmfs_cols.R")
 addResourcePath("tmpuser", getwd())
 
 # Load most recent data file (manually taken from Seafood Dashboard)
-load('hms_data_munge_12_17_25.RData')
+load('hms_data_munge_01_12_26.RData')
 
 
 # filter out confidential data (no data contained therein)
