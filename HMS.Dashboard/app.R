@@ -98,11 +98,11 @@ sname_list <- unique(categorization_matrix %>%
 tooltip_aes <- paste0(
   "position: absolute; ",
   "background-color: rgba(255, 255, 255, 0.95); ",
-  "border: 1px solid #ccc; ",
+  "border: 1px solid #002364; ",
   "border-radius: 10px; ",
   "padding: 10px; ",
   "padding-right: 25px; ",
-  "box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); ",
+#   "box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); ",
   "z-index: 1000; ",
   "max-width: 250px; ",
   "min-width: 250px; "
@@ -125,10 +125,10 @@ close_button_aes <- paste0(
   "text-align: center; ")
 
 tooltip_heading <- paste0(
-  "</span><span style = 'font-size: 22px; font-weight: bold; text-decoration: underline;'>")
+  "</span><span style = 'font-size: 22px; font-weight: bold;'>")
 
 tooltip_subheading <- paste0(
-  "</span><span style = 'font-size: 18px; font-style: italic; text-decoration: underline;'>")
+  "</span><span style = 'font-size: 18px; font-weight: bold;'>")
 
 ###
 
@@ -1858,30 +1858,35 @@ names(pp_colors) <- levels(factor(levels = c(
 mlti_colors <- c('#A6D4EC', '#54ADDB', '#B3EDEF', '#6DDBE1', '#005761')
 # App --------------------------------------------------------------------------
 # Define UI --------------------------------------------------------------------
-ui <- page_sidebar(
-  # custom CSS for wider tooltips
+ui <- page_fluid(
+  # add link to CSS sheet
   tags$head(
-    tags$style(HTML("
-                    .tooltip-inner {
-                    max-width: 600px !important;
-                    width: auto !important;
-                    font-size: 16px !important;
-                    background-color: #283A38 !important;
-                    }")),
-    tags$style(HTML("g.hovertext > path {opacity: .9;}")),
-    tags$style(HTML(".color-swatch {
-                      display: inline-block;
-                      width: 18px;
-                      height: 15px; 
-                      border: 1px solid #000; 
-                      border-radius: 3px;
-                      vertical-align: middle;
-                      margin-right: 8px;
-                    }"))
+    tags$link(rel = 'stylesheet', type = 'text/css', href = 'style.css')
   ),
   
+  # Banner
+  div(id = 'banner',
+      
+      # Image
+      div(
+        style = 'flex-shrink: 0;',
+        img(src = 'NOAA_FISHERIES_logoH.png',
+            align = 'left',
+            style = 'max-width: 300px; max-height: 300px; width: auto; height: auto;'
+        )
+      ),
+      
+      # Text
+      div(
+        style = 'flex: 1; text-align: left; margin-left: 100px;',
+        h1('HMS Seafood Dashboard'),
+        
+        p('A Tool to Investigate 20 Years of U.S. Fisheries Data for Highly Migratory Species')
+      )),
+  page_sidebar(
   sidebar = sidebar(
-    title = 'Species Selection',
+    width = 350,
+    title = h2(br(), 'Species Selection'),
     actionButton('reset_button', 'Reset All Filters',
                  class = 'btn-warning',
                  style = 'margin-bottom: 15px; width: 100%'),
@@ -1898,14 +1903,14 @@ ui <- page_sidebar(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     selectizeInput(inputId = 'coast',
-                   label = 'Alternatively, select a Coast',
+                   label = h4('Alternatively, select a Coast'),
                    choices = c('', 'West Coast + Alaska', 'Atlantic', 
                                'Pacific Islands', 'Gulf + Territories'),
                    options = list(
                      placeholder = 'Type here...'
                    )),
-    input_switch('units', 'Imperial Units'),
-    input_switch('nominal', 'Nominal Values'),
+    input_switch('units', h4('Imperial Units')),
+    input_switch('nominal', h4('Nominal Values')),
     uiOutput('trade_unfilter_button'),
     uiOutput('product_unfilter_button'),
     uiOutput('landings_unfilter_button'),
@@ -1917,37 +1922,7 @@ ui <- page_sidebar(
                    'Download raw processed products data')
   ),
   
-  # Banner
-  div(
-    style = 'background: linear-gradient(155deg, #001743 0%, #0085CA 100%);
-             color: white;
-             padding: 30px 20px;
-             margin-bottom: 10px;
-             min-width: 800px;
-             border-radius: 10px;
-             align-items: center;
-             text-align: left;
-             display: flex;
-             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);',
-    
-    # Image
-    div(
-      style = 'flex-shrink: 0;',
-      img(src = 'NOAA_FISHERIES_H.png',
-          align = 'left',
-          style = 'width: 200px; height: 200px;'
-      )
-    ),
-    
-    # Text
-    div(
-      style = 'flex: 1; text-align: left;',
-      h1('NOAA Fisheries HMS Seafood Dashboard',
-         style = 'font-family: "Gill Sans MT", sans-serif; font-size: clamp(2.5rem, 4vw, 4.5rem); margin-bottom: 0px;'),
-      
-      p('Investigate 20 Years of U.S. Fisheries Data for Highly Migratory Species',
-        style = 'font-family: "Gill Sans MT", sans-serif; font-size: clamp(1.5rem, 2.6vw, 2.6rem); margin-top: 0px; margin-bottom: 0px; opacity: 0.9;')
-    )),
+  
   page_fluid(
     navset_tab(
       nav_panel(
@@ -1955,9 +1930,9 @@ ui <- page_sidebar(
         icon = bsicons::bs_icon("layout-wtf"),
         fluidRow(
           div(
-            style = 'border: 3px solid #005761; border-radius: 12px;
+            style = 'border-radius: 12px;
                min-width: 800px; width: 100%; display: flex; flex-direction: column;',
-            navset_card_pill(title = 'Trade',
+            navset_card_pill(title = h3('Trade'),
                              nav_panel(title = 'Market Summary',
                                        div(
                                          style = "position: relative; min-width: 1200px;",
@@ -1969,7 +1944,7 @@ ui <- page_sidebar(
                                          # textOutput('balance_tooltip'),
                                          uiOutput('balance_click_overlay'),
                                          div(
-                                           style = "position: absolute; top: 0px; left: 5px",
+                                           id = 'info-circle',
                                            tooltip(
                                              icon("info-circle"),
                                              "Trade balance reflects the net value of product traded between the U.S. and all trading partners. Balance values in the negative indicate more product is imported than exported. Balance values in the positive indicate more product is exported than imported."
@@ -1986,7 +1961,7 @@ ui <- page_sidebar(
                                            # textOutput('ratio_tooltip'),
                                            uiOutput('ratio_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The ratio of the volume of exported product to the volume of imported product. Values less than one indicate a greater volume of product is imported than exported. Values greater than one indicate a greater volume of product is exported than imported."
@@ -2001,7 +1976,7 @@ ui <- page_sidebar(
                                            # textOutput('top5_tooltip'),
                                            uiOutput('top5_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Trade balance reflects the net value of product traded between the U.S. and the given trading partner. The top 5 countries displayed are those with the greatest sum of value traded (exports + imports). Balance values in the negative indicate more product is imported than exported. Balance values in the positive indicate more product is exported than imported. Countries display in alphabetical order."
@@ -2021,7 +1996,7 @@ ui <- page_sidebar(
                                            # textOutput('expval_tooltip'),
                                            uiOutput("exp_value_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Export value reflects the total value of product traded out of the U.S. into other countries. The left y-axis reflects the total value of exports and applies to the bars. The right y-axis reflects the average price of exported product per kilogram or pound and applies to the line and points."
@@ -2036,7 +2011,7 @@ ui <- page_sidebar(
                                            # textOutput('impval_tooltip'),
                                            uiOutput("imp_value_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."
@@ -2056,7 +2031,7 @@ ui <- page_sidebar(
                                            # textOutput('expvol_tooltip'),
                                            uiOutput("exp_volume_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Export volume reflects the total volume of product traded out of the U.S. into other countries."
@@ -2071,7 +2046,7 @@ ui <- page_sidebar(
                                            # textOutput('impvol_tooltip')
                                            uiOutput('imp_volume_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Import volume reflects the total volume of product traded into the U.S. from other countries."
@@ -2093,7 +2068,7 @@ ui <- page_sidebar(
                                            # textOutput('expmlti_tooltip'),
                                            uiOutput('exp_mlti_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The multilateral trade index (MLTI) measures relative densities of exported product volumes to individual nations. The index subsets the top five trading partners by total export value over the time period. The base of the index is the export value of the country with the third most cumulative export value (middle of the top five selected countries) in the initial year of the time period (MLTI = 1 for the base country in the base year). MLTI above 1 reflects a greater density of traded volume than the base. MLTI below 1 reflects a lower density of traded volume than the base."
@@ -2108,7 +2083,7 @@ ui <- page_sidebar(
                                              type = 7),
                                            uiOutput('imp_mlti_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The multilateral trade index (MLTI) measures relative densities of imported product volumes from individual nations. The index subsets the top five trading partners by total import value over the time period. The base of the index is the import value of the country with the third most cumulative import value (middle of the top five selected countries) in the initial year of the time period (MLTI = 1 for the base country in the base year). MLTI above 1 reflects a greater density of traded volume than the base. MLTI below 1 reflects a lower density of traded volume than the base."
@@ -2126,7 +2101,7 @@ ui <- page_sidebar(
                                            # textOutput('hi_tooltip'),
                                            uiOutput('hi_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The Herfindahl index (HI) measures the relative distribution of traded product value (exports and imports individually) among trading partners; it cannot be greater than 1. The HI communicates potential trading dependencies for given products. An HI closer to 1 indicates more trade value concentrated among fewer trading partners. An HI closer to 0 indicates trade value is spread out among more trading partners."
@@ -2141,11 +2116,14 @@ ui <- page_sidebar(
                                            # textOutput('supply_tooltip')
                                            uiOutput("supply_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Apparent supply indicates the volume of given product available for domestic consumption that relates domestic landings and production with trade."
-                                             ))),
+                                             )))),
+                                       br(),
+                                       div(
+                                         style = 'flex: 1; display: flex; gap: 15px',
                                          div(
                                            style = "position: relative; min-width: 300px; width: 100%",
                                            withSpinner(
@@ -2156,7 +2134,7 @@ ui <- page_sidebar(
                                            # textOutput('supplyratio_tooltip')
                                            uiOutput('supply_ratio_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Apparent supply relative to domestic production reflects the ratio of apparent supply to domestic production (processed products) volume. Ratios greater than 1 indicate the U.S. must import product to meet domestic demand. Ratios less than 1 indicate the U.S. produces more of the product than is domestically available."
@@ -2171,7 +2149,7 @@ ui <- page_sidebar(
                                            # textOutput('supplyshare_tooltip')
                                            uiOutput('supply_share_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Unexported domestic production relative to apparently supply reflects the share of apparent supply that derives from retained processed products (i.e., processed product volume less export volume). High percentages indicate most apparent supply is domestically produced and retained. Low percentages indicate most apparent supply is due to imports."
@@ -2182,9 +2160,9 @@ ui <- page_sidebar(
         fluidRow(
           div(style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
               div(
-                style = 'border: 3px solid #234515; border-radius: 12px;
+                style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-                navset_card_pill(title = 'Commercial Landings',
+                navset_card_pill(title = h3('Commercial Landings'),
                                  nav_panel(title = 'Value',
                                            div(
                                              style = "position: relative; min-width: 600px; width: 100%",
@@ -2196,7 +2174,7 @@ ui <- page_sidebar(
                                              # textOutput('comvalue_tooltip')
                                              uiOutput('landings_value_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
@@ -2214,7 +2192,7 @@ ui <- page_sidebar(
                                              # textOutput('comvolume_tooltip')
                                              uiOutput('landings_volume_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
@@ -2222,9 +2200,9 @@ ui <- page_sidebar(
                                            downloadButton('download_landings_page2',
                                                           'Download this plot and the data')))),
               div(
-                style = 'border: 3px solid #681617; border-radius: 12px;
+                style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-                navset_card_pill(title = 'Processed Products',
+                navset_card_pill(title = h3('Processed Products'),
                                  nav_panel(title = 'Value',
                                            div(
                                              style = "position: relative; min-width: 600px; width: 100%",
@@ -2236,7 +2214,7 @@ ui <- page_sidebar(
                                              # textOutput('ppvalue_tooltip')
                                              uiOutput('pp_value_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2254,7 +2232,7 @@ ui <- page_sidebar(
                                              # textOutput('ppvolume_tooltip')
                                              uiOutput('pp_volume_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2272,7 +2250,7 @@ ui <- page_sidebar(
                                              # textOutput('ppprice_tooltip')
                                              uiOutput('pp_price_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2309,9 +2287,9 @@ ui <- page_sidebar(
         icon = bsicons::bs_icon("tsunami"),
         fluidRow(
           div(
-            style = 'border: 3px solid #005761; border-radius: 12px;
+            style = 'border-radius: 12px;
                min-width: 800px; width: 100%; display: flex; flex-direction: column;',
-            navset_card_pill(title = 'Trade',
+            navset_card_pill(title = h3('Trade'),
                              nav_panel(title = 'Value',
                                        div(
                                          style = "position: relative; min-width: 1200px;",
@@ -2323,7 +2301,7 @@ ui <- page_sidebar(
                                          # textOutput('balance_tooltip'),
                                          uiOutput('exp_coast_value_click_overlay'),
                                          div(
-                                           style = "position: absolute; top: 0px; left: 5px",
+                                           id = 'info-circle',
                                            tooltip(
                                              icon("info-circle"),
                                              "Export value reflects the total value of product traded out of the U.S. into other countries. The left y-axis reflects the total value of exports and applies to the bars. The right y-axis reflects the average price of exported product per kilogram or pound and applies to the line and points."))),
@@ -2337,7 +2315,7 @@ ui <- page_sidebar(
                                          # textOutput('balance_tooltip'),
                                          uiOutput('imp_coast_value_click_overlay'),
                                          div(
-                                           style = "position: absolute; top: 0px; left: 5px",
+                                           id = 'info-circle',
                                            tooltip(
                                              icon("info-circle"),
                                              "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."))),
@@ -2352,7 +2330,7 @@ ui <- page_sidebar(
                                                       height = '400px', width = '100%'),
                                            type = 7),
                                          uiOutput('exp_coast_volume_click_overlay'),
-                                         div(style = 'position: absolute; top: 0px; left: 5px',
+                                         div(id = 'info-circle',
                                              tooltip(
                                                icon('info-circle'),
                                                'Export volume reflects the total volume of product traded out of the U.S. into other countries.'))),
@@ -2365,7 +2343,7 @@ ui <- page_sidebar(
                                            type = 7),
                                          uiOutput('imp_coast_volume_click_overlay'),
                                          div(
-                                           style = 'position: absolute; top: 0px; left: 5px',
+                                           id = 'info-circle',
                                            tooltip(
                                              icon('info-circle'),
                                              'Import volume reflects the total volume of product traded into the U.S. from other countries.'))),
@@ -2376,9 +2354,9 @@ ui <- page_sidebar(
           div(
             style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
             div(
-              style = 'border: 3px solid #234515; border-radius: 12px;
+              style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-              navset_card_pill(title = 'Commercial Landings',
+              navset_card_pill(title = h3('Commercial Landings'),
                                nav_panel(title = 'Value',
                                          div(
                                            style = "position: relative; min-width: 600px; width: 100%",
@@ -2390,7 +2368,7 @@ ui <- page_sidebar(
                                            # textOutput('comvalue_tooltip')
                                            uiOutput('coast_landings_value_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
@@ -2408,7 +2386,7 @@ ui <- page_sidebar(
                                            # textOutput('comvolume_tooltip')
                                            uiOutput('coast_landings_volume_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
@@ -2416,9 +2394,9 @@ ui <- page_sidebar(
                                          downloadButton('download_coast_landings_page2',
                                                         'Download this plot and the data')))),
             div(
-              style = 'border: 3px solid #681617; border-radius: 12px;
+              style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-              navset_card_pill(title = 'Processed Products',
+              navset_card_pill(title = h3('Processed Products'),
                                nav_panel(title = 'Value',
                                          div(
                                            style = "position: relative; min-width: 600px; width: 100%",
@@ -2430,7 +2408,7 @@ ui <- page_sidebar(
                                            # textOutput('ppvalue_tooltip')
                                            uiOutput('coast_pp_value_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2448,7 +2426,7 @@ ui <- page_sidebar(
                                            # textOutput('ppvolume_tooltip')
                                            uiOutput('coast_pp_volume_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2466,7 +2444,7 @@ ui <- page_sidebar(
                                            # textOutput('ppprice_tooltip')
                                            uiOutput('coast_pp_price_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2475,7 +2453,7 @@ ui <- page_sidebar(
                                                         'Download this plot and the data'))))))
         ))
         
-      ))
+      )))
 
 
 # Define server logic ----------------------------------------------------------
@@ -3030,7 +3008,7 @@ server <- function(input, output, session) {
                                    pull())))
     
     selectizeInput('search_term', 
-                   'Search for a Species',
+                   h4('Search for a Species'),
                    species_list,
                    options = list(
                      placeholder = 'Type here...'
@@ -3074,9 +3052,9 @@ server <- function(input, output, session) {
                         pull())
     
     if (input$search_term == '') {
-      selectInput('species_cat', 'Choose a Category', species_cats)
+      selectInput('species_cat', h4('Choose a Category'), species_cats)
     } else {
-      selectInput('species_cat', 'Choose a Category', species_cats,
+      selectInput('species_cat', h4('Choose a Category'), species_cats,
                   selected = search_cats()[3])
     }
   })
@@ -3101,9 +3079,9 @@ server <- function(input, output, session) {
                           pull())
     
     if (input$search_term == '') {
-      selectInput('species_grp', 'Choose a Group', species_groups)
+      selectInput('species_grp', h4('Choose a Group'), species_groups)
     } else {
-      selectInput('species_grp', 'Choose a Group', species_groups,
+      selectInput('species_grp', h4('Choose a Group'), species_groups,
                   selected = search_cats()[2])
     }
   })
@@ -3129,9 +3107,9 @@ server <- function(input, output, session) {
                          mutate(SPECIES_NAME = str_to_title(SPECIES_NAME)) %>%
                          pull())
     if (input$search_term == '') {
-      selectInput('species_name', 'Choose a Species', species_names)
+      selectInput('species_name', h4('Choose a Species'), species_names)
     } else {
-      selectInput('species_name', 'Choose a Species', species_names,
+      selectInput('species_name', h4('Choose a Species'), species_names,
                   selected = search_cats()[1])
     }
   })
