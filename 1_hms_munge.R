@@ -5,7 +5,7 @@ if(!require("tidyverse")) install.packages("tidyverse")
 
 # Load in data -----------------------------------------------------------------
 # load in seafood data
-load('seafood_trade_data_munge_11_24_25.RData')
+load('seafood_trade_data_munge_12_23_25.RData')
 
 # get inflationary index data
   # this will allow values per year to be calculated as inflation-adjusted
@@ -183,6 +183,12 @@ products <- left_join(pp_processed, pp_map) %>%
          # NEW_PRODUCT_FORM will store updated product conditions so that
          # PRODUCT_FORM can retain prior, more specific data
          NEW_PRODUCT_FORM = PRODUCT_FORM,
+         # OLD_ levels of the classification hierarchy will store initial
+          # species classifications that may be set to NA for confidentiality
+         OLD_SPECIES_NAME = SPECIES_NAME,
+         OLD_SPECIES_GROUP = SPECIES_GROUP,
+         OLD_SPECIES_CATEGORY = SPECIES_CATEGORY,
+         OLD_ECOLOGICAL_CATEGORY = ECOLOGICAL_CATEGORY,
          # CONFIDENTIAL is a placeholder for labeling data as confidential
          CONFIDENTIAL = NA)
 
@@ -285,6 +291,8 @@ products <- products %>%
   
 
 # Remove confidential data -----------------------------------------------------
+# NOTE: There is no product data from Alaska here, so the effort is less complex
+  # than in the main U.S. Seafood Dashboard
 overwrite_prodform <- function(data, cols = '', coast = '') {
   # here, data should be processed product data as formatted above 
   # cols is a vector of columns to group by and is defaulted as an empty string;
@@ -421,8 +429,173 @@ overwritten_products <- products %>%
   overwrite_prodform(c('SPECIES_CATEGORY', 
                        'SPECIES_GROUP'), coast = 'GULF + TERRITORIES') %>%
   overwrite_prodform(c('SPECIES_CATEGORY',
-                       'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'GULF + TERRITORIES') %>%
-  # reset confidential column
+                       'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'GULF + TERRITORIES')
+
+test <- overwritten_products %>%
+  mutate(POUNDS = ifelse(is.na(POUNDS), 0, POUNDS))
+sum(test$POUNDS[which(test$CONFIDENTIAL == 1)]) / sum(test$POUNDS)
+
+changed_product_forms <- overwritten_products %>%
+  filter(CONFIDENTIAL == 1) %>%
+  select(!CONFIDENTIAL)
+
+# remove confidential markers
+overwritten_products <- overwritten_products %>%
+  mutate(CONFIDENTIAL = NA)
+
+# The next step is to identify which products, after attempting to consolidate
+# into less specific product conditions, are confidential. For these, we will
+# attempt to consolidate into less specific species classifications
+declassify_species <- function(data, coast = '') {
+  # data is a dataset of processed products
+  # coast is an empty character string by default that accepts a string of a 
+  # desired coast formatted as is in 'data'
+  
+  # The process is four steps, one for each level of the species hierarchy
+  # Each step consists of isolating necessary columns for aggregation, counting
+  # how many plants process the product, and overwriting species classifications
+  # The distinction in each step lies in the specific level getting isolated
+  # and then overwritten. 
+  if (coast == '') {
+    step1 <- data %>%
+      select(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+             SPECIES_GROUP, SPECIES_NAME, PLANT_STREET) %>%
+      # Because users can't select NA species name, only take products with 
+      # a provided species name
+      filter(!is.na(SPECIES_NAME)) %>%
+      distinct() %>%
+      group_by(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+               SPECIES_GROUP, SPECIES_NAME) %>%
+      count() %>%
+      ungroup() %>%
+      filter(n < 3) %>%
+      mutate(CONFIDENTIAL = 1) %>%
+      # rejoin back to original data with CONFIDENTIAL removed (clean join)
+      right_join(data %>% select(!CONFIDENTIAL)) %>%
+      # STATE OF ALASKA represnts many processors, so they are not confidential
+      # For any confidentially marked products, remove the assigned species name
+      mutate(CONFIDENTIAL = ifelse(CITY == 'STATE OF ALASKA', NA, CONFIDENTIAL),
+             SPECIES_NAME = ifelse(!is.na(CONFIDENTIAL), NA, SPECIES_NAME)) %>%
+      # remove n
+      select(!n)
+    
+    step2 <- step1 %>%
+      select(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+             SPECIES_GROUP, SPECIES_NAME, PLANT_STREET) %>%
+      # Now we only want products for which there is no species name but a 
+      # species group
+      filter(is.na(SPECIES_NAME),
+             !is.na(SPECIES_GROUP)) %>%
+      distinct() %>%
+      group_by(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+               SPECIES_GROUP, SPECIES_NAME) %>%
+      count() %>%
+      ungroup() %>%
+      filter(n < 3) %>%
+      mutate(CONFIDENTIAL = 1) %>%
+      right_join(step1 %>% select(!CONFIDENTIAL)) %>%
+      mutate(CONFIDENTIAL = ifelse(CITY == 'STATE OF ALASKA', NA, CONFIDENTIAL),
+             SPECIES_GROUP = ifelse(!is.na(CONFIDENTIAL), NA, SPECIES_GROUP)) %>%
+      select(!n)
+    
+    step3 <- step2 %>%
+      select(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+             SPECIES_GROUP, SPECIES_NAME, PLANT_STREET) %>%
+      # only products for which there is no species name nor group, but a 
+      # species category
+      filter(is.na(SPECIES_NAME),
+             is.na(SPECIES_GROUP),
+             !is.na(SPECIES_CATEGORY)) %>%
+      distinct() %>%
+      group_by(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+               SPECIES_GROUP, SPECIES_NAME) %>%
+      count() %>%
+      ungroup() %>%
+      filter(n < 3) %>%
+      mutate(CONFIDENTIAL = 1) %>%
+      right_join(step2 %>% select(!CONFIDENTIAL)) %>%
+      mutate(CONFIDENTIAL = ifelse(CITY == 'STATE OF ALASKA', NA, CONFIDENTIAL),
+             SPECIES_CATEGORY = ifelse(!is.na(CONFIDENTIAL), NA, SPECIES_CATEGORY)) %>%
+      select(!n)
+    
+  } else {
+    # Here, the only differences from the steps above are filtering for the
+    # desired region in the data
+    
+    step1 <- data %>%
+      filter(COAST == coast) %>%
+      select(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+             SPECIES_GROUP, SPECIES_NAME, PLANT_STREET) %>%
+      filter(!is.na(SPECIES_NAME)) %>%
+      distinct() %>%
+      group_by(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+               SPECIES_GROUP, SPECIES_NAME) %>%
+      count() %>%
+      ungroup() %>%
+      filter(n < 3) %>%
+      mutate(CONFIDENTIAL = 1,
+             COAST = coast) %>%
+      right_join(data %>% select(!CONFIDENTIAL)) %>%
+      mutate(SPECIES_NAME = ifelse(!is.na(CONFIDENTIAL), NA, SPECIES_NAME)) %>%
+      select(!n)
+    
+    step2 <- step1 %>%
+      filter(COAST == coast) %>%
+      select(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+             SPECIES_GROUP, SPECIES_NAME, PLANT_STREET) %>%
+      filter(is.na(SPECIES_NAME),
+             !is.na(SPECIES_GROUP)) %>%
+      distinct() %>%
+      group_by(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+               SPECIES_GROUP, SPECIES_NAME) %>%
+      count() %>%
+      ungroup() %>%
+      filter(n < 3) %>%
+      mutate(CONFIDENTIAL = 1,
+             COAST = coast) %>%
+      right_join(step1 %>% select(!CONFIDENTIAL)) %>%
+      mutate(SPECIES_GROUP = ifelse(!is.na(CONFIDENTIAL), NA, SPECIES_GROUP)) %>%
+      select(!n)
+    
+    step3 <- step2 %>%
+      filter(COAST == coast) %>%
+      select(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+             SPECIES_GROUP, SPECIES_NAME, PLANT_STREET) %>%
+      filter(is.na(SPECIES_NAME),
+             is.na(SPECIES_GROUP),
+             !is.na(SPECIES_CATEGORY)) %>%
+      distinct() %>%
+      group_by(YEAR, NEW_PRODUCT_FORM, SPECIES_CATEGORY,
+               SPECIES_GROUP, SPECIES_NAME) %>%
+      count() %>%
+      ungroup() %>%
+      filter(n < 3) %>%
+      mutate(CONFIDENTIAL = 1,
+             COAST = coast) %>%
+      right_join(step2 %>% select(!CONFIDENTIAL)) %>%
+      mutate(SPECIES_CATEGORY = ifelse(!is.na(CONFIDENTIAL), NA, SPECIES_CATEGORY)) %>%
+      select(!n)
+    
+  }
+  
+  return(step3)
+}
+
+# pipe for declassifying species
+declassified_products <- declassify_species(overwritten_products) %>%
+  declassify_species('ATLANTIC') %>%
+  declassify_species('GULF + TERRITORIES') %>%
+  declassify_species('WEST COAST + ALASKA') %>%
+  declassify_species('PACIFIC ISLANDS')
+
+# store declassified species in separate object
+species_declassified_products <- declassified_products %>%
+  filter((is.na(SPECIES_NAME) & !is.na(OLD_SPECIES_NAME)) |
+           (is.na(SPECIES_GROUP) & !is.na(OLD_SPECIES_GROUP)) |
+           (is.na(SPECIES_CATEGORY) & !is.na(OLD_SPECIES_CATEGORY)))
+
+# remove confidential markers
+declassified_products <- declassified_products %>%
   mutate(CONFIDENTIAL = NA)
 
 # The next step is to identify which products, after attempting to consolidate
@@ -479,7 +652,7 @@ set_confids <- function(data, cols = '', coast = '') {
 }
 
 # pipe for identifying confidential products
-products_marked <- overwritten_products %>%
+products_marked <- declassified_products %>%
   set_confids() %>%
   # FIRST SECTION: Each level of the classification hierarchy without coast
   set_confids(c('SPECIES_CATEGORY')) %>%
@@ -519,10 +692,16 @@ set_confids(coast = 'WEST COAST + ALASKA') %>%
   set_confids(c('SPECIES_CATEGORY', 
                 'SPECIES_GROUP'), coast = 'GULF + TERRITORIES') %>%
   set_confids(c('SPECIES_CATEGORY',
-                'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'GULF + TERRITORIES') %>%
-  # if there is no provided street address, then a product should not be confidential
-  mutate(CONFIDENTIAL = ifelse(PLANT_STREET == '', NA, CONFIDENTIAL))
+                'SPECIES_GROUP', 'SPECIES_NAME'), coast = 'GULF + TERRITORIES')
 
+test <- products_marked %>%
+  mutate(POUNDS = ifelse(is.na(POUNDS), 0, POUNDS))
+
+sum(test$POUNDS[which(test$CONFIDENTIAL == 1)]) / sum(test$POUNDS)
+
+# store confidential products in separate objects
+confidential_products <- products_marked %>%
+  filter(CONFIDENTIAL == 1)
 
 # Attach coasts ----------------------------------------------------------------
 # Assign coasts by state abbreviation
