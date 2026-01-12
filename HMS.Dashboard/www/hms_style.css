@@ -1,0 +1,350 @@
+/* CSS for App */
+
+/* Text formats */
+/* Banner subheader */
+p {
+  font-family: "Arial", sans-serif; 
+  font-size: clamp(1.8rem, 1.6vw, 2.6rem); 
+  margin-top: -15px; 
+  margin-bottom: 0px; 
+  opacity: 0.9;
+}
+
+/* Banner header */
+h1 {
+  font-family: "Cambria", sans-serif;
+  font-weight: bold;
+  font-size: clamp(3.9rem, 5vw, 4.5rem); 
+  margin-bottom: 0px;
+  margin-top: -8px;
+}
+
+/* Species Selection */
+h2 {
+  font-family: "Cambria";
+  text-align: center;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  text-decoration-thickness: 2px;
+}
+
+/* Section Headers */
+h3 {
+  font-family: "Cambria";
+  font-size: 25px;
+  font-variant: small-caps;
+  color: #002364;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+/* Dropdown Headers */
+h4 {
+  font-family: 'Cambria';
+  font-size: 20px;
+  color: white; 
+  margin-bottom: 0rem;
+}
+
+/* Plot Titles */
+h5 {
+  font-family: 'Arial';
+  font-size: 200px; 
+  color: #002364;
+}
+
+
+
+/* Checkboxes */
+.shiny-input-container .checkbox label {
+  font-family: 'Arial';
+  color: white;
+  font-size: 18px;
+}
+
+.shiny-input-container .checkbox input:checked {
+  background-color: #5EB6D9;
+}
+
+.shiny-input-container .checkbox input[type='checkbox'] {
+  border-radius: 200px;
+}
+
+
+
+/* Banner */
+#banner {
+  background: linear-gradient(155deg, #C6E6F0 50%, #00559B 100%);
+  color: #002364;
+  padding: 10px 10px;
+  min-width: 800px;
+  align-items: center;
+  text-align: left;
+  display: flex;
+}
+
+
+
+/* Sidebar */
+.bslib-sidebar-layout>.sidebar {
+  background: linear-gradient(130deg, #00559B 100%, #C6E6F0 100%);
+}
+
+.bslib-sidebar-layout>.collapse-toggle>.collapse-icon {
+  color: #5EB6D9;
+  opacity: 1;
+}
+/* Sidebar ends at bottom of page */
+.bslib-sidebar-layout {
+  margin-bottom: 0px;
+}
+/* Remove empty space at bottom (-24 is max) */
+.bslib-page-main {
+  margin-bottom: -24px;
+}
+
+
+/* Reset Button */
+.btn-warning {
+  font-family: "Arial";
+  font-size: 18px;
+  color: white;
+  background: #5EB6D9;
+  border-color: #5EB6D9;
+  border-radius: 200px;
+    --bs-btn-active-bg: #C6E6F0;
+    --bs-btn-active-border-color: black;
+    --bs-btn-active-color: black;
+    --bs-btn-padding-y: 0.5em;
+}
+
+.btn-warning:hover {
+  color: white;
+  background: #5EB6D9;
+  border-color: #5EB6D9;
+  box-shadow: 0px 0px 10px #002364;
+}
+
+.btn-warning:active {
+  box-shadow: 0px 0px 0px white;
+}
+
+
+
+/* Dropdown menus */
+.selectize-input.focus {
+  border-color: #5EB6D9;
+  box-shadow: 0px 0px 4px 0.1rem #5EB6D9;
+  font-family: "Arial";
+  font-size: 17px;
+}
+
+.selectize-input {
+  font-family: "Arial";
+  font-size: 17px;
+}
+
+.selectize-dropdown {
+  font-family: "Arial";
+  font-size: 17px;
+}
+
+.selectize-input input {
+  font-size: 17px;
+}
+
+
+
+/* Switches */
+.form-check-input:checked {
+  background-color: #5EB6D9;
+  border-color: #5EB6D9;
+}
+
+
+
+/* Download Buttons */
+.btn-default.shiny-download-link {
+  font-family: "Cambria";
+  background: transparent;
+  border-color: #5EB6D9;
+  color: #5EB6D9;
+  font-weight: bold;
+}
+
+.btn-default.shiny-download-link:hover {
+  background: #002364 !important;
+  border-color: #002364 !important;
+  color: #5EB6D9 !important;
+}
+
+.btn-default.shiny-download-link:active {
+  border-color: #5EB6D9 !important;
+  color: #5EB6D9 !important;
+}
+
+
+
+/* Nav */
+.nav {
+  border-color: transparent; 
+  background: transparent; 
+}
+/* This makes overlap with nav tabs */
+.bslib-card {
+  border-color: #C6E6F0;
+  border-width: 4px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  box-shadow: 0 0 0;
+  
+  margin-top: -30px;
+  margin-bottom: 45px;
+}
+
+
+
+/* Nav Tabs */
+.nav-tabs .nav-link.active, .nav-tabs>li>a.active {
+  font-family: 'Cambria';
+  font-weight: bold;
+  font-size: 19px;
+  color: #002364;
+  background: transparent;
+  border-color: #C6E6F0;
+  border-width: 4px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  transition: border-color 0.15s ease-in-out;
+  padding-bottom: 30px;
+}
+
+.nav-tabs .nav-link, .nav-tabs>li>a {
+  font-family: 'Cambria';
+  font-weight: bold; 
+  font-size: 19px; 
+  color: #002364;
+  background: transparent;
+  border-color: transparent;
+  border-width: 4px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  transition: border-color 0.15s ease-in-out;
+  padding-bottom: 30px;
+}
+
+.nav-tabs .nav-link:hover, .nav-tabs>li>a:hover {
+  font-family: 'Cambria';
+  font-weight: bold;
+  font-size: 19px;
+  border-color: #C6E6F0;
+  border-width: 4px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  transition: border-color 0.15s ease-in-out;
+  padding-bottom: 30px;
+}
+
+.nav-link, .nav-tabs>li>a {
+  transition: border-color 0.15s ease-in-out;
+  border-color: #C6E6F0;
+  padding-bottom: 30px;
+}
+
+
+
+/* Nav Pills */
+.nav-pills .nav-link {
+  color: #002364;
+  font-size: 17px;
+}
+
+.nav-pills .nav-link.active {
+  font-family: "Arial";
+  color: #fff;
+  background: #00559B;
+  transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.nav-pills {
+  font-family: "Arial";
+  color: #002364;
+}
+
+.nav-pills>li>a:hover {
+  color: #002364;
+  background: #C6E6F0;
+  transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+
+
+/* Info Circle Tooltips */
+#info-circle {
+  position: absolute; 
+  top: 0px; 
+  left: 5px;
+  color: #5EB6D9;
+}
+
+.tooltip-inner {
+  font-family: 'Arial';
+  font-size: 20px;
+  color: white;
+  max-width: 600px !important;
+  width: auto !important;
+  background-color: #002364 !important;
+  text-align: left;
+  
+}
+
+.container-fluid {
+  --bs-gutter-x: 0rem;
+  --bs-gutter-y: 0rem;
+}
+
+g.hovertext > path {opacity: .9;}
+
+.color-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 15px; 
+  border: 1px solid #000;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+
+
+
+
+.form-check-label {
+  font-family: "Tahoma";
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.form-check-input:focus {
+  border-color: #002364;
+  box-shadow: 0px 0px 4px 0.1rem #002364;
+}
+
+.nav {
+  --bs-nav-link-hover-color: #000000
+  --bs-nav-link-border-color: transparent
+}
+
+#download_page1, #download_landings_page1, #download_products_page1,
+#download_page2, #download_landings_page2, #download_products_page2,
+#download_page3, #download_products_page3, #download_page4,
+#download_coast_trade_page1, #download_coast_trade_page2, 
+#download_coast_landings_page1, #download_coast_landings_page2, 
+#download_coast_products_page1, #download_coast_products_page2, 
+#download_coast_products_page3 {
+  border-color: #C6E6F0;
+  background: #C6E6F0;
+  color: #002364;
+}
+
