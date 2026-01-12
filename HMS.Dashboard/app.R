@@ -1874,7 +1874,7 @@ mlti_colors <- c('#A6D4EC', '#54ADDB', '#B3EDEF', '#6DDBE1', '#005761')
 ui <- page_fluid(
   # add link to CSS sheet
   tags$head(
-    tags$link(rel = 'stylesheet', type = 'text/css', href = 'style.css')
+    tags$link(rel = 'stylesheet', type = 'text/css', href = 'hms_style.css')
   ),
   
   # Banner
