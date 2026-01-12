@@ -2,6 +2,7 @@
 title: "Species Classification Hierarchy"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 Several sources collect federal fisheries data along the supply chain using nonuniform methods. This generates variability in how species information is reported, which poses a barrier to comparing how catch, processing, and trade of a species varies through time. We thus standardized species identification and organization across our data sets by creating a classification hierarchy consisting of three levels: (1) species category, (2) species group, and (3) species name (Figure 1). The first level primarily reflects species conglomerates (i.e., collections of species organized by specific shared characteristics), and the final two levels primarily reflect species identification. This effort increases the power of the data set by enabling investigation of seafood characteristics at different degrees of species classification (e.g., Albacore Tuna, pacific tunas, or all tunas).

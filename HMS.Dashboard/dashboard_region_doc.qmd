@@ -2,6 +2,7 @@
 title: "Coastal Consolidation"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 The inherent management of most domestic fisheries at a regional scale warrants a need to provide geographic resolution to federal fisheries data. Furthermore, the wide-ranging distribution of highly migratory species (HMS) and their international management suggests the geographic resolution should be at a coastal scale. As stated previously, the FOSS reports federal fisheries data at a city-level for exports and imports via ports of entry and state-level for commercially landed catch. The processed products database also aggregates data at the city-level via the address of the processing plant. Aggregating these data at a coastal level was straightforward. States and territories that border an ocean or gulf were given appropriate coast designations, and those that are landlocked were given no coast designation. Florida, however, straddles two coasts (Atlantic and Gulf) and was thus split in two parts: East-FL and West-FL. We identified cities that belonged to East-FL or West-FL with the aid of Google Gemini, an AI tool. We organized 196 Florida cities found in the processed products and trade data into a .csv file and provided the file to Gemini with the following prompt:

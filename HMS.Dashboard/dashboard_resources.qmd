@@ -2,6 +2,7 @@
 title: "Resources"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 ## References

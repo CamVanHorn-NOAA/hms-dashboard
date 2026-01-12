@@ -2,6 +2,7 @@
 title: "Data Management"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 The FOSS provides federal fisheries data in an organized manner. Across landings, processed products, and trade, the FOSS provides the value at time of sale (i.e., nominal value) and volume (in imperial units) of the product. Export and import data provide the specific city and state of the port of entry; commercial landings data provide the state where fishers landed the catch; but processed products in the FOSS do not contain any geographic data. Also, while each data set provides some resolution of the species that comprise(s) most products (some products report no species), the data sets are not uniform in reporting species. These inconsistencies collectively motivate standardization of federal fisheries data. We performed most of our data management and engineering effort using R (R Core Team, 2023) and tidyverse packages (Wickham et al., 2019).

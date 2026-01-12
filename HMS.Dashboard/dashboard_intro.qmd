@@ -2,6 +2,7 @@
 title: "Introduction"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 Highly migratory species (HMS) include some of the most commercially valuable species on the planet. Conglomerates such as tuna, billfishes such as swordfish, and sharks net tens of billions of dollars a year in domestic trade, landing, and processing value. Multiple nations collaborate to manage HMS due to the transience of their habitat (e.g., migrating in and out of national waters). The high value and international consideration of HMS fisheries compel analysis of dynamics through time in the domestic market to ensure the sustainability of the fisheries from an economic lens.

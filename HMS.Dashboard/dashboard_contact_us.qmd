@@ -2,6 +2,7 @@
 title: "Contact Us"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 The data and metrics we present in this dashboard serve several purposes. First, we provide any user the opportunity to investigate common metrics of publicly available fisheries data in seconds. This broadens the access of public fisheries data to audiences that otherwise would not seek the FOSS tool. Simultaneously, the dashboard munges the public data into quantified metrics that can be used to inform policy, research, and other data needs. The scope of this utility extends to all fisheries regions of the U.S. We hope that this dashboard serves the needs of policymakers, fisheries scientists, and other audiences nationwide, thus we also hope that users identify and provide any issues in their exploit of the dashboard so that we may continuously improve the dashboard. It is vital that any issue be submitted to the dashboard managers such that any potential mischaracterizations or data errors are consolidated and any policy decisions made therefrom are avoided. For these reasons, we also ask for suggestions that might improve how the data in this dashboard are communicated such that its utility for fisheries scientists and managers is maximized.

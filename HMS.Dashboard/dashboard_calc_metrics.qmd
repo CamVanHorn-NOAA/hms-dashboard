@@ -2,6 +2,7 @@
 title: "Calculating Metrics"
 format: html
 editor: visual
+css: www/hms_quarto-style.css
 ---
 
 We present summative metrics to visualize trends in seafood catch, production, and trade over time. Specifically, we investigate value ($D$), volume ($V$), and price ($P$) among commercial landings ($C$), domestic production (i.e., processed products; $J$), and trade (i.e., exports ($E$), imports ($I$), and their difference) as well as more complex trade metrics. Our chosen metrics mirror those investigated in Fissel et al. (2023).
