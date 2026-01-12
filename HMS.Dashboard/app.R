@@ -136,6 +136,7 @@ plot_title_size <- 22
 plot_title_color <- '#002364'
 axis_title_size <- 15
 axis_value_size <- 13
+facet_title_size <- 15
 # Custom Functions -------------------------------------------------------------
 # stop functions without outputting error message
 stop_quietly <- function() {
@@ -5542,7 +5543,8 @@ server <- function(input, output, session) {
   exp_coast_value_plot <- reactive({
     plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), export = T, 
                species = species_selection_trade(), nominal = selected_value()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs export value plot
@@ -5557,7 +5559,8 @@ server <- function(input, output, session) {
   imp_coast_value_plot <- reactive({
     plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), import = T, 
                species = species_selection_trade(), nominal = selected_value()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs import value plot
@@ -5572,7 +5575,8 @@ server <- function(input, output, session) {
   exp_coast_volume_plot <- reactive({
     plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), export = T, 
                species = species_selection_trade()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs export volume plot
@@ -5587,7 +5591,8 @@ server <- function(input, output, session) {
   imp_coast_volume_plot <- reactive({
     plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), import = T, 
                species = species_selection_trade()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs import volume plot
@@ -5616,7 +5621,8 @@ server <- function(input, output, session) {
     plot_landings(coast_landings_df(), 'ALL', 'VALUE', units = selected_units(),
                   species = species_selection_landings(),
                   nominal = selected_value()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs landings value plot
@@ -5631,7 +5637,8 @@ server <- function(input, output, session) {
   coast_landings_volume_plot <- reactive({
     plot_landings(coast_landings_df(), 'ALL', 'VOLUME', units = selected_units(),
                   species = species_selection_landings()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs landings volume plot
@@ -5660,7 +5667,8 @@ server <- function(input, output, session) {
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs processed products value plot
@@ -5676,7 +5684,8 @@ server <- function(input, output, session) {
     plot_spp_pp(coast_pp_df(), 'ALL', 'VOLUME', 
                 units = selected_units(),
                 species = species_selection_products()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs processed products volume plot
@@ -5693,7 +5702,8 @@ server <- function(input, output, session) {
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value()) +
-      facet_grid(cols = vars(COAST))
+      facet_grid(cols = vars(COAST)) +
+      theme(strip.text = element_text(size = facet_title_size))
   })
   
   # outputs processed products price plot
