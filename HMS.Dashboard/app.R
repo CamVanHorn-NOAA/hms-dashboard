@@ -98,11 +98,11 @@ sname_list <- unique(categorization_matrix %>%
 tooltip_aes <- paste0(
   "position: absolute; ",
   "background-color: rgba(255, 255, 255, 0.95); ",
-  "border: 1px solid #ccc; ",
+  "border: 1px solid #002364; ",
   "border-radius: 10px; ",
   "padding: 10px; ",
   "padding-right: 25px; ",
-  "box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); ",
+#   "box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); ",
   "z-index: 1000; ",
   "max-width: 250px; ",
   "min-width: 250px; "
@@ -125,13 +125,17 @@ close_button_aes <- paste0(
   "text-align: center; ")
 
 tooltip_heading <- paste0(
-  "</span><span style = 'font-size: 22px; font-weight: bold; text-decoration: underline;'>")
+  "</span><span style = 'font-size: 22px; font-weight: bold;'>")
 
 tooltip_subheading <- paste0(
-  "</span><span style = 'font-size: 18px; font-style: italic; text-decoration: underline;'>")
+  "</span><span style = 'font-size: 18px; font-weight: bold;'>")
 
 ###
-
+# Plot Aesthetic Objects -------------------------------------------------------
+plot_title_size <- 22
+plot_title_color <- '#002364'
+axis_title_size <- 15
+axis_value_size <- 13
 # Custom Functions -------------------------------------------------------------
 # stop functions without outputting error message
 stop_quietly <- function() {
@@ -1176,8 +1180,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
              aes(x = factor(YEAR),
                  # call for unique y value set earlier (see RLang)
                  y = !!y)) + 
-      geom_col(color = 'black',
-               fill = color) +
+      geom_col(fill = color) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       scale_y_continuous(labels = label,
@@ -1186,9 +1189,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
            y = ylab,
            title = paste0(species, ' ', longform, coast_text)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            axis.title = element_text(size = 15))
+      theme(axis.text = element_text(size = axis_value_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
+            axis.title = element_text(size = axis_title_size))
   } else if (plot_format == 'VALUE') {
     # plot of Value with Price overlayed as a line chart
     # because we have a line chart, we need a column to group by
@@ -1206,15 +1211,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       ggplot(data = data,
              aes(x = factor(YEAR))) +
       geom_col(aes(y = !!y),
-               fill = color,
-               color = 'black') +
+               fill = color) +
       geom_line(aes(y = !!y2 * scale_factor,
                     group = GROUP),
                 color = trade_price_color,
                 linewidth = 1.5) +
-      geom_point(aes(y = !!y2 * scale_factor),
-                 color = 'black',
-                 size = 2) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       scale_y_continuous(name = ylab, 
@@ -1225,9 +1226,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       labs(x = '',
            title = paste0(species, ' ', longform, coast_text)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            axis.title = element_text(size = 15))
+      theme(axis.text = element_text(size = axis_value_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
+            axis.title = element_text(size = axis_title_size))
   } else if (plot_format == 'RATIO') {
     # plot of RATIO
     # RATIO is a line chart, so we need a column to group by
@@ -1244,17 +1247,17 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       geom_line(aes(group = GROUP),
                 color = 'black',
                 linewidth = 1.5) +
-      geom_point(color = 'black',
-                 size = 2) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       labs(x = '', 
            y = 'Export / Import',
            title = paste0('Volume Ratio of ', species, coast_text)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            plot.title = element_text(size = 18),
-            axis.title = element_text(size = 15))
+      theme(axis.text = element_text(size = axis_value_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
+            axis.title = element_text(size = axis_title_size))
   } else {
     if (!(coast %in% c('', 'ALL'))) {
       coast_text <- paste0(' traded in the ', coast)
@@ -1266,8 +1269,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                  y = VALUE_MILLIONS)) +
       geom_bar(aes(fill = TRADE),
                stat = 'identity',
-               position = 'dodge',
-               color = 'black') +
+               position = 'dodge') +
       labs(x = '',
            # y = 'Billions (Real 2024 USD)',
            y = 'Millions (Real 2024 USD)',
@@ -1282,12 +1284,14 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       theme(legend.position = 'top',
             axis.line.y = element_line(color = 'black'),
             axis.text.x = element_text(hjust = 0.8,
-                                       size = 12),
-            axis.text.y = element_text(size = 12),
+                                       size = axis_value_size),
+            axis.text.y = element_text(size = axis_value_size),
             axis.title.y = element_text(vjust = 23,
-                                        size = 15),
+                                        size = axis_title_size),
             legend.text = element_text(size = 15),
-            plot.title = element_text(size = 18),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'),
             plot.background = element_rect(fill = 'white',
                                            color = 'white'),
             panel.grid = element_blank(),
@@ -1319,8 +1323,7 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
          aes(x = factor(gsub(' ', '\n', str_to_title(COUNTRY_NAME))),
              y = NET_VALUE_MILLIONS, 
              fill = factor(YEAR))) +
-    geom_col(position = 'dodge',
-             color = 'black') +
+    geom_col(position = 'dodge') +
     scale_fill_manual(values = top5_colors) +
     labs(x = '',
          y = ylab,
@@ -1330,11 +1333,13 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
     scale_y_continuous(labels = label_currency(suffix = 'M')) +
     theme_bw() +
     geom_hline(yintercept = 0, 'black') +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
           legend.title = element_text(size = 15),
           legend.text = element_text(size = 12),
-          plot.title = element_text(size = 18))
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
 }
 plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL, species, nominal = F) {
   # function that plots processed product data 
@@ -1425,8 +1430,6 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                        color = PRODUCT_FORM)) +
       geom_line(aes(group = PRODUCT_FORM),
                 linewidth = 1.5) +
-      geom_point(color = 'black',
-                 size = 1.5) +
       scale_color_manual(values = pp_colors,
                          name = 'Product Condition') +
       labs(x = '',
@@ -1438,11 +1441,13 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                          expand = c(0, 0),
                          labels = label) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
             legend.text = element_text(size = 12),
             legend.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
     
     return(plot)
   }
@@ -1463,8 +1468,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                  aes(x = factor(YEAR),
                      y = !!y,
                      fill = PRODUCT_FORM)) +
-    geom_col(position = 'stack',
-             color = 'black') +
+    geom_col(position = 'stack') +
     scale_fill_manual(values = pp_colors,
                       name = 'Product Condition') +
     labs(x = '',
@@ -1476,11 +1480,13 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
                        expand = c(0, 0),
                        labels = label) +
     theme_bw() +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
           legend.text = element_text(size = 12),
           legend.title = element_text(size = 15),
-          plot.title = element_text(size = 18))
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
   
   return(plot)
 }
@@ -1561,15 +1567,11 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
       ggplot(data = data,
              aes(x = factor(YEAR))) +
       geom_col(aes(y = COM_VALUE_MILLIONS),
-               fill = landings_colors[1],
-               color = 'black') +
+               fill = landings_colors[1]) +
       geom_line(aes(y = COM_PRICE * scale_factor,
                     group = GROUP),
                 color = landings_colors[2],
                 linewidth = 1.5) +
-      geom_point(aes(y = COM_PRICE * scale_factor),
-                 color = 'black',
-                 size = 2) +
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2023)) +
       scale_y_continuous(name = ylab, 
@@ -1579,9 +1581,11 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
       labs(x = '',
            title = paste0(coast_text, tlab, species)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
     
     return(plot)
   }
@@ -1591,8 +1595,7 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
     ggplot(data = data,
            aes(x = factor(YEAR),
                y = COM_VOLUME_T)) +
-    geom_col(color = 'black',
-             fill = landings_colors[1]) +
+    geom_col(fill = landings_colors[1]) +
     scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                      limits = factor(2004:2023)) +
     scale_y_continuous(labels = label) +
@@ -1600,9 +1603,11 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
          y = ylab,
          title = paste0(coast_text, tlab, species)) +
     theme_bw() +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
-          plot.title = element_text(size = 18))
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
   
   return(plot)
 }
@@ -1649,9 +1654,11 @@ plot_mlti <- function(mlti_data, coast, exports = F, imports = F, species) {
          color = '',
          shape = '') +
     theme_bw() +
-    theme(axis.text = element_text(size = 15),
-          axis.title.y = element_text(size = 18),
-          plot.title = element_text(size = 20),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title.y = element_text(size = axis_title_size),
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'),
           strip.text = element_text(size = 15,
                                     color = 'white'),
           legend.text = element_text(size = 15),
@@ -1683,8 +1690,6 @@ plot_hi <- function(hi_data, coast, species) {
     geom_line(aes(group = name, 
                   colour = name),
               linewidth = 1.5) +
-    geom_point(size = 2,
-               color = 'black') +
     scale_color_discrete(name = NULL, 
                          type = c(export_color, import_color)) +
     labs(x = '',
@@ -1692,13 +1697,17 @@ plot_hi <- function(hi_data, coast, species) {
          title = paste0('Herfindahl Index of \n', species, coast_text)) +
     scale_x_discrete(breaks = seq(2006, 2022, by = 4)) +
     theme_bw() +
-    theme(axis.text = element_text(size = 12),
-          axis.title = element_text(size = 15),
+    theme(axis.text = element_text(size = axis_value_size),
+          axis.title = element_text(size = axis_title_size),
           legend.text = element_text(size = 15),
           legend.position = 'inside',
           legend.position.inside = c(0.87, 0.93),
-          legend.box.background = element_rect(color = 'black', linetype = 'solid', linewidth = 1),
-          plot.title = element_text(size = 16))
+          legend.box.background = element_rect(color = 'black', 
+                                               linetype = 'solid', 
+                                               linewidth = 1),
+          plot.title = element_text(size = plot_title_size,
+                                    color = plot_title_color,
+                                    face = 'bold'))
   
 }
 plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, species) {
@@ -1730,17 +1739,18 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                filter(YEAR < 2024),
              aes(x = factor(YEAR),
                  y = APPARENT_SUPPLY)) +
-      geom_col(color = 'black',
-               fill = c(supply_color)) +
+      geom_col(fill = c(supply_color)) +
       labs(x = '',
            y = ylab,
            title = paste0('Apparent Supply of \n', species, coast_text)) +
       scale_x_discrete(limits = factor(c(2004:2023)),
                        breaks = seq(2006, 2022, by = 4)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
   }
   
   if (metric == 'RATIO') {
@@ -1750,8 +1760,6 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
              aes(x = factor(YEAR),
                  y = APPARENT_SUPPLY_REL_US_PROD,
                  group = SPECIES)) +
-      geom_point(color = 'black', 
-                 size = 3) +
       geom_line(color = 'black',
                 linewidth = 1) +
       labs(x = '',
@@ -1761,9 +1769,11 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
       scale_x_discrete(limits = factor(c(2004:2023)),
                        breaks = seq(2006, 2022, by = 4)) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
   }
   
   if (metric == 'SHARE') {
@@ -1772,8 +1782,7 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                filter(YEAR < 2024),
              aes(x = factor(YEAR),
                  y = UNEXPORTED_US_PROD_REL_APPARENT_SUPPLY)) +
-      geom_col(color = 'black',
-               fill = share_color) +
+      geom_col(fill = share_color) +
       labs(x = '',
            y = 'Share of Apparent Supply',
            title = paste0('Unexported Domestic \nProduction Relative \nto Apparent Supply of \n', 
@@ -1782,16 +1791,18 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                        breaks = seq(2006, 2022, by = 4)) +
       scale_y_continuous(labels = label_percent()) +
       theme_bw() +
-      theme(axis.text = element_text(size = 12),
-            axis.title = element_text(size = 15),
-            plot.title = element_text(size = 18))
+      theme(axis.text = element_text(size = axis_value_size),
+            axis.title = element_text(size = axis_title_size),
+            plot.title = element_text(size = plot_title_size,
+                                      color = plot_title_color,
+                                      face = 'bold'))
   }
   
   return(plot)
 }
 
 # tooltip function
-tooltip_line_icon <- function(line, point) {
+tooltip_line_icon <- function(line, point, mlti = F) {
   # Create temporary PNG
   temp_png <- tempfile(fileext = '.png')
   
@@ -1803,8 +1814,10 @@ tooltip_line_icon <- function(line, point) {
   # Draw the line (color specific)
   lines(c(0.1, 0.9), c(0.5, 0.5), col = line, lwd = 4)
   
-  # Draw point (shape specific)
-  points(0.5, 0.5, pch = point, col = 'black', cex = 1.5)
+  # Draw point (shape specific - only for mlti)
+  if (mlti == T) {
+    points(0.5, 0.5, pch = point, col = 'black', cex = 1.5) 
+  }
   
   dev.off()
   
@@ -1858,30 +1871,35 @@ names(pp_colors) <- levels(factor(levels = c(
 mlti_colors <- c('#A6D4EC', '#54ADDB', '#B3EDEF', '#6DDBE1', '#005761')
 # App --------------------------------------------------------------------------
 # Define UI --------------------------------------------------------------------
-ui <- page_sidebar(
-  # custom CSS for wider tooltips
+ui <- page_fluid(
+  # add link to CSS sheet
   tags$head(
-    tags$style(HTML("
-                    .tooltip-inner {
-                    max-width: 600px !important;
-                    width: auto !important;
-                    font-size: 16px !important;
-                    background-color: #283A38 !important;
-                    }")),
-    tags$style(HTML("g.hovertext > path {opacity: .9;}")),
-    tags$style(HTML(".color-swatch {
-                      display: inline-block;
-                      width: 18px;
-                      height: 15px; 
-                      border: 1px solid #000; 
-                      border-radius: 3px;
-                      vertical-align: middle;
-                      margin-right: 8px;
-                    }"))
+    tags$link(rel = 'stylesheet', type = 'text/css', href = 'style.css')
   ),
   
+  # Banner
+  div(id = 'banner',
+      
+      # Image
+      div(
+        style = 'flex-shrink: 0;',
+        img(src = 'NOAA_FISHERIES_logoH.png',
+            align = 'left',
+            style = 'max-width: 300px; max-height: 300px; width: auto; height: auto;'
+        )
+      ),
+      
+      # Text
+      div(
+        style = 'flex: 1; text-align: left; margin-left: 100px;',
+        h1('HMS Seafood Dashboard'),
+        
+        p('A Tool to Investigate 20 Years of U.S. Fisheries Data for Highly Migratory Species')
+      )),
+  page_sidebar(
   sidebar = sidebar(
-    title = 'Species Selection',
+    width = 350,
+    title = h2(br(), 'Species Selection'),
     actionButton('reset_button', 'Reset All Filters',
                  class = 'btn-warning',
                  style = 'margin-bottom: 15px; width: 100%'),
@@ -1898,14 +1916,14 @@ ui <- page_sidebar(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     selectizeInput(inputId = 'coast',
-                   label = 'Alternatively, select a Coast',
+                   label = h4('Alternatively, select a Coast'),
                    choices = c('', 'West Coast + Alaska', 'Atlantic', 
                                'Pacific Islands', 'Gulf + Territories'),
                    options = list(
                      placeholder = 'Type here...'
                    )),
-    input_switch('units', 'Imperial Units'),
-    input_switch('nominal', 'Nominal Values'),
+    input_switch('units', h4('Imperial Units')),
+    input_switch('nominal', h4('Nominal Values')),
     uiOutput('trade_unfilter_button'),
     uiOutput('product_unfilter_button'),
     uiOutput('landings_unfilter_button'),
@@ -1917,47 +1935,17 @@ ui <- page_sidebar(
                    'Download raw processed products data')
   ),
   
-  # Banner
-  div(
-    style = 'background: linear-gradient(155deg, #001743 0%, #0085CA 100%);
-             color: white;
-             padding: 30px 20px;
-             margin-bottom: 10px;
-             min-width: 800px;
-             border-radius: 10px;
-             align-items: center;
-             text-align: left;
-             display: flex;
-             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);',
-    
-    # Image
-    div(
-      style = 'flex-shrink: 0;',
-      img(src = 'NOAA_FISHERIES_H.png',
-          align = 'left',
-          style = 'width: 200px; height: 200px;'
-      )
-    ),
-    
-    # Text
-    div(
-      style = 'flex: 1; text-align: left;',
-      h1('NOAA Fisheries HMS Seafood Dashboard',
-         style = 'font-family: "Gill Sans MT", sans-serif; font-size: clamp(2.5rem, 4vw, 4.5rem); margin-bottom: 0px;'),
-      
-      p('Investigate 20 Years of U.S. Fisheries Data for Highly Migratory Species',
-        style = 'font-family: "Gill Sans MT", sans-serif; font-size: clamp(1.5rem, 2.6vw, 2.6rem); margin-top: 0px; margin-bottom: 0px; opacity: 0.9;')
-    )),
+  
   page_fluid(
     navset_tab(
       nav_panel(
-        title = 'The Dashboard',
+        title = 'Dashboard',
         icon = bsicons::bs_icon("layout-wtf"),
         fluidRow(
           div(
-            style = 'border: 3px solid #005761; border-radius: 12px;
+            style = 'border-radius: 12px;
                min-width: 800px; width: 100%; display: flex; flex-direction: column;',
-            navset_card_pill(title = 'Trade',
+            navset_card_pill(title = h3('Trade'),
                              nav_panel(title = 'Market Summary',
                                        div(
                                          style = "position: relative; min-width: 1200px;",
@@ -1969,7 +1957,7 @@ ui <- page_sidebar(
                                          # textOutput('balance_tooltip'),
                                          uiOutput('balance_click_overlay'),
                                          div(
-                                           style = "position: absolute; top: 0px; left: 5px",
+                                           id = 'info-circle',
                                            tooltip(
                                              icon("info-circle"),
                                              "Trade balance reflects the net value of product traded between the U.S. and all trading partners. Balance values in the negative indicate more product is imported than exported. Balance values in the positive indicate more product is exported than imported."
@@ -1986,7 +1974,7 @@ ui <- page_sidebar(
                                            # textOutput('ratio_tooltip'),
                                            uiOutput('ratio_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The ratio of the volume of exported product to the volume of imported product. Values less than one indicate a greater volume of product is imported than exported. Values greater than one indicate a greater volume of product is exported than imported."
@@ -2001,7 +1989,7 @@ ui <- page_sidebar(
                                            # textOutput('top5_tooltip'),
                                            uiOutput('top5_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Trade balance reflects the net value of product traded between the U.S. and the given trading partner. The top 5 countries displayed are those with the greatest sum of value traded (exports + imports). Balance values in the negative indicate more product is imported than exported. Balance values in the positive indicate more product is exported than imported. Countries display in alphabetical order."
@@ -2021,7 +2009,7 @@ ui <- page_sidebar(
                                            # textOutput('expval_tooltip'),
                                            uiOutput("exp_value_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Export value reflects the total value of product traded out of the U.S. into other countries. The left y-axis reflects the total value of exports and applies to the bars. The right y-axis reflects the average price of exported product per kilogram or pound and applies to the line and points."
@@ -2036,7 +2024,7 @@ ui <- page_sidebar(
                                            # textOutput('impval_tooltip'),
                                            uiOutput("imp_value_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."
@@ -2056,7 +2044,7 @@ ui <- page_sidebar(
                                            # textOutput('expvol_tooltip'),
                                            uiOutput("exp_volume_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Export volume reflects the total volume of product traded out of the U.S. into other countries."
@@ -2071,7 +2059,7 @@ ui <- page_sidebar(
                                            # textOutput('impvol_tooltip')
                                            uiOutput('imp_volume_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Import volume reflects the total volume of product traded into the U.S. from other countries."
@@ -2093,7 +2081,7 @@ ui <- page_sidebar(
                                            # textOutput('expmlti_tooltip'),
                                            uiOutput('exp_mlti_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The multilateral trade index (MLTI) measures relative densities of exported product volumes to individual nations. The index subsets the top five trading partners by total export value over the time period. The base of the index is the export value of the country with the third most cumulative export value (middle of the top five selected countries) in the initial year of the time period (MLTI = 1 for the base country in the base year). MLTI above 1 reflects a greater density of traded volume than the base. MLTI below 1 reflects a lower density of traded volume than the base."
@@ -2108,7 +2096,7 @@ ui <- page_sidebar(
                                              type = 7),
                                            uiOutput('imp_mlti_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The multilateral trade index (MLTI) measures relative densities of imported product volumes from individual nations. The index subsets the top five trading partners by total import value over the time period. The base of the index is the import value of the country with the third most cumulative import value (middle of the top five selected countries) in the initial year of the time period (MLTI = 1 for the base country in the base year). MLTI above 1 reflects a greater density of traded volume than the base. MLTI below 1 reflects a lower density of traded volume than the base."
@@ -2126,7 +2114,7 @@ ui <- page_sidebar(
                                            # textOutput('hi_tooltip'),
                                            uiOutput('hi_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "The Herfindahl index (HI) measures the relative distribution of traded product value (exports and imports individually) among trading partners; it cannot be greater than 1. The HI communicates potential trading dependencies for given products. An HI closer to 1 indicates more trade value concentrated among fewer trading partners. An HI closer to 0 indicates trade value is spread out among more trading partners."
@@ -2141,11 +2129,14 @@ ui <- page_sidebar(
                                            # textOutput('supply_tooltip')
                                            uiOutput("supply_click_overlay"),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Apparent supply indicates the volume of given product available for domestic consumption that relates domestic landings and production with trade."
-                                             ))),
+                                             )))),
+                                       br(),
+                                       div(
+                                         style = 'flex: 1; display: flex; gap: 15px',
                                          div(
                                            style = "position: relative; min-width: 300px; width: 100%",
                                            withSpinner(
@@ -2156,7 +2147,7 @@ ui <- page_sidebar(
                                            # textOutput('supplyratio_tooltip')
                                            uiOutput('supply_ratio_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Apparent supply relative to domestic production reflects the ratio of apparent supply to domestic production (processed products) volume. Ratios greater than 1 indicate the U.S. must import product to meet domestic demand. Ratios less than 1 indicate the U.S. produces more of the product than is domestically available."
@@ -2171,7 +2162,7 @@ ui <- page_sidebar(
                                            # textOutput('supplyshare_tooltip')
                                            uiOutput('supply_share_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Unexported domestic production relative to apparently supply reflects the share of apparent supply that derives from retained processed products (i.e., processed product volume less export volume). High percentages indicate most apparent supply is domestically produced and retained. Low percentages indicate most apparent supply is due to imports."
@@ -2182,9 +2173,9 @@ ui <- page_sidebar(
         fluidRow(
           div(style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
               div(
-                style = 'border: 3px solid #234515; border-radius: 12px;
+                style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-                navset_card_pill(title = 'Commercial Landings',
+                navset_card_pill(title = h3('Commercial Landings'),
                                  nav_panel(title = 'Value',
                                            div(
                                              style = "position: relative; min-width: 600px; width: 100%",
@@ -2196,7 +2187,7 @@ ui <- page_sidebar(
                                              # textOutput('comvalue_tooltip')
                                              uiOutput('landings_value_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
@@ -2214,7 +2205,7 @@ ui <- page_sidebar(
                                              # textOutput('comvolume_tooltip')
                                              uiOutput('landings_volume_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
@@ -2222,9 +2213,9 @@ ui <- page_sidebar(
                                            downloadButton('download_landings_page2',
                                                           'Download this plot and the data')))),
               div(
-                style = 'border: 3px solid #681617; border-radius: 12px;
+                style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-                navset_card_pill(title = 'Processed Products',
+                navset_card_pill(title = h3('Processed Products'),
                                  nav_panel(title = 'Value',
                                            div(
                                              style = "position: relative; min-width: 600px; width: 100%",
@@ -2236,7 +2227,7 @@ ui <- page_sidebar(
                                              # textOutput('ppvalue_tooltip')
                                              uiOutput('pp_value_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2254,7 +2245,7 @@ ui <- page_sidebar(
                                              # textOutput('ppvolume_tooltip')
                                              uiOutput('pp_volume_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2272,7 +2263,7 @@ ui <- page_sidebar(
                                              # textOutput('ppprice_tooltip')
                                              uiOutput('pp_price_click_overlay'),
                                              div(
-                                               style = "position: absolute; top: 0px; left: 5px",
+                                               id = 'info-circle',
                                                tooltip(
                                                  icon("info-circle"),
                                                  "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2309,9 +2300,9 @@ ui <- page_sidebar(
         icon = bsicons::bs_icon("tsunami"),
         fluidRow(
           div(
-            style = 'border: 3px solid #005761; border-radius: 12px;
+            style = 'border-radius: 12px;
                min-width: 800px; width: 100%; display: flex; flex-direction: column;',
-            navset_card_pill(title = 'Trade',
+            navset_card_pill(title = h3('Trade'),
                              nav_panel(title = 'Value',
                                        div(
                                          style = "position: relative; min-width: 1200px;",
@@ -2323,7 +2314,7 @@ ui <- page_sidebar(
                                          # textOutput('balance_tooltip'),
                                          uiOutput('exp_coast_value_click_overlay'),
                                          div(
-                                           style = "position: absolute; top: 0px; left: 5px",
+                                           id = 'info-circle',
                                            tooltip(
                                              icon("info-circle"),
                                              "Export value reflects the total value of product traded out of the U.S. into other countries. The left y-axis reflects the total value of exports and applies to the bars. The right y-axis reflects the average price of exported product per kilogram or pound and applies to the line and points."))),
@@ -2337,7 +2328,7 @@ ui <- page_sidebar(
                                          # textOutput('balance_tooltip'),
                                          uiOutput('imp_coast_value_click_overlay'),
                                          div(
-                                           style = "position: absolute; top: 0px; left: 5px",
+                                           id = 'info-circle',
                                            tooltip(
                                              icon("info-circle"),
                                              "Import value reflects the total value of product traded into the U.S. from other countries. The left y-axis reflects the total value of imports and applies to the bars. The right y-axis reflects the average price of imported product per kilogram or pound and applies to the line and points."))),
@@ -2352,7 +2343,7 @@ ui <- page_sidebar(
                                                       height = '400px', width = '100%'),
                                            type = 7),
                                          uiOutput('exp_coast_volume_click_overlay'),
-                                         div(style = 'position: absolute; top: 0px; left: 5px',
+                                         div(id = 'info-circle',
                                              tooltip(
                                                icon('info-circle'),
                                                'Export volume reflects the total volume of product traded out of the U.S. into other countries.'))),
@@ -2365,7 +2356,7 @@ ui <- page_sidebar(
                                            type = 7),
                                          uiOutput('imp_coast_volume_click_overlay'),
                                          div(
-                                           style = 'position: absolute; top: 0px; left: 5px',
+                                           id = 'info-circle',
                                            tooltip(
                                              icon('info-circle'),
                                              'Import volume reflects the total volume of product traded into the U.S. from other countries.'))),
@@ -2376,9 +2367,9 @@ ui <- page_sidebar(
           div(
             style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
             div(
-              style = 'border: 3px solid #234515; border-radius: 12px;
+              style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-              navset_card_pill(title = 'Commercial Landings',
+              navset_card_pill(title = h3('Commercial Landings'),
                                nav_panel(title = 'Value',
                                          div(
                                            style = "position: relative; min-width: 600px; width: 100%",
@@ -2390,7 +2381,7 @@ ui <- page_sidebar(
                                            # textOutput('comvalue_tooltip')
                                            uiOutput('coast_landings_value_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Ex-vessel value reflects the amount paid to fishers for raw product (i.e., landed catch) in the U.S. The left y-axis reflects the total value of landed catch and applies to the bars. The right y-axis reflects the average price of landed catch per kilogram or pound and applies to the line and points."
@@ -2408,7 +2399,7 @@ ui <- page_sidebar(
                                            # textOutput('comvolume_tooltip')
                                            uiOutput('coast_landings_volume_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Ex-vessel volume reflects the weight of raw product landed by fishers in the U.S."
@@ -2416,9 +2407,9 @@ ui <- page_sidebar(
                                          downloadButton('download_coast_landings_page2',
                                                         'Download this plot and the data')))),
             div(
-              style = 'border: 3px solid #681617; border-radius: 12px;
+              style = 'border-radius: 12px;
                  min-width: 400px; width: 100%; display: flex; flex-direction: column;',
-              navset_card_pill(title = 'Processed Products',
+              navset_card_pill(title = h3('Processed Products'),
                                nav_panel(title = 'Value',
                                          div(
                                            style = "position: relative; min-width: 600px; width: 100%",
@@ -2430,7 +2421,7 @@ ui <- page_sidebar(
                                            # textOutput('ppvalue_tooltip')
                                            uiOutput('coast_pp_value_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2448,7 +2439,7 @@ ui <- page_sidebar(
                                            # textOutput('ppvolume_tooltip')
                                            uiOutput('coast_pp_volume_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2466,7 +2457,7 @@ ui <- page_sidebar(
                                            # textOutput('ppprice_tooltip')
                                            uiOutput('coast_pp_price_click_overlay'),
                                            div(
-                                             style = "position: absolute; top: 0px; left: 5px",
+                                             id = 'info-circle',
                                              tooltip(
                                                icon("info-circle"),
                                                "Processed products are divided by the condition of their processing (i.e., canned, fillets, surimi, etc.). The category Other* includes conditions marked as 'Other' as well as those that comprise 2% or less of total processed product value."
@@ -2475,7 +2466,7 @@ ui <- page_sidebar(
                                                         'Download this plot and the data'))))))
         ))
         
-      ))
+      )))
 
 
 # Define server logic ----------------------------------------------------------
@@ -3030,7 +3021,7 @@ server <- function(input, output, session) {
                                    pull())))
     
     selectizeInput('search_term', 
-                   'Search for a Species',
+                   h4('Search for a Species'),
                    species_list,
                    options = list(
                      placeholder = 'Type here...'
@@ -3074,9 +3065,9 @@ server <- function(input, output, session) {
                         pull())
     
     if (input$search_term == '') {
-      selectInput('species_cat', 'Choose a Category', species_cats)
+      selectInput('species_cat', h4('Choose a Category'), species_cats)
     } else {
-      selectInput('species_cat', 'Choose a Category', species_cats,
+      selectInput('species_cat', h4('Choose a Category'), species_cats,
                   selected = search_cats()[3])
     }
   })
@@ -3101,9 +3092,9 @@ server <- function(input, output, session) {
                           pull())
     
     if (input$search_term == '') {
-      selectInput('species_grp', 'Choose a Group', species_groups)
+      selectInput('species_grp', h4('Choose a Group'), species_groups)
     } else {
-      selectInput('species_grp', 'Choose a Group', species_groups,
+      selectInput('species_grp', h4('Choose a Group'), species_groups,
                   selected = search_cats()[2])
     }
   })
@@ -3129,9 +3120,9 @@ server <- function(input, output, session) {
                          mutate(SPECIES_NAME = str_to_title(SPECIES_NAME)) %>%
                          pull())
     if (input$search_term == '') {
-      selectInput('species_name', 'Choose a Species', species_names)
+      selectInput('species_name', h4('Choose a Species'), species_names)
     } else {
-      selectInput('species_name', 'Choose a Species', species_names,
+      selectInput('species_name', h4('Choose a Species'), species_names,
                   selected = search_cats()[1])
     }
   })
@@ -4662,11 +4653,11 @@ server <- function(input, output, session) {
     new_mlti_colors <- mlti_colors
     names(new_mlti_colors) <- c(countries)
     # create all 5 icons
-    icon_1 <- tooltip_line_icon(new_mlti_colors[1], point_shapes[1])
-    icon_2 <- tooltip_line_icon(new_mlti_colors[2], point_shapes[2])
-    icon_3 <- tooltip_line_icon(new_mlti_colors[3], point_shapes[3])
-    icon_4 <- tooltip_line_icon(new_mlti_colors[4], point_shapes[4])
-    icon_5 <- tooltip_line_icon(new_mlti_colors[5], point_shapes[5])
+    icon_1 <- tooltip_line_icon(new_mlti_colors[1], point_shapes[1], mlti = T)
+    icon_2 <- tooltip_line_icon(new_mlti_colors[2], point_shapes[2], mlti = T)
+    icon_3 <- tooltip_line_icon(new_mlti_colors[3], point_shapes[3], mlti = T)
+    icon_4 <- tooltip_line_icon(new_mlti_colors[4], point_shapes[4], mlti = T)
+    icon_5 <- tooltip_line_icon(new_mlti_colors[5], point_shapes[5], mlti = T)
     
     # Position tooltip near clicked point
     left_pos <- click_info$coords_css$x + 10 # Offset to right of point
@@ -4754,11 +4745,11 @@ server <- function(input, output, session) {
     new_mlti_colors <- mlti_colors
     names(new_mlti_colors) <- c(countries)
     
-    icon_1 <- tooltip_line_icon(new_mlti_colors[1], point_shapes[1])
-    icon_2 <- tooltip_line_icon(new_mlti_colors[2], point_shapes[2])
-    icon_3 <- tooltip_line_icon(new_mlti_colors[3], point_shapes[3])
-    icon_4 <- tooltip_line_icon(new_mlti_colors[4], point_shapes[4])
-    icon_5 <- tooltip_line_icon(new_mlti_colors[5], point_shapes[5])
+    icon_1 <- tooltip_line_icon(new_mlti_colors[1], point_shapes[1], mlti = T)
+    icon_2 <- tooltip_line_icon(new_mlti_colors[2], point_shapes[2], mlti = T)
+    icon_3 <- tooltip_line_icon(new_mlti_colors[3], point_shapes[3], mlti = T)
+    icon_4 <- tooltip_line_icon(new_mlti_colors[4], point_shapes[4], mlti = T)
+    icon_5 <- tooltip_line_icon(new_mlti_colors[5], point_shapes[5], mlti = T)
     
     
     left_pos <- click_info$coords_css$x + 10 # Offset to right of point
@@ -4804,7 +4795,8 @@ server <- function(input, output, session) {
   observeEvent(input$hi_plot_click, {
     click_x <- input$hi_plot_click$x
     
-    hi_data <- calculate_hi(species_selection_trade(), nominal = selected_value())
+    hi_data <- calculate_hi(species_selection_trade(), input$coast, 
+                            nominal = selected_value())
     
     year_levels <- levels(factor(sort(unique(hi_data$YEAR))))
     clicked_year <- round(click_x)
