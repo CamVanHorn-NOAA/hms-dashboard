@@ -7,30 +7,30 @@ h1 {
 }
 
 h2 {
-  font-family: 'Calibri';
+  font-family: 'Arial';
   font-size: 28px;
   font-weight: bold;
 }
 
 h3 {
-  font-family: 'Calibri';
+  font-family: 'Arial';
   font-size: 26px;
   font-weight: bold;
 }
 
 h5 {
-  font-family: 'Calibri';
+  font-family: 'Arial';
   font-size: 25px;
   font-variant: small-caps;
 }
 
 p {
-  font-family: 'Calibri';
+  font-family: 'Arial';
   font-size: 22px;
 }
 
 dt {
-  font-family: 'Calibri';
+  font-family: 'Arial';
   font-size: 24px;
   font-weight: bold;
 }
