@@ -1939,7 +1939,7 @@ ui <- page_fluid(
   page_fluid(
     navset_tab(
       nav_panel(
-        title = 'The Dashboard',
+        title = 'Dashboard',
         icon = bsicons::bs_icon("layout-wtf"),
         fluidRow(
           div(
