@@ -5484,7 +5484,7 @@ server <- function(input, output, session) {
   
   output$tutorial <- renderUI({
     tags$iframe(seamless = "seamless",
-                src = "tmpuser/dashboard_intro.html",
+                src = "tmpuser/how-to-dashboard.html",
                 height = 800)
   })
   
