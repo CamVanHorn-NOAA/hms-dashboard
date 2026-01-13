@@ -3212,7 +3212,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "eb2db4f8790730dec8ad35e847d23fff"
+      "checksum": "6219e039447e264f213053bed09bc492"
     },
     "dashboard_calc_metrics.html": {
       "checksum": "f14325dfecdc19db81d3b51ec929fe28"
@@ -3589,6 +3589,45 @@
     "hms_data_munge_11_06_25.RData": {
       "checksum": "0699885593812d0926c783ab6f614274"
     },
+    "how-to-dashboard.html": {
+      "checksum": "216278e17bf10e167cb2cf069004cbcc"
+    },
+    "how-to-dashboard.qmd": {
+      "checksum": "fa9d3522bc030e3b0da6278ca67ec1a6"
+    },
+    "how-to-dashboard_files/libs/bootstrap/bootstrap-icons.css": {
+      "checksum": "3104c106b6c22560ae274d7c56f116c5"
+    },
+    "how-to-dashboard_files/libs/bootstrap/bootstrap-icons.woff": {
+      "checksum": "e4cc83ddcec34db65724eb56c5230b4c"
+    },
+    "how-to-dashboard_files/libs/bootstrap/bootstrap.min.css": {
+      "checksum": "c3d94fc928527d3d5ff9475017cd76ce"
+    },
+    "how-to-dashboard_files/libs/bootstrap/bootstrap.min.js": {
+      "checksum": "7ccd9d390d31af98110f74f842ea9b32"
+    },
+    "how-to-dashboard_files/libs/clipboard/clipboard.min.js": {
+      "checksum": "ad98572d415d2f2452845a6068a913c0"
+    },
+    "how-to-dashboard_files/libs/quarto-html/anchor.min.js": {
+      "checksum": "a58f4bdbf86e8ae057af9131b5b1bcfd"
+    },
+    "how-to-dashboard_files/libs/quarto-html/popper.min.js": {
+      "checksum": "ad6c106f3ba17d5a54d8053a4c4899ca"
+    },
+    "how-to-dashboard_files/libs/quarto-html/quarto-syntax-highlighting.css": {
+      "checksum": "099cd394577c915952e100d918f76f84"
+    },
+    "how-to-dashboard_files/libs/quarto-html/quarto.js": {
+      "checksum": "6c59bad421c4db5cafa70cd49864a5d1"
+    },
+    "how-to-dashboard_files/libs/quarto-html/tippy.css": {
+      "checksum": "ebd6f8ce46a677e1a4f5f8a8317109a9"
+    },
+    "how-to-dashboard_files/libs/quarto-html/tippy.umd.min.js": {
+      "checksum": "d828775275749701b48bd9d958814111"
+    },
     "nmfs_cols.R": {
       "checksum": "3319cae28b424f32a1d67037f1aa005d"
     },
@@ -3599,7 +3638,7 @@
       "checksum": "ec431e0faa51006677ef9ddd85c16f12"
     },
     "www/hms_quarto-style.css": {
-      "checksum": "ff85a7d7f820aa2dede69a03761d324c"
+      "checksum": "291da9a81c9c8f9b048ef45fb8349666"
     },
     "www/hms_style.css": {
       "checksum": "48353a37fb1ded07b8896cdcd8bb2443"
