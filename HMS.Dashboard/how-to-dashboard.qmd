@@ -1,0 +1,38 @@
+---
+title: "How to Use the Dashboard"
+format: html
+editor: visual
+css: www/hms_quarto-style.css
+---
+
+## Getting Started
+
+The NOAA Fisheries Highly Migratory Species Seafood Dashboard is a tool that allows users to investigate up to 20 years of U.S. fisheries data exclusively for highly migratory species. The dashboard divides data into three cards: Trade, Commercial Landings, and Processed Products. These labels are found at the upper left of each card in small-caps, dark blue font.
+
+The dashboard by default displays all available data for highly migratory species seafood traded, landed, and processed in the U.S. Interact with the plots by clicking bars, points, or lines of interest to return details for the data (a tooltip), and simply click the 'x' at the top right to remove the tooltip. Learn more information about the type of plot displayed by hovering the mouse over the light blue info-circle to the upper left of each plot. To keep these plottips on the screen, simply click the info-circle.
+
+There are more plots than those displayed upon starting the dashboard. To view more plots, look to the upper right of each card and find 'Market Summary' or 'Value' encased in a blue box. Click any term to find more plots.
+
+## Selecting a Species
+
+When opening the dashboard, a blue sidebar is present on the left titled 'Species Selection'. The dashboard provides two ways for a user to filter seafood data by species: (1) the user can search for a species of interest; (2) the user can select categories that progressively filter for more unique groups of species. See 'Species Classification' for more information.
+
+(1) To search for a species, simply click the white box below 'Search for a Species' and begin typing. Upon clicking the white box, a drop-down list of available species organized alphabetically will appear. Either click or manually type a species of interest and press enter or return on your keyboard. The dashboard will then update with new plots that display available data for the selected species. Also, notice several boxes appear in the sidebar. Each box corresponds to a level in the species classification hierarchy and is automatically filled with the selection corresponding to the inputted species of interest.
+
+(2) To progressively filter for species groups, navigate to 'Choose a Category' on the blue sidebar and click the white box. By default, the group 'All Species' is selected. Scroll the drop-down list of categories and click one of interest. The dashboard will immediately update to present data for the selected category. In the sidebar, notice a new white box appear titled 'Choose a Group'. Again, click the white box and scroll the drop-down list of categories. The categories available in this Group box depend upon the category selected in the first 'Choose a Category' box. Repeat these steps until the white box titled 'Choose a Species' appears and select a species of interest. Again, each list of options is dependent upon selections made in each preceding category.
+
+## Selecting a Coast
+
+Below the species selection within the sidebar is a white box labeled 'Select a Coast' (see Coastal Consolidation for more information). Click the white box to view a drop-down list of available coasts. When a coast is selected, the dashboard updates to present available fisheries data from that coast; specifically, data will be of seafood traded, landed, or processed within the selected coast.
+
+If a coast is selected, species lists are updated to reflect those available within the selected coast. The inverse is also true.
+
+## Downloading Data and Figures
+
+Users can download all data used in the dashboard as well as all figures generated therein. Download buttons appear in cards and correspond to both the card and the tab in which they lie. For example, clicking the 'Download these plots and their data' button in the Trade card will download (in a zip file) the figures and data used to generate the figures in the Trade card for the selected tab (Value, e.g.). The figures and data downloaded will also update based on the species and coast selected. To download the raw trade, landings, or processed product data, see the sidebar for the corresponding download buttons. Data contained in these sidebar download buttons do not change based on other selections.
+
+## On Unavailable Data
+
+Not all species are consumed equally. While many species are traded, landed, and processed domestically, some, for example, must be imported and thus cannot be landed domestically. This can cause gaps in what the dashboard can visualize based on the species or species group selected by the user.
+
+In the event that a selected species or species group is not available for trade, landings, or processed product figures, a checkbox will appear in the sidebar for the corresponding data group (trade, e.g.). If the box is checked, the dashboard will regenerate figures for the corresponding data group for the last available selected species group. For example, if a user selects Marlin, the dashboard will generate landings figures but no trade or processed product figures. This will cause two checkboxes to appear in the sidebar: one for processed products, and one for trade. By checking either of these boxes, the dashboard will regenerate figures for the corresponding data group for Billfishes, otherwise the last selected species group for which there is data available. 
