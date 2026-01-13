@@ -1917,7 +1917,7 @@ ui <- page_fluid(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     selectizeInput(inputId = 'coast',
-                   label = h4('Alternatively, select a Coast'),
+                   label = h4('Select a Coast'),
                    choices = c('', 'West Coast + Alaska', 'Atlantic', 
                                'Pacific Islands', 'Gulf + Territories'),
                    options = list(
@@ -2278,6 +2278,8 @@ ui <- page_fluid(
         navset_card_pill(
           nav_panel(title = 'Introduction',
                     htmlOutput('intro')),
+          nav_panel(title = 'Tutorial',
+                    htmlOutput('tutorial')),
           nav_panel(title = 'Data Collection',
                     htmlOutput('collection')),
           nav_panel(title = 'Data Sourcing',
@@ -5475,6 +5477,12 @@ server <- function(input, output, session) {
   })
   # Quarto Documents -----------------------------------------------------------
   output$intro <- renderUI({
+    tags$iframe(seamless = "seamless",
+                src = "tmpuser/dashboard_intro.html",
+                height = 800)
+  })
+  
+  output$tutorial <- renderUI({
     tags$iframe(seamless = "seamless",
                 src = "tmpuser/dashboard_intro.html",
                 height = 800)
