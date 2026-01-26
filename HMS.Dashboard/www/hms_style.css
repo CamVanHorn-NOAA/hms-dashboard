@@ -3,8 +3,9 @@
 /* Text formats */
 /* Banner subheader */
 p {
-  font-family: "Arial", sans-serif; 
+  font-family: "Arial Narrow", sans-serif; 
   font-size: clamp(1.8rem, 1.6vw, 2.6rem); 
+  color: #05477D;
   margin-top: -15px; 
   margin-bottom: 0px; 
   opacity: 0.9;
@@ -14,6 +15,7 @@ p {
 h1 {
   font-family: "Cambria", sans-serif;
   font-weight: bold;
+  color: #05477D;
   font-size: clamp(3.9rem, 5vw, 4.5rem); 
   margin-bottom: 0px;
   margin-top: -8px;
@@ -22,43 +24,58 @@ h1 {
 /* Species Selection */
 h2 {
   font-family: "Cambria";
-  text-align: center;
-  color: white;
+  text-align: left;
+  color: #DAEFF8;
   font-size: 35px;
-  font-weight: bold;
-  text-decoration-thickness: 2px;
+  margin-bottom: -8px;
 }
 
 /* Section Headers */
 h3 {
   font-family: "Cambria";
-  font-size: 25px;
+  font-size: 28px;
   font-variant: small-caps;
-  color: #002364;
+  color: #808080;
   font-weight: bold;
-  margin-bottom: 0px;
+  margin-bottom: -30px;
 }
 
 /* Dropdown Headers */
 h4 {
-  font-family: 'Cambria';
+  font-family: 'Arial Narrow';
+  font-weight: bold;
   font-size: 20px;
   color: white; 
   margin-bottom: 0rem;
 }
 
-/* Plot Titles */
+/* Tab Titles */
 h5 {
-  font-family: 'Arial';
-  font-size: 200px; 
-  color: #002364;
+  font-family: 'Arial Narrow';
+  font-size: 19px; 
+  font-weight: bold; 
+  margin-top: 5px;
+  color: #2B70B1;
 }
 
+/* Pill Titles */
+h6 {
+  font-family: 'Arial Narrow';
+  font-size: 18px;
+  margin-bottom: 0rem; 
+}
+
+/* Tab Titles */
+h7 {
+  font-family: 'Arial Narrow';
+  font-weight: bold; 
+  font-size: 19px;
+}
 
 
 /* Checkboxes */
 .shiny-input-container .checkbox label {
-  font-family: 'Arial';
+  font-family: 'Arial Narrow';
   color: white;
   font-size: 18px;
 }
@@ -75,10 +92,9 @@ h5 {
 
 /* Banner */
 #banner {
-  background: linear-gradient(155deg, #C6E6F0 50%, #00559B 100%);
-  color: #002364;
-  padding: 10px 10px;
-  min-width: 800px;
+  background: linear-gradient(155deg, #DAEFF8 50%, #69BBFC 100%);
+  padding: 20px 10px;
+  min-width: 100px;
   align-items: center;
   text-align: left;
   display: flex;
@@ -88,7 +104,7 @@ h5 {
 
 /* Sidebar */
 .bslib-sidebar-layout>.sidebar {
-  background: linear-gradient(130deg, #00559B 100%, #C6E6F0 100%);
+  background: #2B70B1;
 }
 
 .bslib-sidebar-layout>.collapse-toggle>.collapse-icon {
@@ -107,23 +123,23 @@ h5 {
 
 /* Reset Button */
 .btn-warning {
-  font-family: "Arial";
+  font-family: "Arial Narrow";
   font-size: 18px;
   color: white;
-  background: #5EB6D9;
-  border-color: #5EB6D9;
+  background: #05477D;
+  border-color: #05477D;
   border-radius: 200px;
-    --bs-btn-active-bg: #C6E6F0;
-    --bs-btn-active-border-color: black;
-    --bs-btn-active-color: black;
+    --bs-btn-active-bg: #05477D;
+    --bs-btn-active-border-color: #2B70B1;
+    --bs-btn-active-color: white;
     --bs-btn-padding-y: 0.5em;
 }
 
 .btn-warning:hover {
   color: white;
-  background: #5EB6D9;
-  border-color: #5EB6D9;
-  box-shadow: 0px 0px 10px #002364;
+  background: #05477D;
+  border-color: #05477D;
+  box-shadow: 0px 0px 10px #DAEFF8;
 }
 
 .btn-warning:active {
@@ -134,54 +150,81 @@ h5 {
 
 /* Dropdown menus */
 .selectize-input.focus {
+  background: #DAEFF8;
   border-color: #5EB6D9;
   box-shadow: 0px 0px 4px 0.1rem #5EB6D9;
-  font-family: "Arial";
+  font-family: "Arial Narrow";
   font-size: 17px;
+  color: #02233E;
 }
 
 .selectize-input {
-  font-family: "Arial";
+  background: #DAEFF8;
+  font-family: "Arial Narrow";
   font-size: 17px;
+  color: #02233E;
 }
 
 .selectize-dropdown {
-  font-family: "Arial";
+  background: #DAEFF8;
+  font-family: "Arial Narrow";
   font-size: 17px;
+  color: #02233E;
 }
 
 .selectize-input input {
+  background: #DAEFF8;
   font-size: 17px;
+  color: #02233E;
+}
+
+.selectize-input.full {
+  background: #DAEFF8;
+  color: #02233E;
 }
 
 
 
 /* Switches */
 .form-check-input:checked {
-  background-color: #5EB6D9;
-  border-color: #5EB6D9;
+  background-color: #2699FC;
+  border-color: #2699FC;
+}
+
+label.form-check-label {
+  font-family: 'Arial Narrow';
+  font-weight: normal;
+  font-size: 18px;
+  color: white;
+}
+/* Doesn't work */
+.form-group .shiny-input-container {
+  margin-bottom: -15px;
 }
 
 
 
 /* Download Buttons */
 .btn-default.shiny-download-link {
-  font-family: "Cambria";
+  font-family: 'Arial Narrow'; 
+  font-size: 17px;
+  padding-bottom: 10px;
+  padding-left: 20px; 
   background: transparent;
-  border-color: #5EB6D9;
-  color: #5EB6D9;
-  font-weight: bold;
+  border-color: #2699FC;
+  color: white;
+  text-align: left;
 }
 
 .btn-default.shiny-download-link:hover {
   background: #002364 !important;
   border-color: #002364 !important;
-  color: #5EB6D9 !important;
+  color: white !important;
 }
 
 .btn-default.shiny-download-link:active {
-  border-color: #5EB6D9 !important;
-  color: #5EB6D9 !important;
+  border-color: #2699FC !important;
+  color: white !important;
 }
 
 
@@ -193,35 +236,44 @@ h5 {
 }
 /* This makes overlap with nav tabs */
 .bslib-card {
-  border-color: #C6E6F0;
+  border-color: #B6DCF5;
   border-width: 4px;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
-  box-shadow: 0 0 0;
+  box-shadow: 5px 10px 10px 1px #E8E8E8;
   
   margin-top: -30px;
   margin-bottom: 45px;
 }
-
+/* Title Rows of Cards */
+.bslib-navs-card-title {
+  margin-top: -25px;
+  padding-bottom: 11px;
+}
 
 
 /* Nav Tabs */
 .nav-tabs .nav-link.active, .nav-tabs>li>a.active {
-  font-family: 'Cambria';
+  font-family: 'Arial Narrow';
   font-weight: bold;
   font-size: 19px;
   color: #002364;
-  background: transparent;
-  border-color: #C6E6F0;
+  background: #B6DCF5;
+  border-color: #B6DCF5;
   border-width: 4px;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   transition: border-color 0.15s ease-in-out;
-  padding-bottom: 30px;
+  padding-top: 2px;
+  padding-right: 21px;
+  padding-left: 21px;
+  padding-bottom: 28px;
+  margin-bottom: -5px;
+  margin-top: 23px;
 }
 
 .nav-tabs .nav-link, .nav-tabs>li>a {
-  font-family: 'Cambria';
+  font-family: 'Arial Narrow';
   font-weight: bold; 
   font-size: 19px; 
   color: #002364;
@@ -231,51 +283,74 @@ h5 {
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   transition: border-color 0.15s ease-in-out;
-  padding-bottom: 30px;
+  padding-top: 2px;
+  padding-right: 21px;
+  padding-left: 21px;
+  padding-bottom: 28px;
+  margin-bottom: -5px;
+  margin-top: 23px;
 }
 
 .nav-tabs .nav-link:hover, .nav-tabs>li>a:hover {
-  font-family: 'Cambria';
+  font-family: 'Arial Narrow';
   font-weight: bold;
   font-size: 19px;
-  border-color: #C6E6F0;
+  border-color: #B6DCF5;
   border-width: 4px;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   transition: border-color 0.15s ease-in-out;
-  padding-bottom: 30px;
+  padding-top: 2px;
+  padding-right: 21px;
+  padding-left: 21px;
+  padding-bottom: 28px;
+  margin-bottom: -5px;
+  margin-top: 23px;
 }
 
 .nav-link, .nav-tabs>li>a {
   transition: border-color 0.15s ease-in-out;
-  border-color: #C6E6F0;
-  padding-bottom: 30px;
+  border-color: #B6DCF5;
+  padding-top: 2px;
+  padding-right: 21px;
+  padding-left: 21px;
+  padding-bottom: 28px;
+  margin-bottom: -5px;
+  margin-top: 23px;
 }
+
+
 
 
 
 /* Nav Pills */
 .nav-pills .nav-link {
-  color: #002364;
+  color: #2699FC;
   font-size: 17px;
+  padding-top: 12px; 
+  padding-bottom: 12px;
 }
 
 .nav-pills .nav-link.active {
-  font-family: "Arial";
+  font-family: "Arial Narrow";
   color: #fff;
-  background: #00559B;
+  background: #2B70B1;
   transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+  padding-top: 12px; 
+  padding-bottom: 12px;
 }
 
 .nav-pills {
-  font-family: "Arial";
-  color: #002364;
+  font-family: "Arial Narrow";
+  color: #2699FC;
 }
 
 .nav-pills>li>a:hover {
-  color: #002364;
-  background: #C6E6F0;
+  color: #fff; 
+  background: #B6DCF5;
   transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+  padding-top: 12px; 
+  padding-bottom: 12px;
 }
 
 
@@ -289,7 +364,7 @@ h5 {
 }
 
 .tooltip-inner {
-  font-family: 'Arial';
+  font-family: 'Arial Narrow';
   font-size: 20px;
   color: white;
   max-width: 600px !important;
@@ -321,7 +396,7 @@ g.hovertext > path {opacity: .9;}
 
 
 .form-check-label {
-  font-family: "Tahoma";
+  font-family: "Cambria";
   font-weight: bold;
   cursor: pointer;
 }
@@ -336,6 +411,98 @@ g.hovertext > path {opacity: .9;}
   --bs-nav-link-border-color: transparent
 }
 
+
+
+.dashboard_icon {
+  background: url('graphics_icons/sfd_icon-DB-dk.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.intro_icon {
+  background: url('graphics_icons/sfd_icon-info-dk.png');
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.mktsum_icon {
+  background: url('graphics_icons/sfd_icon-MS-lt.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.val_icon {
+  background: url('graphics_icons/sfd_icon-val-lt.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.vol_icon {
+  background: url('graphics_icons/sfd_icon-vol-lt.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.advmet_icon {
+  background: url('graphics_icons/sfd_icon-AM-lt.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.price_icon {
+  background: url('graphics_icons/sfd_icon-price-lt.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.download_icon {
+  background: url('graphics_icons/sfd_icon-DL-lt.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.download_icon2 {
+  background: url('graphics_icons/sfd_icon-DL-dk.png'); 
+  background-position: left; 
+  background-repeat: no-repeat;
+  height: 32px; 
+  width: 32px; 
+  display: inline-block;
+  vertical-align: middle;
+}
+
 #download_page1, #download_landings_page1, #download_products_page1,
 #download_page2, #download_landings_page2, #download_products_page2,
 #download_page3, #download_products_page3, #download_page4,
@@ -346,5 +513,6 @@ g.hovertext > path {opacity: .9;}
   border-color: #C6E6F0;
   background: #C6E6F0;
   color: #002364;
+  text-align: center; !important
 }
 
