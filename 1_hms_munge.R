@@ -5,7 +5,7 @@ if(!require("tidyverse")) install.packages("tidyverse")
 
 # Load in data -----------------------------------------------------------------
 # load in seafood data
-load('seafood_trade_data_munge_12_23_25.RData')
+load('seafood_trade_data_munge_01_15_26.RData')
 
 # get inflationary index data
   # this will allow values per year to be calculated as inflation-adjusted
