@@ -137,6 +137,8 @@ plot_title_color <- '#002364'
 axis_title_size <- 15
 axis_value_size <- 13
 facet_title_size <- 15
+
+title_font = 'Arial Narrow'
 # Custom Functions -------------------------------------------------------------
 # stop functions without outputting error message
 stop_quietly <- function() {
@@ -1193,6 +1195,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       theme(axis.text = element_text(size = axis_value_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'),
             axis.title = element_text(size = axis_title_size))
   } else if (plot_format == 'VALUE') {
@@ -1230,6 +1233,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       theme(axis.text = element_text(size = axis_value_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'),
             axis.title = element_text(size = axis_title_size))
   } else if (plot_format == 'RATIO') {
@@ -1257,6 +1261,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       theme(axis.text = element_text(size = axis_value_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'),
             axis.title = element_text(size = axis_title_size))
   } else {
@@ -1292,6 +1297,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
             legend.text = element_text(size = 15),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'),
             plot.background = element_rect(fill = 'white',
                                            color = 'white'),
@@ -1340,6 +1346,7 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
           legend.text = element_text(size = 12),
           plot.title = element_text(size = plot_title_size,
                                     color = plot_title_color,
+                                    family = title_font,
                                     face = 'bold'))
 }
 plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL, species, nominal = F) {
@@ -1448,6 +1455,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
             legend.title = element_text(size = 15),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'))
     
     return(plot)
@@ -1487,6 +1495,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
           legend.title = element_text(size = 15),
           plot.title = element_text(size = plot_title_size,
                                     color = plot_title_color,
+                                    family = title_font,
                                     face = 'bold'))
   
   return(plot)
@@ -1586,6 +1595,7 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
             axis.title = element_text(size = axis_title_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'))
     
     return(plot)
@@ -1608,6 +1618,7 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
           axis.title = element_text(size = axis_title_size),
           plot.title = element_text(size = plot_title_size,
                                     color = plot_title_color,
+                                    family = title_font,
                                     face = 'bold'))
   
   return(plot)
@@ -1659,6 +1670,7 @@ plot_mlti <- function(mlti_data, coast, exports = F, imports = F, species) {
           axis.title.y = element_text(size = axis_title_size),
           plot.title = element_text(size = plot_title_size,
                                     color = plot_title_color,
+                                    family = title_font,
                                     face = 'bold'),
           strip.text = element_text(size = 15,
                                     color = 'white'),
@@ -1708,6 +1720,7 @@ plot_hi <- function(hi_data, coast, species) {
                                                linewidth = 1),
           plot.title = element_text(size = plot_title_size,
                                     color = plot_title_color,
+                                    family = title_font,
                                     face = 'bold'))
   
 }
@@ -1751,6 +1764,7 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
             axis.title = element_text(size = axis_title_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'))
   }
   
@@ -1774,6 +1788,7 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
             axis.title = element_text(size = axis_title_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'))
   }
   
@@ -1796,6 +1811,7 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
             axis.title = element_text(size = axis_title_size),
             plot.title = element_text(size = plot_title_size,
                                       color = plot_title_color,
+                                      family = title_font,
                                       face = 'bold'))
   }
   
