@@ -718,7 +718,8 @@ summarize_landings_yr_spp <- function(landings_data, species, coast, full_data =
   } else if (units == 'IMPERIAL') {
     summarized_data <- summarized_data %>%
       mutate(COM_VOLUME = KG * 2.20462, # convert kilgorams to pounds
-             COM_VOLUME_T = COM_VOLUME / 2000) # short tons are 2000 pounds
+             COM_VOLUME_T = COM_VOLUME / 2000) %>% # short tons are 2000 pounds
+      select(!KG)
   }
   
   summarized_data <- summarized_data %>%
@@ -1074,10 +1075,10 @@ calculate_supply_metrics <- function(species, coast, units = NULL, nominal = F) 
     # calculate unexported domestic production relative to apparent supply by
     # dividing the absolute value of the difference of domestic production and
     # export volume by apparent supply
-    mutate(APPARENT_SUPPLY = (PP_VOLUME_T - EXP_ROUND_VOLUME_T) + IMP_ROUND_VOLUME_T,
-           APPARENT_SUPPLY_REL_US_PROD = APPARENT_SUPPLY / PP_VOLUME_T,
+    mutate(APPARENT_SUPPLY = (COM_VOLUME_T - EXP_ROUND_VOLUME_T) + IMP_ROUND_VOLUME_T,
+           APPARENT_SUPPLY_REL_US_PROD = APPARENT_SUPPLY / COM_VOLUME_T,
            UNEXPORTED_US_PROD_REL_APPARENT_SUPPLY = 
-             abs(PP_VOLUME_T - EXP_ROUND_VOLUME_T) / APPARENT_SUPPLY,
+             abs(COM_VOLUME_T - EXP_ROUND_VOLUME_T) / APPARENT_SUPPLY,
            SPECIES = species) 
   
   return(data)
