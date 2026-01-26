@@ -1961,6 +1961,7 @@ ui <- page_fluid(
   
   
   page_fluid(
+    div(style = 'display: flex; min-width: 1500px;'),
     navset_tab(
       nav_panel(
         title = 'Dashboard',
@@ -1968,7 +1969,7 @@ ui <- page_fluid(
         fluidRow(
           div(
             style = 'border-radius: 12px;
-               min-width: 800px; width: 100%; display: flex; flex-direction: column;',
+               min-width: 1500px; width: 100%; display: flex; flex-direction: column;',
             navset_card_pill(title = h3('Trade'),
                              nav_panel(title = 'Market Summary',
                                        div(
