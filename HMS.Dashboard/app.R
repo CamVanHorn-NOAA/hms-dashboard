@@ -5349,7 +5349,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        dollar(filtered_data$PP_VALUE_MILLIONS[i]), " Million <br>")
+        dollar(filtered_data$PP_VALUE_MILLIONS[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), " Million <br>")
       
       pp_val_tooltip <- paste0(pp_val_tooltip, tooltip_color, tooltip_text, tooltip_data)
     }
@@ -5439,7 +5439,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        comma(filtered_data$PP_VOLUME_T[i]), ifelse(selected_units() == 'METRIC',
+        comma(filtered_data$PP_VOLUME_T[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), ifelse(selected_units() == 'METRIC',
                                                     " Metric Tons <br>",
                                                     " Short Tons <br>"))
       
@@ -5531,7 +5531,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        dollar(filtered_data$PP_PRICE[i]), ifelse(selected_units() == 'METRIC',
+        dollar(filtered_data$PP_PRICE[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), ifelse(selected_units() == 'METRIC',
                                                   " per kilogram <br>",
                                                   " per pound <br>"))
       
@@ -6251,7 +6251,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        dollar(filtered_data$PP_VALUE_MILLIONS[i]), " Million <br>")
+        dollar(filtered_data$PP_VALUE_MILLIONS[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), " Million <br>")
       
       coast_pp_val_tooltip <- paste0(coast_pp_val_tooltip, tooltip_color, tooltip_text, tooltip_data)
     }
@@ -6333,7 +6333,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        comma(filtered_data$PP_VOLUME_T[i]), ifelse(selected_units() == 'METRIC',
+        comma(filtered_data$PP_VOLUME_T[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), ifelse(selected_units() == 'METRIC',
                                                     " Metric Tons <br>",
                                                     " Short Tons <br>"))
       
@@ -6413,7 +6413,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        dollar(filtered_data$PP_PRICE[i]), ifelse(selected_units() == 'METRIC',
+        dollar(filtered_data$PP_PRICE[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), ifelse(selected_units() == 'METRIC',
                                                   " per kilogram <br>",
                                                   " per pound <br>"))
       
