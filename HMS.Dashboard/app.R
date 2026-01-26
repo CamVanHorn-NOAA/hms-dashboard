@@ -5333,8 +5333,8 @@ server <- function(input, output, session) {
     # Next, get product forms
     products <- unique(str_to_title(pp_data$PRODUCT_FORM))
     # Subset colors for these products
-    pp_colors <- pp_colors[names(pp_colors) %in% products]
-    pp_colors <- pp_colors[names(pp_colors)]
+    plot_colors <- pp_colors[names(pp_colors) %in% products]
+    plot_colors <- plot_colors[names(plot_colors)]
     
     # extract first year for only one row per product, arrange alphabetically
     filtered_data <- pp_data %>% 
@@ -5343,10 +5343,10 @@ server <- function(input, output, session) {
     # create icons (number will vary)
     # begin with empty vector that will ultimately contain the full HTML code
     pp_val_tooltip <- vector()
-    for (i in 1:length(pp_colors)) {
-      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+    for (i in 1:length(plot_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(plot_colors[i]))
       
-      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
         dollar(filtered_data$PP_VALUE_MILLIONS[i]), " Million <br>")
@@ -5424,8 +5424,8 @@ server <- function(input, output, session) {
     # Next, get product forms
     products <- unique(str_to_title(pp_data$PRODUCT_FORM))
     # Subset colors for these products
-    pp_colors <- pp_colors[names(pp_colors) %in% products]
-    pp_colors <- pp_colors[names(pp_colors)]
+    plot_colors <- pp_colors[names(pp_colors) %in% products]
+    plot_colors <- plot_colors[names(plot_colors)]
     
     filtered_data <- pp_data %>% 
       filter(YEAR == click_info$data$YEAR[1])
@@ -5433,10 +5433,10 @@ server <- function(input, output, session) {
     # create icons (number will vary)
     # begin with empty vector that will ultimately contain the full HTML code
     pp_vol_tooltip <- vector()
-    for (i in 1:length(pp_colors)) {
-      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+    for (i in 1:length(plot_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(plot_colors[i]))
       
-      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
         comma(filtered_data$PP_VOLUME_T[i]), ifelse(selected_units() == 'METRIC',
@@ -5516,8 +5516,8 @@ server <- function(input, output, session) {
     # Next, get product forms
     products <- unique(str_to_title(pp_data$PRODUCT_FORM))
     # Subset colors for these products
-    pp_colors <- pp_colors[names(pp_colors) %in% products]
-    pp_colors <- pp_colors[names(pp_colors)]
+    plot_colors <- pp_colors[names(pp_colors) %in% products]
+    plot_colors <- plot_colors[names(plot_colors)]
     
     filtered_data <- pp_data %>% 
       filter(YEAR == click_info$data$YEAR[1])
@@ -5525,10 +5525,10 @@ server <- function(input, output, session) {
     # create icons (number will vary)
     # begin with empty vector that will ultimately contain the full HTML code
     pp_price_tooltip <- vector()
-    for (i in 1:length(pp_colors)) {
-      tooltip_icon <- paste0(tooltip_line_icon(pp_colors[i], 16))
+    for (i in 1:length(plot_colors)) {
+      tooltip_icon <- paste0(tooltip_line_icon(plot_colors[i], 16))
       
-      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
         dollar(filtered_data$PP_PRICE[i]), ifelse(selected_units() == 'METRIC',
@@ -6234,8 +6234,8 @@ server <- function(input, output, session) {
     # Next, get product forms
     products <- unique(str_to_title(pp_data$PRODUCT_FORM))
     # Subset colors for these products
-    pp_colors <- pp_colors[names(pp_colors) %in% products]
-    pp_colors <- pp_colors[names(pp_colors)]
+    plot_colors <- pp_colors[names(pp_colors) %in% products]
+    plot_colors <- plot_colors[names(plot_colors)]
     
     # extract first year for only one row per product, arrange alphabetically
     filtered_data <- pp_data %>% 
@@ -6245,10 +6245,10 @@ server <- function(input, output, session) {
     # create icons (number will vary)
     # begin with empty vector that will ultimately contain the full HTML code
     coast_pp_val_tooltip <- vector()
-    for (i in 1:length(pp_colors)) {
-      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+    for (i in 1:length(plot_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(plot_colors[i]))
       
-      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
         dollar(filtered_data$PP_VALUE_MILLIONS[i]), " Million <br>")
@@ -6317,8 +6317,8 @@ server <- function(input, output, session) {
     # Next, get product forms
     products <- unique(str_to_title(pp_data$PRODUCT_FORM))
     # Subset colors for these products
-    pp_colors <- pp_colors[names(pp_colors) %in% products]
-    pp_colors <- pp_colors[names(pp_colors)]
+    plot_colors <- pp_colors[names(pp_colors) %in% products]
+    plot_colors <- plot_colors[names(plot_colors)]
     
     filtered_data <- pp_data %>% 
       filter(YEAR == factored_year,
@@ -6327,10 +6327,10 @@ server <- function(input, output, session) {
     # create icons (number will vary)
     # begin with empty vector that will ultimately contain the full HTML code
     coast_pp_vol_tooltip <- vector()
-    for (i in 1:length(pp_colors)) {
-      tooltip_color <- paste0(tooltip_color_icon(pp_colors[i]))
+    for (i in 1:length(plot_colors)) {
+      tooltip_color <- paste0(tooltip_color_icon(plot_colors[i]))
       
-      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
         comma(filtered_data$PP_VOLUME_T[i]), ifelse(selected_units() == 'METRIC',
@@ -6397,8 +6397,8 @@ server <- function(input, output, session) {
     # Next, get product forms
     products <- unique(str_to_title(pp_data$PRODUCT_FORM))
     # Subset colors for these products
-    pp_colors <- pp_colors[names(pp_colors) %in% products]
-    pp_colors <- pp_colors[names(pp_colors)]
+    plot_colors <- pp_colors[names(pp_colors) %in% products]
+    plot_colors <- plot_colors[names(plot_colors)]
     
     filtered_data <- pp_data %>% 
       filter(YEAR == factored_year,
@@ -6407,10 +6407,10 @@ server <- function(input, output, session) {
     # create icons (number will vary)
     # begin with empty vector that will ultimately contain the full HTML code
     coast_pp_price_tooltip <- vector()
-    for (i in 1:length(pp_colors)) {
-      tooltip_icon <- paste0(tooltip_line_icon(pp_colors[i], 16))
+    for (i in 1:length(plot_colors)) {
+      tooltip_icon <- paste0(tooltip_line_icon(plot_colors[i], 16))
       
-      tooltip_text <- paste0(tooltip_subheading, names(pp_colors)[i], "</span>: ")
+      tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
         dollar(filtered_data$PP_PRICE[i]), ifelse(selected_units() == 'METRIC',
