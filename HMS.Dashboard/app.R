@@ -2364,7 +2364,7 @@ ui <- page_fluid(
         fluidRow(
           div(
             style = 'border-radius: 12px;
-               min-width: 800px; width: 100%; display: flex; flex-direction: column;',
+               min-width: 1500px; width: 100%; display: flex; flex-direction: column;',
             navset_card_pill(title = h3('Trade'),
                              nav_panel(title = h6(icon(name = NULL,
                                                        class = 'val_icon'),
