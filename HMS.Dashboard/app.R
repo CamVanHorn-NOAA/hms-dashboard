@@ -2573,7 +2573,7 @@ server <- function(input, output, session) {
     updateCheckboxInput(session, 'landings_button', value = F)
     updateCheckboxInput(session, 'products_button', value = F)
     update_switch(session = session, 'units', value = F)
-    update_switch(session = session, 'nominal', value = F)
+    update_switch(session = session, 'inflation', value = T)
     balance_clicked_point(NULL)
     ratio_clicked_point(NULL)
     top5_clicked_point(NULL)
@@ -3265,7 +3265,7 @@ server <- function(input, output, session) {
   })
   
   selected_value <- reactive({
-    ifelse(input$nominal == F, 'FALSE', 'TRUE')
+    ifelse(input$inflation == T, 'FALSE', 'TRUE')
   })
   
   # trade ----------------------------------------------------------------------
