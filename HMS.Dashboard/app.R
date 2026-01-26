@@ -1915,10 +1915,10 @@ ui <- page_fluid(
   page_sidebar(
   sidebar = sidebar(
     width = 350,
-    title = h2(br(), 'Species Selection'),
     actionButton('reset_button', 'Reset All Filters',
                  class = 'btn-warning',
                  style = 'margin-bottom: 15px; width: 100%'),
+    h2('Select Species'),
     # search bar that outputs directions for how to filter for the searched 
     # species (if available)
     # selectizeInput(inputId = 'search_term',
@@ -1931,25 +1931,33 @@ ui <- page_fluid(
     # appears once filter_1 has input, etc.
     uiOutput('filter_2'),
     uiOutput('filter_3'),
+    h2('Other Options'),
     selectizeInput(inputId = 'coast',
-                   label = h4('Select a Coast'),
+                   label = h4('Coast'),
                    choices = c('', 'West Coast + Alaska', 'Atlantic', 
                                'Pacific Islands', 'Gulf + Territories'),
                    options = list(
                      placeholder = 'Type here...'
                    )),
-    input_switch('units', h4('Imperial Units')),
-    input_switch('nominal', h4('Nominal Values')),
+    input_switch('units', 'Imperial Units'),
+    input_switch('inflation', 'Inflation-Adjusted', value = T),
     uiOutput('trade_unfilter_button'),
     uiOutput('product_unfilter_button'),
     uiOutput('landings_unfilter_button'),
+    h2('Download Data'),
     downloadButton('download_trade',
-                   'Download raw trade data'),
+                   'Trade Data',
+                   icon = icon(name = NULL,
+                               class = 'download_icon')),
     downloadButton('download_landings',
-                   'Download raw landings data'),
+                   'Landings Data',
+                   icon = icon(name = NULL,
+                               class = 'download_icon')),
     downloadButton('download_products',
-                   'Download raw processed products data')
-  ),
+                   'Processed Products Data',
+                   icon = icon(name = NULL,
+                               class = 'download_icon'))
+    ),
   
   
   page_fluid(
