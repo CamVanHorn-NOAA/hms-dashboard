@@ -39,7 +39,7 @@ Herfindahl Index (HI)
 
 :   The Herfindahl Index (HI) is a parameter that interprets the density of export or import value among trading partners through time. Calculating the HI for exports or imports begins with summing the total trade value (export or import) for each trading partner of the given product in a given year ($D_{c,t}$). We then calculate the dividend of the annual trade values for each trading partner and the total annual trade value of the traded product to yield a proportion of trade value for each trading partner ($\hat P(D_{EorI,c,t})$). $$
     \hat P(D_{EorI,c,t}) = \frac {D_{EorI,c,t}}{\Sigma D_{EorI,c,t}}
-    $$ The sum of the squares of these proportions is the HI ($H$)for the given year. $$
+    $$ The sum of the squares of these proportions is the HI ($H$) for the given year. $$
     H_{EorI} = \sum_{i = c} (\hat P(D_{EorI,c,t}))^2
     $$ Low HIs indicate that total trade value is split up (i.e., not concentrated) among many trade partners, whereas high HIs indicate that total trade value is more concentrated among fewer trade partners. <br><br><br>
 
