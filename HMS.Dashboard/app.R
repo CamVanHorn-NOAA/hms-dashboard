@@ -794,9 +794,9 @@ calculate_mlti <- function(species, coast, exports = F, imports = F, nominal = F
   # in which it resides
   if (species != 'ALL SPECIES') {
     which_level <- as.symbol(
-      ifelse(species %in% unique(landings_data$SPECIES_CATEGORY), 
+      ifelse(species %in% unique(landings$SPECIES_CATEGORY), 
              'SPECIES_CATEGORY',
-             ifelse(species %in% unique(landings_data$SPECIES_GROUP), 
+             ifelse(species %in% unique(landings$SPECIES_GROUP), 
                     'SPECIES_GROUP',
                     'SPECIES_NAME'))
     )
@@ -920,9 +920,9 @@ calculate_mlti_table <- function(species, exports = F, imports = F) {
   
   if (species != 'ALL SPECIES') {
     which_group <- as.symbol(
-      ifelse(species %in% unique(landings_data$SPECIES_CATEGORY), 
+      ifelse(species %in% unique(landings$SPECIES_CATEGORY), 
              'SPECIES_CATEGORY',
-             ifelse(species %in% unique(landings_data$SPECIES_GROUP), 
+             ifelse(species %in% unique(landings$SPECIES_GROUP), 
                     'SPECIES_GROUP',
                     'SPECIES_NAME')))
 
