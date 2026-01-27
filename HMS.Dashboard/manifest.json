@@ -3212,13 +3212,13 @@
   },
   "files": {
     "app.R": {
-      "checksum": "6219e039447e264f213053bed09bc492"
+      "checksum": "83fde833067ea44fe1834e44008cdaa4"
     },
     "dashboard_calc_metrics.html": {
       "checksum": "f14325dfecdc19db81d3b51ec929fe28"
     },
     "dashboard_calc_metrics.qmd": {
-      "checksum": "fbe35c5658b15daaedd9eea4716c71a8"
+      "checksum": "e72f6677cc9e3cb3ac1cff0f737c735b"
     },
     "dashboard_calc_metrics_files/libs/bootstrap/bootstrap-icons.css": {
       "checksum": "c9ea1ce89ef3008c3da0b44cfb1e709b"
@@ -3577,6 +3577,9 @@
     "hms_data_munge_01_12_26.RData": {
       "checksum": "56f5263e8d419c847bab645f02f1b787"
     },
+    "hms_data_munge_01_26_26.RData": {
+      "checksum": "56f5263e8d419c847bab645f02f1b787"
+    },
     "hms_data_munge_10_27_25.RData": {
       "checksum": "3fc328068d43680b0f3ea5ab3207b336"
     },
@@ -3590,46 +3593,49 @@
       "checksum": "0699885593812d0926c783ab6f614274"
     },
     "how-to-dashboard.html": {
-      "checksum": "216278e17bf10e167cb2cf069004cbcc"
+      "checksum": "695fd5673a0e679de23092426fbdab1c"
     },
     "how-to-dashboard.qmd": {
       "checksum": "fa9d3522bc030e3b0da6278ca67ec1a6"
     },
     "how-to-dashboard_files/libs/bootstrap/bootstrap-icons.css": {
-      "checksum": "3104c106b6c22560ae274d7c56f116c5"
+      "checksum": "c9ea1ce89ef3008c3da0b44cfb1e709b"
     },
     "how-to-dashboard_files/libs/bootstrap/bootstrap-icons.woff": {
       "checksum": "e4cc83ddcec34db65724eb56c5230b4c"
     },
     "how-to-dashboard_files/libs/bootstrap/bootstrap.min.css": {
-      "checksum": "c3d94fc928527d3d5ff9475017cd76ce"
+      "checksum": "f2b2147ddccf0b0ae30d860e767f1240"
     },
     "how-to-dashboard_files/libs/bootstrap/bootstrap.min.js": {
-      "checksum": "7ccd9d390d31af98110f74f842ea9b32"
+      "checksum": "2591536dc6f1d305043be991897839ab"
     },
     "how-to-dashboard_files/libs/clipboard/clipboard.min.js": {
-      "checksum": "ad98572d415d2f2452845a6068a913c0"
+      "checksum": "32586c214311fda3b27399831ff92c5f"
     },
     "how-to-dashboard_files/libs/quarto-html/anchor.min.js": {
-      "checksum": "a58f4bdbf86e8ae057af9131b5b1bcfd"
+      "checksum": "c65565ace54d4fff6ba57645ddacf6ee"
     },
     "how-to-dashboard_files/libs/quarto-html/popper.min.js": {
-      "checksum": "ad6c106f3ba17d5a54d8053a4c4899ca"
+      "checksum": "315a5b6efbd3c20fba4cd36388ec4342"
     },
     "how-to-dashboard_files/libs/quarto-html/quarto-syntax-highlighting.css": {
-      "checksum": "099cd394577c915952e100d918f76f84"
+      "checksum": "11a02cd48e1979fa9d87f035d831375b"
     },
     "how-to-dashboard_files/libs/quarto-html/quarto.js": {
-      "checksum": "6c59bad421c4db5cafa70cd49864a5d1"
+      "checksum": "fc5d48d007c56bf7c10896777b5f1616"
     },
     "how-to-dashboard_files/libs/quarto-html/tippy.css": {
       "checksum": "ebd6f8ce46a677e1a4f5f8a8317109a9"
     },
     "how-to-dashboard_files/libs/quarto-html/tippy.umd.min.js": {
-      "checksum": "d828775275749701b48bd9d958814111"
+      "checksum": "c767a9ffc932cac8690dd2e0321a121d"
     },
     "nmfs_cols.R": {
       "checksum": "3319cae28b424f32a1d67037f1aa005d"
+    },
+    "seafood_trade_data_munge_01_15_26.RData": {
+      "checksum": "7a677163f0c685e87310111ad49567dd"
     },
     "seafood_trade_data_munge_11_24_25.RData": {
       "checksum": "95d17ca60ad241ac3f7001529e7ccae7"
@@ -3637,11 +3643,74 @@
     "seafood_trade_data_munge_12_23_25.RData": {
       "checksum": "ec431e0faa51006677ef9ddd85c16f12"
     },
+    "www/graphics_icons/sfd_banner-fish-blue.jpg": {
+      "checksum": "99133ebb115ea3449235112cb44f969c"
+    },
+    "www/graphics_icons/sfd_banner-fish-blue.png": {
+      "checksum": "b6a6e7674922bdad7596d12d3ed99e23"
+    },
+    "www/graphics_icons/sfd_icon-AM-dk.png": {
+      "checksum": "3209a817467b38a9d681c4fa886aed78"
+    },
+    "www/graphics_icons/sfd_icon-AM-lt.png": {
+      "checksum": "4b5f6b0beb76e72b20fe4dfe7634e0c8"
+    },
+    "www/graphics_icons/sfd_icon-DB-dk.png": {
+      "checksum": "7599f818562b95777ef40fbc502d8865"
+    },
+    "www/graphics_icons/sfd_icon-DB-lt.png": {
+      "checksum": "83fcf5245d84eb75a014a2c1d46454a7"
+    },
+    "www/graphics_icons/sfd_icon-DL-dk.png": {
+      "checksum": "075bd988e3091ab3ce686d563554337f"
+    },
+    "www/graphics_icons/sfd_icon-DL-gray-dk.png": {
+      "checksum": "0beaf1f3fab0185a2b6d3d1fd758d7b8"
+    },
+    "www/graphics_icons/sfd_icon-DL-gray-lt.png": {
+      "checksum": "916042cf9db6b796b3cd0c6a16ff32c6"
+    },
+    "www/graphics_icons/sfd_icon-DL-lt.png": {
+      "checksum": "4dbc89d3d690e064344d5bb5b7c91254"
+    },
+    "www/graphics_icons/sfd_icon-info-dk.png": {
+      "checksum": "a18a5ecee5093e5e5c357a96634f502c"
+    },
+    "www/graphics_icons/sfd_icon-info-lt.png": {
+      "checksum": "e34300f163e7028431f55f74c936d6f2"
+    },
+    "www/graphics_icons/sfd_icon-MS-dk.png": {
+      "checksum": "1304193c99fb2a9d6a4a847bae9a989b"
+    },
+    "www/graphics_icons/sfd_icon-MS-lt.png": {
+      "checksum": "ea6d68cf76f96a425ea8766d2283eacd"
+    },
+    "www/graphics_icons/sfd_icon-price-dk.png": {
+      "checksum": "ab8cfe000ee9a6636bfb9463118826a6"
+    },
+    "www/graphics_icons/sfd_icon-price-lt.png": {
+      "checksum": "b5ef197611fa78bbf437743bde47b43c"
+    },
+    "www/graphics_icons/sfd_icon-TT.png": {
+      "checksum": "0010f15f533ff686f50bc1d5f41a00a9"
+    },
+    "www/graphics_icons/sfd_icon-val-dk.png": {
+      "checksum": "68b8020c1b148490f1457b9747c8c77e"
+    },
+    "www/graphics_icons/sfd_icon-val-lt.png": {
+      "checksum": "46c060f470c9623bd41a97b146932af6"
+    },
+    "www/graphics_icons/sfd_icon-vol-dk.png": {
+      "checksum": "530e85a2830b0f3679cfbb54fef5ccc7"
+    },
+    "www/graphics_icons/sfd_icon-vol-lt.png": {
+      "checksum": "080d77cbaf28ec2dc3bfc49887f83139"
+    },
     "www/hms_quarto-style.css": {
       "checksum": "291da9a81c9c8f9b048ef45fb8349666"
     },
     "www/hms_style.css": {
-      "checksum": "48353a37fb1ded07b8896cdcd8bb2443"
+      "checksum": "305cf11e628e87efcec4eee71bdff407"
     },
     "www/NOAA_FISHERIES_logoH.png": {
       "checksum": "958d958c7d7108909f27fa0e08e70007"
