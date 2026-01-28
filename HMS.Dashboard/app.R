@@ -1188,7 +1188,8 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2024)) +
       scale_y_continuous(labels = label,
-                         limits = c(0, y_max)) +
+                         expand = c(0, 0),
+                         limits = c(0, y_max*1.1)) +
       labs(x = '',
            y = ylab,
            title = paste0(species, ' ', longform, coast_text)) +
@@ -1225,7 +1226,8 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                        limits = factor(2004:2024)) +
       scale_y_continuous(name = ylab, 
                          labels = label,
-                         limits = c(0, y_max + y_max*0.1),
+                         expand = c(0, 0),
+                         limits = c(0, y_max*1.1),
                          sec.axis = sec_axis(~./scale_factor, name = ylab2,
                                              labels = label2)) +
       labs(x = '',
@@ -1586,7 +1588,9 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
       scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                        limits = factor(2004:2023)) +
       scale_y_continuous(name = ylab, 
+                         limits = c(0, max_value*1.1),
                          labels = label,
+                         expand = c(0, 0),
                          sec.axis = sec_axis(~./scale_factor, name = ylab2,
                                              labels = label2)) +
       labs(x = '',
@@ -1602,6 +1606,8 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
     return(plot)
   }
   
+  max_volume <- max(data$COM_VOLUME_T, na.rm = T)
+  
   # output plot of VOLUME
   plot <- 
     ggplot(data = data,
@@ -1610,7 +1616,9 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
     geom_col(fill = landings_colors[1]) +
     scale_x_discrete(breaks = seq(2006, 2022, by = 4),
                      limits = factor(2004:2023)) +
-    scale_y_continuous(labels = label) +
+    scale_y_continuous(labels = label,
+                       expand = c(0, 0),
+                       limits = c(0, max_volume*1.1)) +
     labs(x = '',
          y = ylab,
          title = paste0(coast_text, tlab, species)) +
@@ -1760,6 +1768,8 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
            title = paste0('Apparent Supply of \n', species, coast_text)) +
       scale_x_discrete(limits = factor(c(2004:2023)),
                        breaks = seq(2006, 2022, by = 4)) +
+      scale_y_continuous(expand = c(0, 0),
+                         limits = c(0, max(supply_data$APPARENT_SUPPLY, na.rm = T)*1.1)) +
       theme_bw() +
       theme(axis.text = element_text(size = axis_value_size),
             axis.title = element_text(size = axis_title_size),
@@ -1806,7 +1816,9 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
                           species, coast_text)) +
       scale_x_discrete(limits = factor(c(2004:2023)),
                        breaks = seq(2006, 2022, by = 4)) +
-      scale_y_continuous(labels = label_percent()) +
+      scale_y_continuous(labels = label_percent(),
+                         expand = c(0, 0),
+                         limits = c(0, max(supply_data$UNEXPORTED_US_PROD_REL_APPARENT_SUPPLY, na.rm = T)*1.1)) +
       theme_bw() +
       theme(axis.text = element_text(size = axis_value_size),
             axis.title = element_text(size = axis_title_size),
