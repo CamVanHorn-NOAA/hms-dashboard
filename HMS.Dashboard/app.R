@@ -3922,7 +3922,7 @@ server <- function(input, output, session) {
     }
     
     if(cat_index == 'sname') {
-      if(toupper(input$species_name) %in% (products_categorization_matrix %>%
+      if(toupper(input$species_grp) %in% (products_categorization_matrix %>%
                                           filter_species(input$species_cat) %>%
                                           select(SPECIES_GROUP) %>%
                                           pull())) {
