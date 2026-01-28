@@ -3990,7 +3990,7 @@ server <- function(input, output, session) {
       new_data <- pp_data %>%
         filter_species(input$species_cat)
       
-      if (input$product_button == T) {
+      if (input$products_button == T) {
         new_data <- pp_data
       }
     }
