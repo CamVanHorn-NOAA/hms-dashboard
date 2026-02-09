@@ -1954,7 +1954,7 @@ ui <- page_fluid(
     uiOutput('trade_unfilter_button'),
     uiOutput('product_unfilter_button'),
     uiOutput('landings_unfilter_button'),
-    h2('Download Data'),
+    h2(id = 'download-text', 'Download Data'),
     downloadButton('download_trade',
                    'Trade Data',
                    icon = icon(name = NULL,
