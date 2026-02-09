@@ -2225,7 +2225,7 @@ ui <- page_fluid(
           div(style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
               div(
                 style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
                 navset_card_pill(title = h3('Commercial Landings'),
                                  nav_panel(title = h6(icon(name = NULL,
                                                            class = 'val_icon'), 
@@ -2273,7 +2273,7 @@ ui <- page_fluid(
                                                                       class = 'download_icon2'))))),
               div(
                 style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
                 navset_card_pill(title = h3('Processed Products'),
                                  nav_panel(title = h6(icon(name = NULL,
                                                            class = 'val_icon'),
@@ -2449,7 +2449,7 @@ ui <- page_fluid(
             style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
             div(
               style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
               navset_card_pill(title = h3('Commercial Landings'),
                                nav_panel(title = h6(icon(name = NULL,
                                                          class = 'val_icon'),
@@ -2497,7 +2497,7 @@ ui <- page_fluid(
                                                                     class = 'download_icon2'))))),
             div(
               style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
               navset_card_pill(title = h3('Processed Products'),
                                nav_panel(title = h6(icon(name = NULL,
                                                          class = 'val_icon'),
