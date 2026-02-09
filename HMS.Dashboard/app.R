@@ -95,6 +95,10 @@ sname_list <- unique(categorization_matrix %>%
                        mutate(SPECIES_NAME = str_to_title(SPECIES_NAME)) %>%
                        pull())
 
+coast_order <- levels(factor(levels = c(
+  'Atlantic', 'Gulf + Territories', 'Pacific Islands', 'West Coast + Alaska'
+)))
+
 tooltip_aes <- paste0(
   "position: absolute; ",
   "background-color: rgba(255, 255, 255, 0.95); ",
@@ -1944,13 +1948,7 @@ ui <- page_fluid(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     h2('Other Options'),
-    selectizeInput(inputId = 'coast',
-                   label = h4('Coast'),
-                   choices = c('', 'West Coast + Alaska', 'Atlantic', 
-                               'Pacific Islands', 'Gulf + Territories'),
-                   options = list(
-                     placeholder = 'Type here...'
-                   )),
+    uiOutput('filter_coast'),
     input_switch('units', 'Imperial Units'),
     input_switch('inflation', 'Inflation-Adjusted', value = T),
     uiOutput('trade_unfilter_button'),
@@ -3228,6 +3226,57 @@ server <- function(input, output, session) {
       selectInput('species_name', h4('Species Name'), species_names,
                   selected = search_cats()[1])
     }
+  })
+  
+  # creates input: coast
+  output$filter_coast <- renderUI({
+    coast_options <- categorization_matrix %>%
+      filter(!is.na(COAST)) %>%
+      select(COAST) %>%
+      distinct() %>%
+      pull()
+    
+    if (!(is.null(input$species_cat))) {
+      coast_options <- categorization_matrix %>%
+        filter_species(input$species_cat) %>%
+        filter(!is.na(COAST)) %>%
+        select(COAST) %>%
+        distinct() %>%
+        pull()
+    }
+    
+    if (!(is.null(input$species_grp))) {
+      coast_options <- categorization_matrix %>%
+        filter_species(input$species_cat) %>%
+        filter_species(input$species_grp) %>%
+        filter(!is.na(COAST)) %>%
+        select(COAST) %>%
+        distinct() %>%
+        pull()
+    }
+    
+    if (!(is.null(input$species_name))) {
+      coast_options <- categorization_matrix %>%
+        filter_species(input$species_cat) %>%
+        filter_species(input$species_grp) %>%
+        filter_species(input$species_name) %>%
+        filter(!is.na(COAST)) %>%
+        select(COAST) %>%
+        distinct() %>%
+        pull()
+    }
+    
+    coast_list <- factor(coast_options, levels = coast_order, ordered = T)
+    ordered_coasts <- as.vector(sort(coast_list))
+    
+    selectizeInput(inputId = 'coast',
+                   label = h4('Coast'),
+                   choices = c('', ordered_coasts),
+                   options = list(
+                     placeholder = ifelse(length(ordered_coasts != 0),
+                                          'Type here...',
+                                          'No Available Coasts')
+                   ))
   })
   
   # creates checkbox to unfilter trade up one level
