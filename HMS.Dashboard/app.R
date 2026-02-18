@@ -3114,7 +3114,7 @@ server <- function(input, output, session) {
   
   output$filter_0 <- renderUI({
     species_list <- c('', sort(c(categorization_matrix %>%
-                                   filter_coast(input$coast) %>%
+                                   filter_coast(coast_selection()) %>%
                                    select(SPECIES_NAME) %>%
                                    distinct() %>%
                                    filter(!is.na(SPECIES_NAME)) %>%
