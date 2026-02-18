@@ -287,7 +287,7 @@ products <- products %>%
                         ifelse(STATE %in% atlantic, 'ATLANTIC',
                                ifelse(STATE %in% gulf, 'GULF + TERRITORIES',
                                       ifelse(STATE %in% hawaii, 'PACIFIC ISLANDS',
-                                             NA)))))
+                                             'NO COAST ASSIGNED')))))
   
 
 # Remove confidential data -----------------------------------------------------
@@ -723,7 +723,8 @@ trade_data <- trade_data %>%
          COAST = ifelse(STATE %in% pacific, 'WEST COAST + ALASKA',
                         ifelse(STATE %in% atlantic, 'ATLANTIC',
                                ifelse(STATE %in% gulf, 'GULF + TERRITORIES', 
-                                      ifelse(STATE %in% hawaii, 'HAWAII', NA)))))
+                                      ifelse(STATE %in% hawaii, 'HAWAII', 
+                                             'NO COAST ASSIGNED')))))
 
 # Recreate pp data
 pp_data <- products_marked %>%
@@ -784,7 +785,7 @@ com_landings <- com_landings %>%
                         ifelse(STATE %in% atlantic, 'ATLANTIC',
                                ifelse(STATE %in% gulf, 'GULF + TERRITORIES', 
                                       ifelse(STATE %in% hawaii, 'PACIFIC ISLANDS',
-                                             NA)))))
+                                             'NO COAST ASSIGNED')))))
 
 
 
@@ -843,3 +844,4 @@ file_name <- paste0('hms_data_munge_',
 
 save(list = c('trade_data', 'landings', 'pp_data'),
      file = file_name)
+
