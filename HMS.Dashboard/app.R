@@ -23,7 +23,7 @@ source("nmfs_cols.R")
 addResourcePath("tmpuser", getwd())
 
 # Load most recent data file (manually taken from Seafood Dashboard)
-load('hms_data_munge_02_17_26.RData')
+load('hms_data_munge_02_18_26.RData')
 
 
 # filter out confidential data (no data contained therein)
@@ -875,26 +875,26 @@ calculate_mlti <- function(species, coast, exports = F, imports = F, nominal = F
   # step 7: set base country as the middle (third) country in the list
   # the list is arranged by value
   base_country <- top5$COUNTRY_NAME[3]
-  # output trading partners from first year of period (2004)
+  # output trading partners from first year of period (2011)
   trade_nations <- summary_spp_data %>%
-    filter(YEAR == 2004) %>%
+    filter(YEAR == 2011) %>%
     select(COUNTRY_NAME) %>%
     distinct() 
   
-  # make sure that the base country was a trade partner in 2004
+  # make sure that the base country was a trade partner in 2011
   # if it is not, set base country as the second listed country
   # this is a band-aid solution
   if (base_country %in% trade_nations$COUNTRY_NAME) {} else {
     base_country <- top5$COUNTRY_NAME[2]
   } 
   
-  # step 8: calculate the Q-index of the base country in 2004
+  # step 8: calculate the Q-index of the base country in 2011
   # the Q-index is the base country's trade volume in the base year multiplied
   # by the average price calculated in step 5; in other words, it is the
   # normalized value of the traded volume determined by the average price
   # of the traded product during the time period by all trading partners
   base_country_q <- summary_spp_data %>%
-    filter(YEAR == 2004,
+    filter(YEAR == 2011,
            COUNTRY_NAME == base_country) %>%
     mutate(Q_INDEX = !!which_volume * average_price)
   
@@ -989,12 +989,12 @@ calculate_mlti_table <- function(species, exports = F, imports = F) {
   
   base_country <- top9$COUNTRY_NAME[3]
   trade_nations <- summary_spp_data %>%
-    filter(YEAR == 2004) %>%
+    filter(YEAR == 2011) %>%
     select(COUNTRY_NAME) %>%
     distinct() 
   
   base_country_q <- summary_spp_data %>%
-    filter(YEAR == 2004,
+    filter(YEAR == 2011,
            COUNTRY_NAME == base_country) %>%
     mutate(Q_INDEX = !!which_volume * average_price)
   
@@ -1196,8 +1196,8 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                  # call for unique y value set earlier (see RLang)
                  y = !!y)) + 
       geom_col(fill = color) +
-      scale_x_discrete(breaks = seq(2006, 2022, by = 4),
-                       limits = factor(2004:2024)) +
+      scale_x_discrete(breaks = seq(2012, 2023, by = 4),
+                       limits = factor(2011:2024)) +
       scale_y_continuous(labels = label,
                          expand = c(0, 0),
                          limits = c(0, y_max*1.1)) +
@@ -1233,8 +1233,8 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                     group = GROUP),
                 color = trade_price_color,
                 linewidth = 1.5) +
-      scale_x_discrete(breaks = seq(2006, 2022, by = 4),
-                       limits = factor(2004:2024)) +
+      scale_x_discrete(breaks = seq(2012, 2023, by = 4),
+                       limits = factor(2011:2024)) +
       scale_y_continuous(name = ylab, 
                          labels = label,
                          expand = c(0, 0),
@@ -1268,8 +1268,8 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
       geom_line(aes(group = GROUP),
                 color = 'black',
                 linewidth = 1.5) +
-      scale_x_discrete(breaks = seq(2006, 2022, by = 4),
-                       limits = factor(2004:2024)) +
+      scale_x_discrete(breaks = seq(2012, 2023, by = 4),
+                       limits = factor(2011:2024)) +
       labs(x = '', 
            y = 'Export / Import',
            title = paste0('Volume Ratio of ', species, coast_text)) +
@@ -1301,7 +1301,7 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
            title = paste0('Value Balance of ', species, coast_text)) +
       scale_fill_manual(values = balance_colors) +
       coord_axes_inside(labels_inside = T) +
-      scale_x_discrete(limits = factor(2004:2024)) +
+      scale_x_discrete(limits = factor(2011:2024)) +
       scale_y_continuous(labels = label_currency()) +
       geom_hline(yintercept = 0, color = 'black') +
       theme_minimal() +
@@ -1462,7 +1462,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
            y = ylab,
            fill = 'Product Condition',
            title = paste0(coast_text, 'Production Price of ', species)) +
-      scale_x_discrete(breaks = seq(2006, 2022, by = 4)) +
+      scale_x_discrete(breaks = seq(2012, 2023, by = 4)) +
       scale_y_continuous(limits = c(0, ymax),
                          expand = c(0, 0),
                          labels = label) +
@@ -1502,7 +1502,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
          y = ylab,
          fill = 'Product Condition',
          title = paste0(coast_text, tlab, species)) +
-    scale_x_discrete(breaks = seq(2006, 2022, by = 4)) +
+    scale_x_discrete(breaks = seq(2012, 2023, by = 4)) +
     scale_y_continuous(limits = c(0, ylim), 
                        expand = c(0, 0),
                        labels = label) +
@@ -1595,8 +1595,8 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
                     group = GROUP),
                 color = landings_colors[2],
                 linewidth = 1.5) +
-      scale_x_discrete(breaks = seq(2006, 2022, by = 4),
-                       limits = factor(2004:2023)) +
+      scale_x_discrete(breaks = seq(2012, 2023, by = 4),
+                       limits = factor(2011:2023)) +
       scale_y_continuous(name = ylab, 
                          limits = c(0, max_value*1.1),
                          labels = label,
@@ -1624,8 +1624,8 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
            aes(x = factor(YEAR),
                y = COM_VOLUME_T)) +
     geom_col(fill = landings_colors[1]) +
-    scale_x_discrete(breaks = seq(2006, 2022, by = 4),
-                     limits = factor(2004:2023)) +
+    scale_x_discrete(breaks = seq(2012, 2023, by = 4),
+                     limits = factor(2011:2023)) +
     scale_y_continuous(labels = label,
                        expand = c(0, 0),
                        limits = c(0, max_volume*1.1)) +
@@ -1677,7 +1677,7 @@ plot_mlti <- function(mlti_data, coast, exports = F, imports = F, species) {
               linewidth = 1.25) +
     geom_point(color = 'black',
                size = 2.5) +
-    scale_x_discrete(breaks = seq(2006, 2022, by = 4)) +
+    scale_x_discrete(breaks = seq(2012, 2023, by = 4)) +
     scale_color_manual(values = mlti_colors) +
     # hline sets baseline to compare points from base index for all plots
     geom_hline(yintercept = 1, color = 'black') +
@@ -1731,7 +1731,7 @@ plot_hi <- function(hi_data, coast, species) {
     labs(x = '',
          y = 'Index',
          title = paste0('Herfindahl Index of \n', species, coast_text)) +
-    scale_x_discrete(breaks = seq(2006, 2022, by = 4)) +
+    scale_x_discrete(breaks = seq(2012, 2023, by = 4)) +
     theme_bw() +
     theme(axis.text = element_text(size = axis_value_size),
           axis.title = element_text(size = axis_title_size),
@@ -1781,8 +1781,8 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
       labs(x = '',
            y = ylab,
            title = paste0('Apparent Supply of \n', species, coast_text)) +
-      scale_x_discrete(limits = factor(c(2004:2023)),
-                       breaks = seq(2006, 2022, by = 4)) +
+      scale_x_discrete(limits = factor(c(2011:2023)),
+                       breaks = seq(2012, 2023, by = 4)) +
       scale_y_continuous(expand = c(0, 0),
                          limits = c(0, max(supply_data$APPARENT_SUPPLY, na.rm = T)*1.1)) +
       theme_bw() +
@@ -1807,8 +1807,8 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
            y = 'Ratio',
            title = paste0('Apparent Supply of \n', species, 
                           '\nRelative to Domestic \nProduction', coast_text)) +
-      scale_x_discrete(limits = factor(c(2004:2023)),
-                       breaks = seq(2006, 2022, by = 4)) +
+      scale_x_discrete(limits = factor(c(2011:2023)),
+                       breaks = seq(2012, 2023, by = 4)) +
       theme_bw() +
       theme(axis.text = element_text(size = axis_value_size),
             axis.title = element_text(size = axis_title_size),
@@ -1829,8 +1829,8 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
            y = 'Share of Apparent Supply',
            title = paste0('Unexported Domestic \nProduction Relative \nto Apparent Supply of \n', 
                           species, coast_text)) +
-      scale_x_discrete(limits = factor(c(2004:2023)),
-                       breaks = seq(2006, 2022, by = 4)) +
+      scale_x_discrete(limits = factor(c(2011:2023)),
+                       breaks = seq(2012, 2023, by = 4)) +
       scale_y_continuous(labels = label_percent(),
                          expand = c(0, 0),
                          limits = c(0, max(supply_data$UNEXPORTED_US_PROD_REL_APPARENT_SUPPLY, na.rm = T)*1.1)) +
