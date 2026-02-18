@@ -3276,8 +3276,23 @@ server <- function(input, output, session) {
                    options = list(
                      placeholder = ifelse(length(ordered_coasts != 0),
                                           'Type here...',
-                                          'No Available Coasts')
-                   ))
+                                          'No Available Coasts')),
+                   multiple = T
+                   )
+  })
+  
+  output$coast_text <- renderText(coast_selection())
+  
+  coast_selection <- reactive({
+    if (is.null(input$coast)) {
+      return('NONE')
+    }
+    
+    if (length(input$coast) == 5) {
+      return('ALL')
+    }
+    
+    return(input$coast)
   })
   
   # creates checkbox to unfilter trade up one level
