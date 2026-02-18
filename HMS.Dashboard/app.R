@@ -96,7 +96,8 @@ sname_list <- unique(categorization_matrix %>%
                        pull())
 
 coast_order <- levels(factor(levels = c(
-  'Atlantic', 'Gulf + Territories', 'Pacific Islands', 'West Coast + Alaska'
+  'Atlantic', 'Gulf + Territories', 'Pacific Islands', 'West Coast + Alaska',
+  'No Coast Assigned'
 )))
 
 tooltip_aes <- paste0(
