@@ -7,6 +7,14 @@ if(!require("tidyverse")) install.packages("tidyverse")
 # load in seafood data
 load('seafood_trade_data_munge_01_15_26.RData')
 
+# Filter years >= 2011
+com_landings <- com_landings %>%
+  filter(YEAR >= 2011)
+pp_data <- pp_data %>%
+  filter(YEAR >= 2011)
+trade_data <- trade_data %>%
+  filter(YEAR >= 2011)
+
 # get inflationary index data
   # this will allow values per year to be calculated as inflation-adjusted
 def_index <- read.csv('GDPDEF_2024_index.csv') %>%
@@ -87,7 +95,8 @@ terr_landings <- left_join(foss_terr_landings, foss_terr_landings_map) %>%
   select(-INDEX) %>%
   # remove territorial landings for American Samoa, Guam, and Northern Marianas
   # or, just keep USVI and PR
-  filter(STATE %in% c('U.S. VIRGIN IS.', 'PUERTO RICO')) %>%
+  filter(STATE %in% c('U.S. VIRGIN IS.', 'PUERTO RICO'),
+         YEAR >= 2011) %>%
   bind_rows(pacisl_terr_landings)
 
 # Get pp data manually ---------------------------------------------------------
@@ -767,7 +776,8 @@ pp_data <- products_marked %>%
          DOLLARS_PER_LB = ifelse(CONFIDENTIAL == 1, 0, DOLLARS_PER_LB),
          DOLLARS_PER_KG = ifelse(CONFIDENTIAL == 1, 0, DOLLARS_PER_KG),
          DOLLARS_2024_PER_LB = ifelse(CONFIDENTIAL == 1, 0, DOLLARS_2024_PER_LB),
-         DOLLARS_2024_PER_KG = ifelse(CONFIDENTIAL == 1, 0, DOLLARS_2024_PER_KG))
+         DOLLARS_2024_PER_KG = ifelse(CONFIDENTIAL == 1, 0, DOLLARS_2024_PER_KG)) %>%
+  filter(YEAR >= 2011)
 
 pacific <- c('CALIFORNIA', 'OREGON', 'WASHINGTON', 'ALASKA')
 hawaii <- c('HAWAII', 'AMERICAN SAMOA', 'NORTHERN MARIANA IS.', 'GUAM',
