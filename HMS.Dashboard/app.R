@@ -3349,7 +3349,7 @@ server <- function(input, output, session) {
   
   trade_cat_mat <- reactive({
     trade_data %>%
-      filter_coast(input$coast) %>%
+      filter_coast(coast_selection()) %>%
       select(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
       group_by(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
       distinct() %>%
@@ -3579,7 +3579,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = '',
+      coast = 'NONE',
       'FULL')
   })
   
@@ -3588,7 +3588,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      input$coast,
+      coast_selection(),
       'BALANCE',
       units = selected_units(),
       nominal = selected_value())
@@ -3602,7 +3602,7 @@ server <- function(input, output, session) {
   
   # creates trade balance plot (value)
   balance_plot <- reactive({
-    plot_trade(balance_df(), input$coast, 'BALANCE', 
+    plot_trade(balance_df(), coast_selection(), 'BALANCE', 
                species = species_selection_trade(), nominal = selected_value())
   })
   
@@ -3619,7 +3619,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      input$coast,
+      coast_selection(),
       'VALUE',
       units = selected_units(),
       nominal = selected_value())
@@ -3627,7 +3627,7 @@ server <- function(input, output, session) {
   
   # creates export/import ratio plot
   ratio_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'RATIO', export = T, import = T, 
+    plot_trade(trade_df(), coast_selection(), 'RATIO', export = T, import = T, 
                species = species_selection_trade())
   })
   
@@ -3655,7 +3655,7 @@ server <- function(input, output, session) {
     summarize_trade_ctry_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      input$coast,
+      coast_selection(),
       output.format = 'VALUE',
       time.frame = c(2020, 2024),
       nominal = selected_value())
@@ -3665,7 +3665,7 @@ server <- function(input, output, session) {
   top5_trade_plot <- reactive({
     plot_trade_ctry_yr_spp(top5_trade_df(), 
                            species = species_selection_trade(), 
-                           input$coast, nominal = selected_value())
+                           coast_selection(), nominal = selected_value())
   })
   
   # outputs top 5 net export plot
@@ -3678,7 +3678,7 @@ server <- function(input, output, session) {
   
   # creates export value plot
   exp_value_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VALUE', units = selected_units(), export = T, 
+    plot_trade(trade_df(), coast_selection(), 'VALUE', units = selected_units(), export = T, 
                species = species_selection_trade(), nominal = selected_value())
   })
   
@@ -3692,7 +3692,7 @@ server <- function(input, output, session) {
   
   # creates import value plot
   imp_value_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VALUE', units = selected_units(), import = T, 
+    plot_trade(trade_df(), coast_selection(), 'VALUE', units = selected_units(), import = T, 
                species = species_selection_trade(), nominal = selected_value())
   })
   
@@ -3706,7 +3706,7 @@ server <- function(input, output, session) {
   
   # creates export volume plot
   exp_volume_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VOLUME', units = selected_units(), export = T, 
+    plot_trade(trade_df(), coast_selection(), 'VOLUME', units = selected_units(), export = T, 
                species = species_selection_trade())
   })
   
@@ -3720,7 +3720,7 @@ server <- function(input, output, session) {
   
   # creates import volume plot
   imp_volume_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VOLUME', units = selected_units(), import = T, 
+    plot_trade(trade_df(), coast_selection(), 'VOLUME', units = selected_units(), import = T, 
                species = species_selection_trade())
   })
   
@@ -3764,7 +3764,7 @@ server <- function(input, output, session) {
   
   landings_cat_mat <- reactive({
     landings %>%
-      filter_coast(input$coast) %>%
+      filter_coast(coast_selection()) %>%
       select(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
       group_by(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
       distinct() %>%
@@ -3931,14 +3931,14 @@ server <- function(input, output, session) {
     summarize_landings_yr_spp(
       landings_filtered(),
       species_selection_landings(),
-      input$coast,
+      coast_selection(),
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates landings value plot
   landings_value_plot <- reactive({
-    plot_landings(landings_df(), input$coast, 'VALUE', units = selected_units(),
+    plot_landings(landings_df(), coast_selection(), 'VALUE', units = selected_units(),
                   species = species_selection_landings(),
                   nominal = selected_value())
   })
@@ -3953,7 +3953,7 @@ server <- function(input, output, session) {
   
   # creates landings volume plot
   landings_volume_plot <- reactive({
-    plot_landings(landings_df(), input$coast, 'VOLUME', units = selected_units(),
+    plot_landings(landings_df(), coast_selection(), 'VOLUME', units = selected_units(),
                   species = species_selection_landings())
   })
   
@@ -3967,7 +3967,7 @@ server <- function(input, output, session) {
   
   # creates landings price plot
   landings_price_plot <- reactive({
-    plot_landings(landings_df(), input$coast, 'PRICE', units = selected_units(), 
+    plot_landings(landings_df(), coast_selection(), 'PRICE', units = selected_units(), 
                   species = species_selection_landings())
   })
   
@@ -3983,7 +3983,7 @@ server <- function(input, output, session) {
   
   products_cat_mat <- reactive({
     pp_data %>%
-      filter_coast(input$coast) %>%
+      filter_coast(coast_selection()) %>%
       select(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
       group_by(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
       distinct() %>%
@@ -4149,14 +4149,14 @@ server <- function(input, output, session) {
     summarize_pp_yr_spp(
       products_filtered(),
       species_selection_products(),
-      input$coast,
+      coast_selection(),
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates processed products value plot
   pp_value_plot <- reactive({
-    plot_spp_pp(pp_df(), input$coast, 'VALUE', 
+    plot_spp_pp(pp_df(), coast_selection(), 'VALUE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value())
@@ -4172,7 +4172,7 @@ server <- function(input, output, session) {
   
   # creates processed products volume plot
   pp_volume_plot <- reactive({
-    plot_spp_pp(pp_df(), input$coast, 'VOLUME', 
+    plot_spp_pp(pp_df(), coast_selection(), 'VOLUME', 
                 units = selected_units(),
                 species = species_selection_products())
   })
@@ -4187,7 +4187,7 @@ server <- function(input, output, session) {
   
   # creates processed products price plot
   pp_price_plot <- reactive({
-    plot_spp_pp(pp_df(), input$coast, 'PRICE', 
+    plot_spp_pp(pp_df(), coast_selection(), 'PRICE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value())
@@ -4205,7 +4205,7 @@ server <- function(input, output, session) {
   
   # creates MLTI export table
   exp_mlti_table_df <- reactive({
-    calculate_mlti(species_selection_trade(), input$coast,
+    calculate_mlti(species_selection_trade(), coast_selection(),
                    exports = T, nominal = selected_value())
   })
   
@@ -4219,7 +4219,7 @@ server <- function(input, output, session) {
   
   # creates MLTI export plot
   exp_mlti_plot <- reactive({
-    plot_mlti(exp_mlti_table_df(), input$coast,
+    plot_mlti(exp_mlti_table_df(), coast_selection(),
               exports = T, species = species_selection_trade())
   })
   
@@ -4233,7 +4233,7 @@ server <- function(input, output, session) {
   
   # creates MLTI import table
   imp_mlti_table_df <- reactive({
-    calculate_mlti(species_selection_trade(), input$coast,
+    calculate_mlti(species_selection_trade(), coast_selection(),
                    imports = T, nominal = selected_value())
   })
   
@@ -4247,7 +4247,7 @@ server <- function(input, output, session) {
   
   # creates MLTI import plot
   imp_mlti_plot <- reactive({
-    plot_mlti(imp_mlti_table_df(), input$coast,
+    plot_mlti(imp_mlti_table_df(), coast_selection(),
               imports = T, species = species_selection_trade())
   })
   
@@ -4261,9 +4261,9 @@ server <- function(input, output, session) {
   
   # creates HI plot
   hi_plot <- reactive({
-    plot_hi(calculate_hi(species_selection_trade(), input$coast,
+    plot_hi(calculate_hi(species_selection_trade(), coast_selection(),
                          nominal = selected_value()), 
-            input$coast, species = species_selection_trade())
+            coast_selection(), species = species_selection_trade())
   })
   
   # outputs HI plot
@@ -4277,13 +4277,13 @@ server <- function(input, output, session) {
   # creates supply metric data
   supply_df <- reactive({
     calculate_supply_metrics(
-      species_selection_trade(), input$coast, 
+      species_selection_trade(), coast_selection(), 
       units = selected_units(), nominal = selected_value())
   })
   
   # creates apparent supply plot
   supply_plot <- reactive({
-    plot_supply_metrics(supply_df(), input$coast, 'SUPPLY', units = selected_units(),
+    plot_supply_metrics(supply_df(), coast_selection(), 'SUPPLY', units = selected_units(),
                         species = species_selection_trade())
   })
   
@@ -4297,7 +4297,7 @@ server <- function(input, output, session) {
   
   # creates apparent supply (ratio) plot
   supply_ratio_plot <- reactive({
-    plot_supply_metrics(supply_df(), input$coast, 'RATIO', 
+    plot_supply_metrics(supply_df(), coast_selection(), 'RATIO', 
                         species = species_selection_trade())
   })
   
@@ -4311,7 +4311,7 @@ server <- function(input, output, session) {
   
   # creates apparent supply (share) plot
   supply_share_plot <- reactive({
-    plot_supply_metrics(supply_df(), input$coast, 'SHARE', 
+    plot_supply_metrics(supply_df(), coast_selection(), 'SHARE', 
                         species = species_selection_trade())
   })
   
@@ -5023,7 +5023,7 @@ server <- function(input, output, session) {
   observeEvent(input$hi_plot_click, {
     click_x <- input$hi_plot_click$x
     
-    hi_data <- calculate_hi(species_selection_trade(), input$coast, 
+    hi_data <- calculate_hi(species_selection_trade(), coast_selection(), 
                             nominal = selected_value())
     
     year_levels <- levels(factor(sort(unique(hi_data$YEAR))))
@@ -5766,7 +5766,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = 'ALL',
+      coast = 'FACET',
       'VALUE',
       units = selected_units(),
       nominal = selected_value())
@@ -5774,7 +5774,7 @@ server <- function(input, output, session) {
   
   # creates export value plot
   exp_coast_value_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), export = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VALUE', units = selected_units(), export = T, 
                species = species_selection_trade(), nominal = selected_value()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5790,7 +5790,7 @@ server <- function(input, output, session) {
   
   # creates import value plot
   imp_coast_value_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), import = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VALUE', units = selected_units(), import = T, 
                species = species_selection_trade(), nominal = selected_value()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5806,7 +5806,7 @@ server <- function(input, output, session) {
   
   # creates export volume plot
   exp_coast_volume_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), export = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VOLUME', units = selected_units(), export = T, 
                species = species_selection_trade()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5822,7 +5822,7 @@ server <- function(input, output, session) {
   
   # creates import volume plot
   imp_coast_volume_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), import = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VOLUME', units = selected_units(), import = T, 
                species = species_selection_trade()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5844,14 +5844,14 @@ server <- function(input, output, session) {
     summarize_landings_yr_spp(
       landings_filtered(),
       species_selection_landings(),
-      coast = 'ALL',
+      coast = 'FACET',
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates landings value plot
   coast_landings_value_plot <- reactive({
-    plot_landings(coast_landings_df(), 'ALL', 'VALUE', units = selected_units(),
+    plot_landings(coast_landings_df(), 'FACET', 'VALUE', units = selected_units(),
                   species = species_selection_landings(),
                   nominal = selected_value()) +
       facet_grid(cols = vars(COAST)) +
@@ -5868,7 +5868,7 @@ server <- function(input, output, session) {
   
   # creates landings volume plot
   coast_landings_volume_plot <- reactive({
-    plot_landings(coast_landings_df(), 'ALL', 'VOLUME', units = selected_units(),
+    plot_landings(coast_landings_df(), 'FACET', 'VOLUME', units = selected_units(),
                   species = species_selection_landings()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5889,14 +5889,14 @@ server <- function(input, output, session) {
     summarize_pp_yr_spp(
       products_filtered(),
       species_selection_products(),
-      'ALL',
+      'FACET',
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates processed products value plot
   coast_pp_value_plot <- reactive({
-    plot_spp_pp(coast_pp_df(), 'ALL', 'VALUE', 
+    plot_spp_pp(coast_pp_df(), 'FACET', 'VALUE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value()) +
@@ -5914,7 +5914,7 @@ server <- function(input, output, session) {
   
   # creates processed products volume plot
   coast_pp_volume_plot <- reactive({
-    plot_spp_pp(coast_pp_df(), 'ALL', 'VOLUME', 
+    plot_spp_pp(coast_pp_df(), 'FACET', 'VOLUME', 
                 units = selected_units(),
                 species = species_selection_products()) +
       facet_grid(cols = vars(COAST)) +
@@ -5931,7 +5931,7 @@ server <- function(input, output, session) {
   
   # creates processed products price plot
   coast_pp_price_plot <- reactive({
-    plot_spp_pp(coast_pp_df(), 'ALL', 'PRICE', 
+    plot_spp_pp(coast_pp_df(), 'FACET', 'PRICE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value()) +
