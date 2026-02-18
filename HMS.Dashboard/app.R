@@ -23,7 +23,7 @@ source("nmfs_cols.R")
 addResourcePath("tmpuser", getwd())
 
 # Load most recent data file (manually taken from Seafood Dashboard)
-load('hms_data_munge_01_26_26.RData')
+load('hms_data_munge_02_17_26.RData')
 
 
 # filter out confidential data (no data contained therein)
@@ -94,6 +94,11 @@ sname_list <- unique(categorization_matrix %>%
                        filter(!is.na(SPECIES_NAME)) %>%
                        mutate(SPECIES_NAME = str_to_title(SPECIES_NAME)) %>%
                        pull())
+
+coast_order <- levels(factor(levels = c(
+  'Atlantic', 'Gulf + Territories', 'Pacific Islands', 'West Coast + Alaska',
+  'No Coast Assigned'
+)))
 
 tooltip_aes <- paste0(
   "position: absolute; ",
@@ -214,12 +219,19 @@ filter_coast <- function(data, coast) {
   # This filter is used in all summary functions to filter for selected coasts
   # Data is any data frame with a field specifying the data's coast of origin
   # coast is a character vector meant to match how coast is specified in data
-  if (coast == '' | is.null(coast) | coast == 'ALL') {
+  if ('NONE' %in% coast) {
     return(data)
   }
   
+  if ('ALL' %in% coast | 'FACET' %in% coast) {
+    new_data <- data %>%
+      filter(!is.na(COAST))
+    
+    return(new_data)
+  }
+
   new_data <- data %>%
-    filter(COAST == coast)
+    filter(COAST %in% coast)
   return(new_data)
 }
 
@@ -253,7 +265,7 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
     species <- str_to_title(species)
   }
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
   } else {field <- NULL}
@@ -537,7 +549,7 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
   # coerce species to upper case to match data formatting
   species <- ifelse(species == 'All Species', 'All Species', toupper(species))
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
   } else {field <- NULL}
@@ -554,7 +566,7 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
-  if (full_data == 'FULL') {
+  if (full_data == T) {
     summarized_data <- summarized_data %>%
       mutate(MT = KG / 1000,
              ST = POUNDS / 2000,
@@ -660,7 +672,7 @@ summarize_landings_yr_spp <- function(landings_data, species, coast, full_data =
     species <- str_to_title(species)
   }
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
   } else {field <- NULL}
@@ -1101,26 +1113,25 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     shortform <- 'EXP'
     longform <- 'Exports'
     color <- export_color
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' from the ', coast)
-    } else {coast_text <- ''}
+    } 
   }
   # set shortform and longform values for plot labeling if import
   if (import == T & export == F) {
     shortform <- 'IMP'
     longform <- 'Imports'
     color <- import_color
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' to the ', coast)
-    } else {coast_text <- ''}
+    } 
   }
   # coerce plot_format to uppercase to work within function
   plot_format <- toupper(plot_format)
-  
-  if (coast == 'ALL') {
-    data <- data %>%
-      filter(!is.na(COAST))
-  }
   
   # set labels and y values for plots of VALUE
   if (plot_format == 'VALUE') {
@@ -1243,9 +1254,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     # plot of RATIO
     # RATIO is a line chart, so we need a column to group by
     data$GROUP <- 'group'
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' traded in the ', coast)
-    } else {coast_text <- ''}
+    }
     
     plot <- 
       ggplot(data = data, 
@@ -1268,9 +1281,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                                       face = 'bold'),
             axis.title = element_text(size = axis_title_size))
   } else {
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' traded in the ', coast)
-    } else {coast_text <- ''}
+    }
     
     plot <- 
       ggplot(data = data,
@@ -1325,9 +1340,9 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
     ylab <- 'Millions (Real 2024 USD)'
   }
   
-  if (coast != '') {
-    coast_text <- paste0(' with the ', coast)
-  } else {coast_text <- ''}
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(' with the ', coast)}
   
   ggplot(data = data,
          aes(x = factor(gsub(' ', '\n', str_to_title(COUNTRY_NAME))),
@@ -1361,7 +1376,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
     species <- 'Highly Migratory Species'
   }
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
     
@@ -1372,9 +1387,9 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (!(coast %in% c('', 'ALL'))) {
-    coast_text <- paste0(coast, ' ')
-  } else {coast_text <- ''}
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(coast, ' ')}
   
   # set labels for VALUE plots
   if (plot.format == 'VALUE') {
@@ -1514,14 +1529,9 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (!(coast %in% c('', 'ALL'))) {
-    coast_text <- paste0(coast, ' ')
-  } else {coast_text <- ''}
-  
-  if (coast == 'ALL') {
-    data <- data %>%
-      filter(!is.na(COAST))
-  }
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(coast, ' ')}
   
   # set labels for VALUE plot
   if (plot.format == 'VALUE') {
@@ -1647,10 +1657,12 @@ plot_mlti <- function(mlti_data, coast, exports = F, imports = F, species) {
     stop('Please set "exports" or "imports" to "T"')
   }
   
-  if (coast != '') {
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {
     coast_text <- paste0(ifelse(exports == T, ' from the ', ' to the '),
-                          coast)
-  } else {coast_text <- ''}
+                         coast)
+  }
   
   # set label for plot based on exports logical
   label <- ifelse(exports == T, 'Export', 'Import')
@@ -1694,9 +1706,11 @@ plot_hi <- function(hi_data, coast, species) {
     species <- 'Highly Migratory Species'
   }
   
-  if (coast != '') {
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {
     coast_text <- paste0(' traded in the ', coast)
-  } else {coast_text <- ''}
+  }
   
   # format the data by renaming columns for plot labels
   format_hi_data <- hi_data %>%
@@ -1747,9 +1761,10 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
     species <- 'Highly Migratory Species'
   }
   
-  if (coast != '') {
-    coast_text <- paste0(' in the ', coast)
-  } else {coast_text <- ''}
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(' in the ', coast)}
+  
   if (metric == 'SUPPLY') {
     # units are embedded in the calculation function
     # here, we only need to specify how the figure is labeled
@@ -1944,19 +1959,13 @@ ui <- page_fluid(
     uiOutput('filter_2'),
     uiOutput('filter_3'),
     h2('Other Options'),
-    selectizeInput(inputId = 'coast',
-                   label = h4('Coast'),
-                   choices = c('', 'West Coast + Alaska', 'Atlantic', 
-                               'Pacific Islands', 'Gulf + Territories'),
-                   options = list(
-                     placeholder = 'Type here...'
-                   )),
+    uiOutput('filter_coast'),
     input_switch('units', 'Imperial Units'),
     input_switch('inflation', 'Inflation-Adjusted', value = T),
     uiOutput('trade_unfilter_button'),
     uiOutput('product_unfilter_button'),
     uiOutput('landings_unfilter_button'),
-    h2('Download Data'),
+    h2(id = 'download-text', 'Download Data'),
     downloadButton('download_trade',
                    'Trade Data',
                    icon = icon(name = NULL,
@@ -2227,7 +2236,7 @@ ui <- page_fluid(
           div(style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
               div(
                 style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
                 navset_card_pill(title = h3('Commercial Landings'),
                                  nav_panel(title = h6(icon(name = NULL,
                                                            class = 'val_icon'), 
@@ -2275,7 +2284,7 @@ ui <- page_fluid(
                                                                       class = 'download_icon2'))))),
               div(
                 style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
                 navset_card_pill(title = h3('Processed Products'),
                                  nav_panel(title = h6(icon(name = NULL,
                                                            class = 'val_icon'),
@@ -2345,29 +2354,30 @@ ui <- page_fluid(
                                                                       class = 'download_icon2'))))))) 
       ),
       nav_panel(
+        class = 'info-tab',
         title = h5(icon(name = NULL,
                         class = 'intro_icon'),
                    'INFORMATION & METHODS'),
         navset_card_pill(
-          nav_panel(title = 'Introduction',
+          nav_panel(title = h6('Introduction'),
                     htmlOutput('intro')),
-          nav_panel(title = 'Tutorial',
+          nav_panel(title = h6('Tutorial'),
                     htmlOutput('tutorial')),
-          nav_panel(title = 'Data Collection',
+          nav_panel(title = h6('Data Collection'),
                     htmlOutput('collection')),
-          nav_panel(title = 'Data Sourcing',
+          nav_panel(title = h6('Data Sourcing'),
                     htmlOutput('sourcing')),
-          nav_panel(title = 'Data Management',
+          nav_panel(title = h6('Data Management'),
                     htmlOutput('management')),
-          nav_panel(title = 'Coastal Consolidation',
+          nav_panel(title = h6('Coastal Consolidation'),
                     htmlOutput('region')),
-          nav_panel(title = 'Species Classification',
+          nav_panel(title = h6('Species Classification'),
                     htmlOutput('classification')),
-          nav_panel(title = 'Metrics',
+          nav_panel(title = h6('Metrics'),
                     htmlOutput('metrics')),
-          nav_panel(title = 'Contact Us',
+          nav_panel(title = h6('Contact Us'),
                     htmlOutput('contact')),
-          nav_panel(title = 'Resources',
+          nav_panel(title = h6('Resources'),
                     htmlOutput('resource'))
         )
       ),
@@ -2451,7 +2461,7 @@ ui <- page_fluid(
             style = 'display: flex; gap: 15px; min-width: 800px; width: 100%;',
             div(
               style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
               navset_card_pill(title = h3('Commercial Landings'),
                                nav_panel(title = h6(icon(name = NULL,
                                                          class = 'val_icon'),
@@ -2499,7 +2509,7 @@ ui <- page_fluid(
                                                                     class = 'download_icon2'))))),
             div(
               style = 'border-radius: 12px;
-                 min-width: 400px; width: 100%; display: flex; flex-direction: column;',
+                 min-width: 730px; width: 100%; display: flex; flex-direction: column;',
               navset_card_pill(title = h3('Processed Products'),
                                nav_panel(title = h6(icon(name = NULL,
                                                          class = 'val_icon'),
@@ -3115,7 +3125,7 @@ server <- function(input, output, session) {
   
   output$filter_0 <- renderUI({
     species_list <- c('', sort(c(categorization_matrix %>%
-                                   filter_coast(input$coast) %>%
+                                   filter_coast(coast_selection()) %>%
                                    select(SPECIES_NAME) %>%
                                    distinct() %>%
                                    filter(!is.na(SPECIES_NAME)) %>%
@@ -3230,6 +3240,70 @@ server <- function(input, output, session) {
     }
   })
   
+  # creates input: coast
+  output$filter_coast <- renderUI({
+    coast_options <- categorization_matrix %>%
+      filter(!is.na(COAST)) %>%
+      select(COAST) %>%
+      distinct() %>%
+      pull()
+    
+    if (!(is.null(input$species_cat))) {
+      coast_options <- categorization_matrix %>%
+        filter_species(input$species_cat) %>%
+        filter(!is.na(COAST)) %>%
+        select(COAST) %>%
+        distinct() %>%
+        pull()
+    }
+    
+    if (!(is.null(input$species_grp))) {
+      coast_options <- categorization_matrix %>%
+        filter_species(input$species_cat) %>%
+        filter_species(input$species_grp) %>%
+        filter(!is.na(COAST)) %>%
+        select(COAST) %>%
+        distinct() %>%
+        pull()
+    }
+    
+    if (!(is.null(input$species_name))) {
+      coast_options <- categorization_matrix %>%
+        filter_species(input$species_cat) %>%
+        filter_species(input$species_grp) %>%
+        filter_species(input$species_name) %>%
+        filter(!is.na(COAST)) %>%
+        select(COAST) %>%
+        distinct() %>%
+        pull()
+    }
+    
+    coast_list <- factor(coast_options, levels = coast_order, ordered = T)
+    ordered_coasts <- as.vector(sort(coast_list))
+    
+    selectizeInput(inputId = 'coast',
+                   label = h4('Coast'),
+                   choices = c('', ordered_coasts),
+                   options = list(
+                     placeholder = ifelse(length(ordered_coasts != 0),
+                                          'Type here...',
+                                          'No Available Coasts')),
+                   multiple = T
+                   )
+  })
+  
+  coast_selection <- reactive({
+    if (is.null(input$coast)) {
+      return('NONE')
+    }
+    
+    if (length(input$coast) == 5) {
+      return('ALL')
+    }
+    
+    return(input$coast)
+  })
+  
   # creates checkbox to unfilter trade up one level
   # requires the selected species to NOT be available in trade categories
   # the validate prevents an error from being displayed in the side bar
@@ -3282,6 +3356,14 @@ server <- function(input, output, session) {
   
   # trade ----------------------------------------------------------------------
   
+  trade_cat_mat <- reactive({
+    trade_data %>%
+      filter_coast(coast_selection()) %>%
+      select(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
+      group_by(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
+      distinct() %>%
+      ungroup()
+  })
   # create list of trade categories based on selected filters
   trade_terms <- reactive({
     
@@ -3305,7 +3387,7 @@ server <- function(input, output, session) {
     # if the user has selected an ecological category, or if the ecological 
     # category is 'All Species', will return the list of ecological categories
     if(cat_index == 'scat' | cat_index == 'DEFAULT') {
-      result <- c('All Species', trade_categorization_matrix %>%
+      result <- c('All Species', trade_cat_mat() %>%
                     select(SPECIES_CATEGORY) %>%
                     mutate(SPECIES_CATEGORY = str_to_title(SPECIES_CATEGORY)) %>%
                     pull())
@@ -3317,7 +3399,7 @@ server <- function(input, output, session) {
     # but only if that category exists in the trade data
     if(cat_index == 'sgrp') {
       if(toupper(input$species_cat) %in% 
-         trade_categorization_matrix$SPECIES_CATEGORY) {
+         trade_cat_mat()$SPECIES_CATEGORY) {
         terms <- input$species_cat
       } else {
         # if the category does not exist, create empty vector for functionality
@@ -3330,7 +3412,7 @@ server <- function(input, output, session) {
       # return an empty data frame, thus trade_terms will be empty, and
       # 'All Species' will be returned later in unfilter_species_trade()
       result <- c(terms,
-                  trade_categorization_matrix %>%
+                  trade_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     select(SPECIES_GROUP) %>%
                     mutate(SPECIES_GROUP = str_to_title(SPECIES_GROUP)) %>%
@@ -3342,14 +3424,14 @@ server <- function(input, output, session) {
     # We also need to include the previously selected ecological and species
     # categories but only if they exist in the trade data
     if(cat_index == 'sname') {
-      if(toupper(input$species_grp) %in% (trade_categorization_matrix %>%
+      if(toupper(input$species_grp) %in% (trade_cat_mat() %>%
                                           filter_species(input$species_cat) %>%
                                           select(SPECIES_GROUP) %>%
                                           pull())) {
         terms <- c(input$species_cat, input$species_grp)
         # if they don't exist, then check if ecol_cat exists in the trade data
       } else if(toupper(input$species_cat) %in%
-                trade_categorization_matrix$SPECIES_CATEGORY) {
+                trade_cat_mat()$SPECIES_CATEGORY) {
         terms <- input$species_cat
         # if neither the selected species or e_cat terms exist, returns empty
         # vector
@@ -3358,7 +3440,7 @@ server <- function(input, output, session) {
       }
       
       result <- c(terms, 
-                  trade_categorization_matrix %>%
+                  trade_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     filter_species(input$species_grp) %>%
                     select(SPECIES_NAME) %>%
@@ -3506,7 +3588,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = '',
+      coast = 'NONE',
       'FULL')
   })
   
@@ -3515,7 +3597,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      input$coast,
+      coast_selection(),
       'BALANCE',
       units = selected_units(),
       nominal = selected_value())
@@ -3529,7 +3611,7 @@ server <- function(input, output, session) {
   
   # creates trade balance plot (value)
   balance_plot <- reactive({
-    plot_trade(balance_df(), input$coast, 'BALANCE', 
+    plot_trade(balance_df(), coast_selection(), 'BALANCE', 
                species = species_selection_trade(), nominal = selected_value())
   })
   
@@ -3546,7 +3628,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      input$coast,
+      coast_selection(),
       'VALUE',
       units = selected_units(),
       nominal = selected_value())
@@ -3554,7 +3636,7 @@ server <- function(input, output, session) {
   
   # creates export/import ratio plot
   ratio_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'RATIO', export = T, import = T, 
+    plot_trade(trade_df(), coast_selection(), 'RATIO', export = T, import = T, 
                species = species_selection_trade())
   })
   
@@ -3582,7 +3664,7 @@ server <- function(input, output, session) {
     summarize_trade_ctry_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      input$coast,
+      coast_selection(),
       output.format = 'VALUE',
       time.frame = c(2020, 2024),
       nominal = selected_value())
@@ -3592,7 +3674,7 @@ server <- function(input, output, session) {
   top5_trade_plot <- reactive({
     plot_trade_ctry_yr_spp(top5_trade_df(), 
                            species = species_selection_trade(), 
-                           input$coast, nominal = selected_value())
+                           coast_selection(), nominal = selected_value())
   })
   
   # outputs top 5 net export plot
@@ -3605,7 +3687,7 @@ server <- function(input, output, session) {
   
   # creates export value plot
   exp_value_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VALUE', units = selected_units(), export = T, 
+    plot_trade(trade_df(), coast_selection(), 'VALUE', units = selected_units(), export = T, 
                species = species_selection_trade(), nominal = selected_value())
   })
   
@@ -3619,7 +3701,7 @@ server <- function(input, output, session) {
   
   # creates import value plot
   imp_value_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VALUE', units = selected_units(), import = T, 
+    plot_trade(trade_df(), coast_selection(), 'VALUE', units = selected_units(), import = T, 
                species = species_selection_trade(), nominal = selected_value())
   })
   
@@ -3633,7 +3715,7 @@ server <- function(input, output, session) {
   
   # creates export volume plot
   exp_volume_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VOLUME', units = selected_units(), export = T, 
+    plot_trade(trade_df(), coast_selection(), 'VOLUME', units = selected_units(), export = T, 
                species = species_selection_trade())
   })
   
@@ -3647,7 +3729,7 @@ server <- function(input, output, session) {
   
   # creates import volume plot
   imp_volume_plot <- reactive({
-    plot_trade(trade_df(), input$coast, 'VOLUME', units = selected_units(), import = T, 
+    plot_trade(trade_df(), coast_selection(), 'VOLUME', units = selected_units(), import = T, 
                species = species_selection_trade())
   })
   
@@ -3689,6 +3771,14 @@ server <- function(input, output, session) {
   
   # landings -------------------------------------------------------------------
   
+  landings_cat_mat <- reactive({
+    landings %>%
+      filter_coast(coast_selection()) %>%
+      select(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
+      group_by(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
+      distinct() %>%
+      ungroup()
+  })
   # create list of landings categories based on selected filters
   # see trade_terms() notes 
   landings_terms <- reactive({
@@ -3700,7 +3790,7 @@ server <- function(input, output, session) {
                            'sname')))
     
     if(cat_index == 'scat' | cat_index == 'DEFAULT') {
-      result <- c('All Species', landings_categorization_matrix %>%
+      result <- c('All Species', landings_cat_mat() %>%
                     select(SPECIES_CATEGORY) %>%
                     mutate(SPECIES_CATEGORY = str_to_title(SPECIES_CATEGORY)) %>%
                     pull())
@@ -3708,14 +3798,14 @@ server <- function(input, output, session) {
     
     if(cat_index == 'sgrp') {
       if(toupper(input$species_cat) %in% 
-         landings_categorization_matrix$SPECIES_CATEGORY) {
+         landings_cat_mat()$SPECIES_CATEGORY) {
         terms <- input$species_cat
       } else {
         terms <- vector()
       }
       
       result <- c(terms,
-                  landings_categorization_matrix %>%
+                  landings_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     select(SPECIES_GROUP) %>%
                     mutate(SPECIES_GROUP = str_to_title(SPECIES_GROUP)) %>%
@@ -3723,20 +3813,20 @@ server <- function(input, output, session) {
     }
     
     if(cat_index == 'sname') {
-      if(toupper(input$species_grp) %in% (landings_categorization_matrix %>%
+      if(toupper(input$species_grp) %in% (landings_cat_mat() %>%
                                           filter_species(input$species_cat) %>%
                                           select(SPECIES_GROUP) %>%
                                           pull())) {
         terms <- c(input$species_cat, input$species_grp)
       } else if(toupper(input$species_cat) %in%
-                landings_categorization_matrix$SPECIES_CATEGORY) {
+                landings_cat_mat()$SPECIES_CATEGORY) {
         terms <- input$species_cat
       } else {
         terms <- vector()
       }
       
       result <- c(terms, 
-                  landings_categorization_matrix %>%
+                  landings_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     filter_species(input$species_grp) %>%
                     select(SPECIES_NAME) %>%
@@ -3850,14 +3940,14 @@ server <- function(input, output, session) {
     summarize_landings_yr_spp(
       landings_filtered(),
       species_selection_landings(),
-      input$coast,
+      coast_selection(),
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates landings value plot
   landings_value_plot <- reactive({
-    plot_landings(landings_df(), input$coast, 'VALUE', units = selected_units(),
+    plot_landings(landings_df(), coast_selection(), 'VALUE', units = selected_units(),
                   species = species_selection_landings(),
                   nominal = selected_value())
   })
@@ -3872,7 +3962,7 @@ server <- function(input, output, session) {
   
   # creates landings volume plot
   landings_volume_plot <- reactive({
-    plot_landings(landings_df(), input$coast, 'VOLUME', units = selected_units(),
+    plot_landings(landings_df(), coast_selection(), 'VOLUME', units = selected_units(),
                   species = species_selection_landings())
   })
   
@@ -3886,7 +3976,7 @@ server <- function(input, output, session) {
   
   # creates landings price plot
   landings_price_plot <- reactive({
-    plot_landings(landings_df(), input$coast, 'PRICE', units = selected_units(), 
+    plot_landings(landings_df(), coast_selection(), 'PRICE', units = selected_units(), 
                   species = species_selection_landings())
   })
   
@@ -3900,6 +3990,14 @@ server <- function(input, output, session) {
   
   # products -------------------------------------------------------------------
   
+  products_cat_mat <- reactive({
+    pp_data %>%
+      filter_coast(coast_selection()) %>%
+      select(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
+      group_by(SPECIES_NAME, SPECIES_GROUP, SPECIES_CATEGORY) %>%
+      distinct() %>%
+      ungroup()
+  })
   # create list of production categories based on selected filters
   # see trade_terms() notes
   pp_terms <- reactive({
@@ -3911,7 +4009,7 @@ server <- function(input, output, session) {
                            'sname')))
     
     if(cat_index == 'scat' | cat_index == 'DEFAULT') {
-      result <- c('All Species', products_categorization_matrix %>%
+      result <- c('All Species', products_cat_mat() %>%
                     select(SPECIES_CATEGORY) %>%
                     mutate(SPECIES_CATEGORY = str_to_title(SPECIES_CATEGORY)) %>%
                     pull())
@@ -3919,14 +4017,14 @@ server <- function(input, output, session) {
     
     if(cat_index == 'sgrp') {
       if(toupper(input$species_cat) %in% 
-         products_categorization_matrix$SPECIES_CATEGORY) {
+         products_cat_mat()$SPECIES_CATEGORY) {
         terms <- input$species_cat
       } else {
         terms <- vector()
       }
       
       result <- c(terms,
-                  products_categorization_matrix %>%
+                  products_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     select(SPECIES_GROUP) %>%
                     mutate(SPECIES_GROUP = str_to_title(SPECIES_GROUP)) %>%
@@ -3934,20 +4032,20 @@ server <- function(input, output, session) {
     }
     
     if(cat_index == 'sname') {
-      if(toupper(input$species_grp) %in% (products_categorization_matrix %>%
+      if(toupper(input$species_grp) %in% (products_cat_mat() %>%
                                           filter_species(input$species_cat) %>%
                                           select(SPECIES_GROUP) %>%
                                           pull())) {
         terms <- c(input$species_cat, input$species_grp)
       } else if(toupper(input$species_cat) %in%
-                products_categorization_matrix$SPECIES_CATEGORY) {
+                products_cat_mat()$SPECIES_CATEGORY) {
         terms <- input$species_cat
       } else {
         terms <- vector()
       }
       
       result <- c(terms, 
-                  products_categorization_matrix %>%
+                  products_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     filter_species(input$species_grp) %>%
                     select(SPECIES_NAME) %>%
@@ -4060,14 +4158,14 @@ server <- function(input, output, session) {
     summarize_pp_yr_spp(
       products_filtered(),
       species_selection_products(),
-      input$coast,
+      coast_selection(),
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates processed products value plot
   pp_value_plot <- reactive({
-    plot_spp_pp(pp_df(), input$coast, 'VALUE', 
+    plot_spp_pp(pp_df(), coast_selection(), 'VALUE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value())
@@ -4083,7 +4181,7 @@ server <- function(input, output, session) {
   
   # creates processed products volume plot
   pp_volume_plot <- reactive({
-    plot_spp_pp(pp_df(), input$coast, 'VOLUME', 
+    plot_spp_pp(pp_df(), coast_selection(), 'VOLUME', 
                 units = selected_units(),
                 species = species_selection_products())
   })
@@ -4098,7 +4196,7 @@ server <- function(input, output, session) {
   
   # creates processed products price plot
   pp_price_plot <- reactive({
-    plot_spp_pp(pp_df(), input$coast, 'PRICE', 
+    plot_spp_pp(pp_df(), coast_selection(), 'PRICE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value())
@@ -4116,7 +4214,7 @@ server <- function(input, output, session) {
   
   # creates MLTI export table
   exp_mlti_table_df <- reactive({
-    calculate_mlti(species_selection_trade(), input$coast,
+    calculate_mlti(species_selection_trade(), coast_selection(),
                    exports = T, nominal = selected_value())
   })
   
@@ -4130,7 +4228,7 @@ server <- function(input, output, session) {
   
   # creates MLTI export plot
   exp_mlti_plot <- reactive({
-    plot_mlti(exp_mlti_table_df(), input$coast,
+    plot_mlti(exp_mlti_table_df(), coast_selection(),
               exports = T, species = species_selection_trade())
   })
   
@@ -4144,7 +4242,7 @@ server <- function(input, output, session) {
   
   # creates MLTI import table
   imp_mlti_table_df <- reactive({
-    calculate_mlti(species_selection_trade(), input$coast,
+    calculate_mlti(species_selection_trade(), coast_selection(),
                    imports = T, nominal = selected_value())
   })
   
@@ -4158,7 +4256,7 @@ server <- function(input, output, session) {
   
   # creates MLTI import plot
   imp_mlti_plot <- reactive({
-    plot_mlti(imp_mlti_table_df(), input$coast,
+    plot_mlti(imp_mlti_table_df(), coast_selection(),
               imports = T, species = species_selection_trade())
   })
   
@@ -4172,9 +4270,9 @@ server <- function(input, output, session) {
   
   # creates HI plot
   hi_plot <- reactive({
-    plot_hi(calculate_hi(species_selection_trade(), input$coast,
+    plot_hi(calculate_hi(species_selection_trade(), coast_selection(),
                          nominal = selected_value()), 
-            input$coast, species = species_selection_trade())
+            coast_selection(), species = species_selection_trade())
   })
   
   # outputs HI plot
@@ -4188,13 +4286,13 @@ server <- function(input, output, session) {
   # creates supply metric data
   supply_df <- reactive({
     calculate_supply_metrics(
-      species_selection_trade(), input$coast, 
+      species_selection_trade(), coast_selection(), 
       units = selected_units(), nominal = selected_value())
   })
   
   # creates apparent supply plot
   supply_plot <- reactive({
-    plot_supply_metrics(supply_df(), input$coast, 'SUPPLY', units = selected_units(),
+    plot_supply_metrics(supply_df(), coast_selection(), 'SUPPLY', units = selected_units(),
                         species = species_selection_trade())
   })
   
@@ -4208,7 +4306,7 @@ server <- function(input, output, session) {
   
   # creates apparent supply (ratio) plot
   supply_ratio_plot <- reactive({
-    plot_supply_metrics(supply_df(), input$coast, 'RATIO', 
+    plot_supply_metrics(supply_df(), coast_selection(), 'RATIO', 
                         species = species_selection_trade())
   })
   
@@ -4222,7 +4320,7 @@ server <- function(input, output, session) {
   
   # creates apparent supply (share) plot
   supply_share_plot <- reactive({
-    plot_supply_metrics(supply_df(), input$coast, 'SHARE', 
+    plot_supply_metrics(supply_df(), coast_selection(), 'SHARE', 
                         species = species_selection_trade())
   })
   
@@ -4934,7 +5032,7 @@ server <- function(input, output, session) {
   observeEvent(input$hi_plot_click, {
     click_x <- input$hi_plot_click$x
     
-    hi_data <- calculate_hi(species_selection_trade(), input$coast, 
+    hi_data <- calculate_hi(species_selection_trade(), coast_selection(), 
                             nominal = selected_value())
     
     year_levels <- levels(factor(sort(unique(hi_data$YEAR))))
@@ -5677,7 +5775,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = 'ALL',
+      coast = 'FACET',
       'VALUE',
       units = selected_units(),
       nominal = selected_value())
@@ -5685,7 +5783,7 @@ server <- function(input, output, session) {
   
   # creates export value plot
   exp_coast_value_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), export = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VALUE', units = selected_units(), export = T, 
                species = species_selection_trade(), nominal = selected_value()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5701,7 +5799,7 @@ server <- function(input, output, session) {
   
   # creates import value plot
   imp_coast_value_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VALUE', units = selected_units(), import = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VALUE', units = selected_units(), import = T, 
                species = species_selection_trade(), nominal = selected_value()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5717,7 +5815,7 @@ server <- function(input, output, session) {
   
   # creates export volume plot
   exp_coast_volume_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), export = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VOLUME', units = selected_units(), export = T, 
                species = species_selection_trade()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5733,7 +5831,7 @@ server <- function(input, output, session) {
   
   # creates import volume plot
   imp_coast_volume_plot <- reactive({
-    plot_trade(coast_trade_df(), 'ALL', 'VOLUME', units = selected_units(), import = T, 
+    plot_trade(coast_trade_df(), 'FACET', 'VOLUME', units = selected_units(), import = T, 
                species = species_selection_trade()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5755,14 +5853,14 @@ server <- function(input, output, session) {
     summarize_landings_yr_spp(
       landings_filtered(),
       species_selection_landings(),
-      coast = 'ALL',
+      coast = 'FACET',
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates landings value plot
   coast_landings_value_plot <- reactive({
-    plot_landings(coast_landings_df(), 'ALL', 'VALUE', units = selected_units(),
+    plot_landings(coast_landings_df(), 'FACET', 'VALUE', units = selected_units(),
                   species = species_selection_landings(),
                   nominal = selected_value()) +
       facet_grid(cols = vars(COAST)) +
@@ -5779,7 +5877,7 @@ server <- function(input, output, session) {
   
   # creates landings volume plot
   coast_landings_volume_plot <- reactive({
-    plot_landings(coast_landings_df(), 'ALL', 'VOLUME', units = selected_units(),
+    plot_landings(coast_landings_df(), 'FACET', 'VOLUME', units = selected_units(),
                   species = species_selection_landings()) +
       facet_grid(cols = vars(COAST)) +
       theme(strip.text = element_text(size = facet_title_size))
@@ -5800,14 +5898,14 @@ server <- function(input, output, session) {
     summarize_pp_yr_spp(
       products_filtered(),
       species_selection_products(),
-      'ALL',
+      'FACET',
       units = selected_units(),
       nominal = selected_value())
   })
   
   # creates processed products value plot
   coast_pp_value_plot <- reactive({
-    plot_spp_pp(coast_pp_df(), 'ALL', 'VALUE', 
+    plot_spp_pp(coast_pp_df(), 'FACET', 'VALUE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value()) +
@@ -5825,7 +5923,7 @@ server <- function(input, output, session) {
   
   # creates processed products volume plot
   coast_pp_volume_plot <- reactive({
-    plot_spp_pp(coast_pp_df(), 'ALL', 'VOLUME', 
+    plot_spp_pp(coast_pp_df(), 'FACET', 'VOLUME', 
                 units = selected_units(),
                 species = species_selection_products()) +
       facet_grid(cols = vars(COAST)) +
@@ -5842,7 +5940,7 @@ server <- function(input, output, session) {
   
   # creates processed products price plot
   coast_pp_price_plot <- reactive({
-    plot_spp_pp(coast_pp_df(), 'ALL', 'PRICE', 
+    plot_spp_pp(coast_pp_df(), 'FACET', 'PRICE', 
                 units = selected_units(),
                 species = species_selection_products(),
                 nominal = selected_value()) +
