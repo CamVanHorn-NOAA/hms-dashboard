@@ -218,12 +218,19 @@ filter_coast <- function(data, coast) {
   # This filter is used in all summary functions to filter for selected coasts
   # Data is any data frame with a field specifying the data's coast of origin
   # coast is a character vector meant to match how coast is specified in data
-  if (coast == '' | is.null(coast) | coast == 'ALL') {
+  if ('NONE' %in% coast) {
     return(data)
   }
   
+  if ('ALL' %in% coast | 'FACET' %in% coast) {
+    new_data <- data %>%
+      filter(!is.na(COAST))
+    
+    return(new_data)
+  }
+
   new_data <- data %>%
-    filter(COAST == coast)
+    filter(COAST %in% coast)
   return(new_data)
 }
 
@@ -257,7 +264,7 @@ summarize_trade_yr_spp <- function(trade_table, species, coast, output.format,
     species <- str_to_title(species)
   }
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
   } else {field <- NULL}
@@ -541,7 +548,7 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
   # coerce species to upper case to match data formatting
   species <- ifelse(species == 'All Species', 'All Species', toupper(species))
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
   } else {field <- NULL}
@@ -558,7 +565,7 @@ summarize_pp_yr_spp <- function(product_data, species, coast, full_data = F,
     summarise(across(where(is.numeric), sum),
               .groups = 'drop')
   
-  if (full_data == 'FULL') {
+  if (full_data == T) {
     summarized_data <- summarized_data %>%
       mutate(MT = KG / 1000,
              ST = POUNDS / 2000,
@@ -664,7 +671,7 @@ summarize_landings_yr_spp <- function(landings_data, species, coast, full_data =
     species <- str_to_title(species)
   }
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
   } else {field <- NULL}
@@ -1105,26 +1112,25 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     shortform <- 'EXP'
     longform <- 'Exports'
     color <- export_color
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' from the ', coast)
-    } else {coast_text <- ''}
+    } 
   }
   # set shortform and longform values for plot labeling if import
   if (import == T & export == F) {
     shortform <- 'IMP'
     longform <- 'Imports'
     color <- import_color
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' to the ', coast)
-    } else {coast_text <- ''}
+    } 
   }
   # coerce plot_format to uppercase to work within function
   plot_format <- toupper(plot_format)
-  
-  if (coast == 'ALL') {
-    data <- data %>%
-      filter(!is.na(COAST))
-  }
   
   # set labels and y values for plots of VALUE
   if (plot_format == 'VALUE') {
@@ -1247,9 +1253,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
     # plot of RATIO
     # RATIO is a line chart, so we need a column to group by
     data$GROUP <- 'group'
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' traded in the ', coast)
-    } else {coast_text <- ''}
+    }
     
     plot <- 
       ggplot(data = data, 
@@ -1272,9 +1280,11 @@ plot_trade <- function(data, coast, plot_format, units = NULL, export = F, impor
                                       face = 'bold'),
             axis.title = element_text(size = axis_title_size))
   } else {
-    if (!(coast %in% c('', 'ALL'))) {
+    if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+      coast_text <- ''
+    } else {
       coast_text <- paste0(' traded in the ', coast)
-    } else {coast_text <- ''}
+    }
     
     plot <- 
       ggplot(data = data,
@@ -1329,9 +1339,9 @@ plot_trade_ctry_yr_spp <- function(data, species, coast, nominal = F) {
     ylab <- 'Millions (Real 2024 USD)'
   }
   
-  if (coast != '') {
-    coast_text <- paste0(' with the ', coast)
-  } else {coast_text <- ''}
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(' with the ', coast)}
   
   ggplot(data = data,
          aes(x = factor(gsub(' ', '\n', str_to_title(COUNTRY_NAME))),
@@ -1365,7 +1375,7 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
     species <- 'Highly Migratory Species'
   }
   
-  if (coast == 'ALL') {
+  if ('FACET' %in% coast) {
     field <- as.symbol('COAST')
     field <- rlang::enquo(field)
     
@@ -1376,9 +1386,9 @@ plot_spp_pp <- function(processed_product_data, coast, plot.format, units = NULL
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (!(coast %in% c('', 'ALL'))) {
-    coast_text <- paste0(coast, ' ')
-  } else {coast_text <- ''}
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(coast, ' ')}
   
   # set labels for VALUE plots
   if (plot.format == 'VALUE') {
@@ -1518,14 +1528,9 @@ plot_landings <- function(data, coast, plot.format, units = NULL, species, nomin
   # coerce plot.format to uppercase to work within function
   plot.format <- toupper(plot.format)
   
-  if (!(coast %in% c('', 'ALL'))) {
-    coast_text <- paste0(coast, ' ')
-  } else {coast_text <- ''}
-  
-  if (coast == 'ALL') {
-    data <- data %>%
-      filter(!is.na(COAST))
-  }
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(coast, ' ')}
   
   # set labels for VALUE plot
   if (plot.format == 'VALUE') {
@@ -1651,10 +1656,12 @@ plot_mlti <- function(mlti_data, coast, exports = F, imports = F, species) {
     stop('Please set "exports" or "imports" to "T"')
   }
   
-  if (coast != '') {
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {
     coast_text <- paste0(ifelse(exports == T, ' from the ', ' to the '),
-                          coast)
-  } else {coast_text <- ''}
+                         coast)
+  }
   
   # set label for plot based on exports logical
   label <- ifelse(exports == T, 'Export', 'Import')
@@ -1698,9 +1705,11 @@ plot_hi <- function(hi_data, coast, species) {
     species <- 'Highly Migratory Species'
   }
   
-  if (coast != '') {
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {
     coast_text <- paste0(' traded in the ', coast)
-  } else {coast_text <- ''}
+  }
   
   # format the data by renaming columns for plot labels
   format_hi_data <- hi_data %>%
@@ -1751,9 +1760,10 @@ plot_supply_metrics <- function(supply_data, coast, metric, units = NULL, specie
     species <- 'Highly Migratory Species'
   }
   
-  if (coast != '') {
-    coast_text <- paste0(' in the ', coast)
-  } else {coast_text <- ''}
+  if (length(coast) > 1 | any(c('NONE', 'FACET', 'ALL', 'No Coast Assigned') %in% coast)) {
+    coast_text <- ''
+  } else {coast_text <- paste0(' in the ', coast)}
+  
   if (metric == 'SUPPLY') {
     # units are embedded in the calculation function
     # here, we only need to specify how the figure is labeled
@@ -3280,8 +3290,6 @@ server <- function(input, output, session) {
                    multiple = T
                    )
   })
-  
-  output$coast_text <- renderText(coast_selection())
   
   coast_selection <- reactive({
     if (is.null(input$coast)) {
