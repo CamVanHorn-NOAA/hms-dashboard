@@ -2634,31 +2634,31 @@ server <- function(input, output, session) {
   
   # download the raw trade data
   output$download_trade <- downloadHandler(
-    filename = 'trade_data.csv',
+    filename = 'trade_data.xlsx',
     content = function(con) {
       # Show Modal presents to the user that the download is happening
       showModal(modalDialog('Downloading data...', footer = NULL))
       on.exit(removeModal())
       
-      write.csv(trade_data, con)
+      write.xlsx(trade_data, con)
     }
   )
   
   # download the raw landings data
   output$download_landings <- downloadHandler(
-    filename = 'landings_data.csv',
+    filename = 'landings_data.xlsx',
     content = function(con) {
       showModal(modalDialog('Downloading data...', footer = NULL))
       Sys.sleep(1)
       on.exit(removeModal())
       
-      write.csv(landings, con)
+      write.xlsx(landings, con)
     }
   )
   
   # download the raw products data
   output$download_products <- downloadHandler(
-    filename = 'processed_products_data.csv',
+    filename = 'processed_products_data.xlsx',
     content = function(con) {
       showModal(modalDialog('Downloading data...', footer = NULL))
       # because the products data is so small, the download happens too quickly
@@ -2668,7 +2668,7 @@ server <- function(input, output, session) {
       Sys.sleep(1)
       on.exit(removeModal())
       
-      write.csv(pp_data, con)
+      write.xlsx(pp_data, con)
     }
   )
   
@@ -2689,7 +2689,7 @@ server <- function(input, output, session) {
       # list of names that will be saved, these MUST match the csv's and
       # ggsave items listed below
       fs <- c('balance_plot.png', 'ratio_plot.png', 'top5_trade_plot.png',
-              'trade_plots_data.csv', 'top5_trade_plot_data.csv')
+              'trade_plots_data.xlsx', 'top5_trade_plot_data.xlsx')
       ggsave('balance_plot.png', balance_plot(),
              width = 15,
              height = 8,
@@ -2702,8 +2702,8 @@ server <- function(input, output, session) {
              width = 10,
              height = 8,
              device = 'png')
-      write.csv(trade_df_full(), 'trade_plots_data.csv')
-      write.csv(top5_trade_df_full(), 'top5_trade_plot_data.csv')
+      write.xlsx(trade_df_full(), 'trade_plots_data.xlsx')
+      write.xlsx(top5_trade_df_full(), 'top5_trade_plot_data.xlsx')
       
       # we are saving multiple files so they must be in a zip file
       # fname is filename that derives from the start of the function
@@ -2725,7 +2725,7 @@ server <- function(input, output, session) {
       setwd(tempdir())
       
       fs <- c('export_value_plot.png', 'import_value_plot.png', 
-              'trade_plots_data.csv')
+              'trade_plots_data.xlsx')
       ggsave('export_value_plot.png', exp_value_plot(),
              width = 10,
              height = 8,
@@ -2734,7 +2734,7 @@ server <- function(input, output, session) {
              width = 10,
              height = 8,
              device = 'png')
-      write.csv(trade_df_full(), 'trade_plots_data.csv')
+      write.xlsx(trade_df_full(), 'trade_plots_data.xlsx')
       
       zip(zipfile = fname, files = fs)
     },
@@ -2753,7 +2753,7 @@ server <- function(input, output, session) {
       setwd(tempdir())
       
       fs <- c('export_volume_plot.png', 'import_volume_plot.png',
-              'trade_plots_data.csv')
+              'trade_plots_data.xlsx')
       ggsave('export_volume_plot.png', exp_volume_plot(),
              width = 10,
              height = 8,
@@ -2762,7 +2762,7 @@ server <- function(input, output, session) {
              width = 10,
              height = 8,
              device = 'png')
-      write.csv(trade_df_full(), 'trade_plots_data.csv')
+      write.xlsx(trade_df_full(), 'trade_plots_data.xlsx')
       
       zip(zipfile = fname, files = fs)
     },
@@ -2780,13 +2780,13 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('export_MLTI_table.csv', 'import_MLTI_table.csv', 
-              'supply_plots_data.csv', 'HI_plot.png', 'supply_plot.png', 
+      fs <- c('export_MLTI_table.xlsx', 'import_MLTI_table.xlsx', 
+              'supply_plots_data.xlsx', 'HI_plot.png', 'supply_plot.png', 
               'supply_production_ratio.png', 
               'unexported_production_supply_rate.png')
-      write.csv(exp_mlti_table_df(), 'export_MLTI_table.csv')
-      write.csv(imp_mlti_table_df(), 'import_MLTI_table.csv')
-      write.csv(supply_df(), 'supply_plots_data.csv')
+      write.xlsx(exp_mlti_table_df(), 'export_MLTI_table.xlsx')
+      write.xlsx(imp_mlti_table_df(), 'import_MLTI_table.xlsx')
+      write.xlsx(supply_df(), 'supply_plots_data.xlsx')
       ggsave('HI_plot.png', hi_plot(),
              width = 10,
              height = 8,
@@ -2823,8 +2823,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('commercial_landings_plots_data.csv', 'landings_value.png')
-      write.csv(landings_df_full(), 'commercial_landings_plots_data.csv')
+      fs <- c('commercial_landings_plots_data.xlsx', 'landings_value.png')
+      write.xlsx(landings_df_full(), 'commercial_landings_plots_data.xlsx')
       ggsave('landings_value.png', landings_value_plot(),
              width = 10,
              height = 8,
@@ -2846,8 +2846,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('commercial_landings_plots_data.csv', 'landings_volume.png')
-      write.csv(landings_df_full(), 'commercial_landings_plots_data.csv')
+      fs <- c('commercial_landings_plots_data.xlsx', 'landings_volume.png')
+      write.xlsx(landings_df_full(), 'commercial_landings_plots_data.xlsx')
       ggsave('landings_volume.png', landings_volume_plot(),
              width = 10,
              height = 8,
@@ -2869,8 +2869,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('commercial_landings_plots_data.csv', 'landings_price.png')
-      write.csv(landings_df_full(), 'commercial_landings_plots_data.csv')
+      fs <- c('commercial_landings_plots_data.xlsx', 'landings_price.png')
+      write.xlsx(landings_df_full(), 'commercial_landings_plots_data.xlsx')
       ggsave('landings_price.png', landings_price_plot(),
              width = 10,
              height = 8,
@@ -2892,8 +2892,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('products_plots_data.csv', 'products_value.png')
-      write.csv(pp_df_full(), 'products_plots_data.csv')
+      fs <- c('products_plots_data.xlsx', 'products_value.png')
+      write.xlsx(pp_df_full(), 'products_plots_data.xlsx')
       ggsave('products_value.png', pp_value_plot(),
              width = 10,
              height = 8,
@@ -2915,8 +2915,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('products_plots_data.csv', 'products_volume.png')
-      write.csv(pp_df_full(), 'products_plots_data.csv')
+      fs <- c('products_plots_data.xlsx', 'products_volume.png')
+      write.xlsx(pp_df_full(), 'products_plots_data.xlsx')
       ggsave('products_volume.png', pp_volume_plot(),
              width = 10,
              height = 8,
@@ -2938,8 +2938,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('products_plots_data.csv', 'products_price.png')
-      write.csv(pp_df_full(), 'products_plots_data.csv')
+      fs <- c('products_plots_data.xlsx', 'products_price.png')
+      write.xlsx(pp_df_full(), 'products_plots_data.xlsx')
       ggsave('products_price.png', pp_price_plot(),
              width = 10,
              height = 8,
@@ -2962,7 +2962,7 @@ server <- function(input, output, session) {
       setwd(tempdir())
       
       fs <- c('coastal_export_value_plot.png', 'coastal_import_value_plot.png', 
-              'coastal_trade_plots_data.csv')
+              'coastal_trade_plots_data.xlsx')
       ggsave('coastal_export_value_plot.png', exp_coast_value_plot(),
              width = 14,
              height = 8,
@@ -2971,7 +2971,7 @@ server <- function(input, output, session) {
              width = 14,
              height = 8,
              device = 'png')
-      write.csv(coast_trade_df(), 'coastal_trade_plots_data.csv')
+      write.xlsx(coast_trade_df(), 'coastal_trade_plots_data.xlsx')
       
       zip(zipfile = fname, files = fs)
     },
@@ -2990,7 +2990,7 @@ server <- function(input, output, session) {
       setwd(tempdir())
       
       fs <- c('coastal_export_volume_plot.png', 'coastal_import_volume_plot.png',
-              'coastal_trade_plots_data.csv')
+              'coastal_trade_plots_data.xlsx')
       ggsave('coastal_export_volume_plot.png', exp_coast_volume_plot(),
              width = 14,
              height = 8,
@@ -2999,7 +2999,7 @@ server <- function(input, output, session) {
              width = 14,
              height = 8,
              device = 'png')
-      write.csv(coast_trade_df(), 'coastal_trade_plots_data.csv')
+      write.xlsx(coast_trade_df(), 'coastal_trade_plots_data.xlsx')
       
       zip(zipfile = fname, files = fs)
     },
@@ -3017,8 +3017,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('coastal_commercial_landings_plots_data.csv', 'coastal_landings_value.png')
-      write.csv(coast_landings_df(), 'coastal_commercial_landings_plots_data.csv')
+      fs <- c('coastal_commercial_landings_plots_data.xlsx', 'coastal_landings_value.png')
+      write.xlsx(coast_landings_df(), 'coastal_commercial_landings_plots_data.xlsx')
       ggsave('coastal_landings_value.png', coast_landings_value_plot(),
              width = 14,
              height = 8,
@@ -3040,8 +3040,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('coastal_commercial_landings_plots_data.csv', 'coastal_landings_volume.png')
-      write.csv(coast_landings_df(), 'coastal_commercial_landings_plots_data.csv')
+      fs <- c('coastal_commercial_landings_plots_data.xlsx', 'coastal_landings_volume.png')
+      write.xlsx(coast_landings_df(), 'coastal_commercial_landings_plots_data.xlsx')
       ggsave('coastal_landings_volume.png', coast_landings_volume_plot(),
              width = 14,
              height = 8,
@@ -3063,8 +3063,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('coastal_products_plots_data.csv', 'coastal_products_value.png')
-      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      fs <- c('coastal_products_plots_data.xlsx', 'coastal_products_value.png')
+      write.xlsx(coast_pp_df(), 'coastal_products_plots_data.xlsx')
       ggsave('coastal_products_value.png', coast_pp_value_plot(),
              width = 14,
              height = 8,
@@ -3086,8 +3086,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('coastal_products_plots_data.csv', 'coastal_products_volume.png')
-      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      fs <- c('coastal_products_plots_data.xlsx', 'coastal_products_volume.png')
+      write.xlsx(coast_pp_df(), 'coastal_products_plots_data.xlsx')
       ggsave('coastal_products_volume.png', coast_pp_volume_plot(),
              width = 14,
              height = 8,
@@ -3109,8 +3109,8 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       
-      fs <- c('coastal_products_plots_data.csv', 'coastal_products_price.png')
-      write.csv(coast_pp_df(), 'coastal_products_plots_data.csv')
+      fs <- c('coastal_products_plots_data.xlsx', 'coastal_products_price.png')
+      write.xlsx(coast_pp_df(), 'coastal_products_plots_data.xlsx')
       ggsave('coastal_products_price.png', coast_pp_price_plot(),
              width = 14,
              height = 8,
