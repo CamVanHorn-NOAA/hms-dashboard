@@ -5,7 +5,7 @@ if(!require("tidyverse")) install.packages("tidyverse")
 
 # Load in data -----------------------------------------------------------------
 # load in seafood data
-load('seafood_trade_data_munge_01_15_26.RData')
+load('seafood_trade_data_munge_02_24_26.RData')
 
 # Filter years >= 2011
 com_landings <- com_landings %>%
@@ -847,11 +847,23 @@ landings <- landings %>%
          SPECIES_NAME = ifelse(is.na(SPECIES_NAME), 'SPECIES NAME NOT PROVIDED',
                                SPECIES_NAME))
 
+# add date of territorial landings query
+# NOTE: This was date of our access to the data, which was provided 
+  # by Justin Hospital
+pacisl_landings_date <- 
+  format(file.info('PIR_HMS_AS_GU_CNMI_totals2011_2024.csv')$ctime,
+         '%m/%d/%Y')
+terr_landings_date <- 
+  format(file.info('foss_terr_landings.csv')$ctime,
+         '%m/%d/%Y')
+
 
 file_name <- paste0('hms_data_munge_',
                     format(Sys.Date(), '%m_%d_%y'),
                     '.RData')
 
-save(list = c('trade_data', 'landings', 'pp_data'),
+save(list = c('trade_data', 'landings', 'pp_data',
+              'trade_date', 'landings_date', 'products_date',
+              'pacisl_landings_date', 'terr_landings_date'),
      file = file_name)
 
