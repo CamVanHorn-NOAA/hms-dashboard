@@ -3614,7 +3614,6 @@ server <- function(input, output, session) {
   
   # species filter and search inputs -------------------------------------------
   # define search bar terms
-  
   output$filter_0 <- renderUI({
     species_list <- c('', sort(c(categorization_matrix %>%
                                    filter_coast(coast_selection()) %>%
@@ -4145,7 +4144,7 @@ server <- function(input, output, session) {
     summarize_trade_ctry_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = '',
+      coast = 'NONE',
       output.format = 'FULL',
       time.frame = c(2020, 2024),
       nominal = selected_value())
