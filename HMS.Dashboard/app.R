@@ -2361,7 +2361,7 @@ ui <- page_fluid(
                                                                       class = 'download_icon2'))))))) 
       ),
       nav_panel(
-        title = h5('COAST ANALYSIS'),
+        title = h5('COASTAL COMPARISON'),
         fluidRow(
           div(
             style = 'border-radius: 12px;
