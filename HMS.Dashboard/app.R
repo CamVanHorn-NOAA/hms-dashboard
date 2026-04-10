@@ -2361,35 +2361,7 @@ ui <- page_fluid(
                                                                       class = 'download_icon2'))))))) 
       ),
       nav_panel(
-        class = 'info-tab',
-        title = h5(icon(name = NULL,
-                        class = 'intro_icon'),
-                   'INFORMATION & METHODS'),
-        navset_card_pill(
-          nav_panel(title = h6('Introduction'),
-                    htmlOutput('intro')),
-          nav_panel(title = h6('Tutorial'),
-                    htmlOutput('tutorial')),
-          nav_panel(title = h6('Data Collection'),
-                    htmlOutput('collection')),
-          nav_panel(title = h6('Data Sourcing'),
-                    htmlOutput('sourcing')),
-          nav_panel(title = h6('Data Management'),
-                    htmlOutput('management')),
-          nav_panel(title = h6('Coastal Consolidation'),
-                    htmlOutput('region')),
-          nav_panel(title = h6('Species Classification'),
-                    htmlOutput('classification')),
-          nav_panel(title = h6('Metrics'),
-                    htmlOutput('metrics')),
-          nav_panel(title = h6('Contact Us'),
-                    htmlOutput('contact')),
-          nav_panel(title = h6('Resources'),
-                    htmlOutput('resource'))
-        )
-      ),
-      nav_panel(
-        title = h5('COAST ANALYSIS'),
+        title = h5('COASTAL COMPARISON'),
         fluidRow(
           div(
             style = 'border-radius: 12px;
@@ -2584,7 +2556,35 @@ ui <- page_fluid(
                                                         'Download this plot and the data',
                                                         icon = icon(name = NULL,
                                                                     class = 'download_icon2')))))))
-        ))
+        ),
+      nav_panel(
+        class = 'info-tab',
+        title = h5(icon(name = NULL,
+                        class = 'intro_icon'),
+                   'INFORMATION & METHODS'),
+        navset_card_pill(
+          nav_panel(title = h6('Introduction'),
+                    htmlOutput('intro')),
+          nav_panel(title = h6('Tutorial'),
+                    htmlOutput('tutorial')),
+          nav_panel(title = h6('Data Collection'),
+                    htmlOutput('collection')),
+          nav_panel(title = h6('Data Sourcing'),
+                    htmlOutput('sourcing')),
+          nav_panel(title = h6('Data Management'),
+                    htmlOutput('management')),
+          nav_panel(title = h6('Coastal Consolidation'),
+                    htmlOutput('region')),
+          nav_panel(title = h6('Species Classification'),
+                    htmlOutput('classification')),
+          nav_panel(title = h6('Metrics'),
+                    htmlOutput('metrics')),
+          nav_panel(title = h6('Contact Us'),
+                    htmlOutput('contact')),
+          nav_panel(title = h6('Resources'),
+                    htmlOutput('resource'))
+        )
+      ))
         
       )))
 
