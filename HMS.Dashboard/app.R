@@ -1968,7 +1968,7 @@ ui <- page_fluid(
     h2('Other Options'),
     uiOutput('filter_coast'),
     input_switch('units', 'Imperial Units (lb)'),
-    input_switch('inflation', 'Inflation-Adjusted', value = T),
+    input_switch('inflation', 'Inflation-Adjusted (Real 2024 USD)', value = T),
     uiOutput('trade_unfilter_button'),
     uiOutput('product_unfilter_button'),
     uiOutput('landings_unfilter_button'),
