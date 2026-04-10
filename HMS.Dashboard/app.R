@@ -2677,7 +2677,7 @@ server <- function(input, output, session) {
       metadata <- pivot_longer(metadata, cols = colnames(metadata))
       colnames(metadata) <- c('', '')
       
-      final_sheet <- list('Data' = trade_data, 'Metadata' = metadata)
+      final_sheet <- list('Data' = landings, 'Metadata' = metadata)
       write.xlsx(final_sheet, con)
     }
   )
@@ -4079,7 +4079,7 @@ server <- function(input, output, session) {
     summarize_trade_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = 'NONE',
+      coast = coast_selection(),
       'FULL')
   })
   
@@ -4144,7 +4144,7 @@ server <- function(input, output, session) {
     summarize_trade_ctry_yr_spp(
       trade_filtered(),
       species_selection_trade(),
-      coast = 'NONE',
+      coast = coast_selection(),
       output.format = 'FULL',
       time.frame = c(2020, 2024),
       nominal = selected_value())
@@ -4422,7 +4422,7 @@ server <- function(input, output, session) {
     summarize_landings_yr_spp(
       landings_filtered(),
       species_selection_landings(),
-      coast = '',
+      coast = coast_selection(),
       full_data = T)
   })
   
@@ -4640,7 +4640,7 @@ server <- function(input, output, session) {
     summarize_pp_yr_spp(
       products_filtered(),
       species_selection_products(),
-      coast = '',
+      coast = coast_selection(),
       full_data = T)
   })
   
