@@ -2677,7 +2677,7 @@ server <- function(input, output, session) {
       metadata <- pivot_longer(metadata, cols = colnames(metadata))
       colnames(metadata) <- c('', '')
       
-      final_sheet <- list('Data' = trade_data, 'Metadata' = metadata)
+      final_sheet <- list('Data' = landings, 'Metadata' = metadata)
       write.xlsx(final_sheet, con)
     }
   )
