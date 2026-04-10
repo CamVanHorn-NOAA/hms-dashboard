@@ -6708,8 +6708,8 @@ server <- function(input, output, session) {
       
       HTML(paste0(
         tooltip_heading, click_info$YEAR,  ": ", click_info$COAST, "<br>",
-        tooltip_color_icon(import_color), tooltip_subheading, "Export Volume</span>:<br>",
-        comma(click_info$EXP_VOLUME_T), ifelse(selected_units() == 'METRIC', 
+        tooltip_color_icon(import_color), tooltip_subheading, "Import Volume</span>:<br>",
+        comma(click_info$IMP_VOLUME_T), ifelse(selected_units() == 'METRIC', 
                                                " Metric Tons", 
                                                " Short Tons"))))
   })
