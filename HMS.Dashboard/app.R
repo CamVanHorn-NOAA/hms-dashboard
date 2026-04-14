@@ -3616,6 +3616,7 @@ server <- function(input, output, session) {
   # define search bar terms
   output$filter_0 <- renderUI({
     species_list <- c('', sort(c(categorization_matrix %>%
+                                   # see note in output$filter_coast
                                    # filter_coast(coast_selection()) %>%
                                    select(SPECIES_NAME) %>%
                                    distinct() %>%
@@ -3738,6 +3739,12 @@ server <- function(input, output, session) {
       select(COAST) %>%
       distinct() %>%
       pull()
+    # Below would filter coasts available based on species selected prior.
+    # This is commented out because the filters for coast and species selection
+      # are parallel rather than hierarchical. That means filtering for one
+      # affects the other, which affects the other, and thus a loop is made
+    # If put back, searching for a species would overwrite coast, and vice versa
+    
     # if (!(is.null(input$species_cat))) {
     #   coast_options <- categorization_matrix %>%
     #     filter_species(input$species_cat) %>%
