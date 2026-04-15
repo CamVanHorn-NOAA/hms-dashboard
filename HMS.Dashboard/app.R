@@ -24,7 +24,7 @@ source("nmfs_cols.R")
 addResourcePath("tmpuser", getwd())
 
 # Load most recent data file (manually taken from Seafood Dashboard)
-load('hms_data_munge_02_26_26.RData')
+load('hms_data_munge_04_15_26.RData')
 
 
 # filter out confidential data (no data contained therein)
@@ -3908,7 +3908,7 @@ server <- function(input, output, session) {
       # Should the e_cat NOT exist in the trade data, filter_species will 
       # return an empty data frame, thus trade_terms will be empty, and
       # 'All Species' will be returned later in unfilter_species_trade()
-      result <- c(terms,
+      result <- c('All Species', terms,
                   trade_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     select(SPECIES_GROUP) %>%
@@ -3936,7 +3936,7 @@ server <- function(input, output, session) {
         terms <- vector()
       }
       
-      result <- c(terms, 
+      result <- c('All Species', terms, 
                   trade_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     filter_species(input$species_grp) %>%
@@ -4301,7 +4301,7 @@ server <- function(input, output, session) {
         terms <- vector()
       }
       
-      result <- c(terms,
+      result <- c('All Species', terms,
                   landings_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     select(SPECIES_GROUP) %>%
@@ -4322,7 +4322,7 @@ server <- function(input, output, session) {
         terms <- vector()
       }
       
-      result <- c(terms, 
+      result <- c('All Species', terms, 
                   landings_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     filter_species(input$species_grp) %>%
@@ -4520,7 +4520,7 @@ server <- function(input, output, session) {
         terms <- vector()
       }
       
-      result <- c(terms,
+      result <- c('All Species', terms,
                   products_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     select(SPECIES_GROUP) %>%
@@ -4541,7 +4541,7 @@ server <- function(input, output, session) {
         terms <- vector()
       }
       
-      result <- c(terms, 
+      result <- c('All Species', terms, 
                   products_cat_mat() %>%
                     filter_species(input$species_cat) %>%
                     filter_species(input$species_grp) %>%
