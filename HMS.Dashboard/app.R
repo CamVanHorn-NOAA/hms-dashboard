@@ -4846,11 +4846,11 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$data$YEAR[1], "</span><br>",
         tooltip_color_icon(balance_colors[1]), tooltip_subheading, "Exports</span>:<br>", 
-        dollar(click_info$data$VALUE_MILLIONS[1]), " Million <br>",
+        dollar(click_info$data$VALUE[1]), "<br>",
         tooltip_color_icon(balance_colors[2]), tooltip_subheading, "Imports</span>:<br>",
-        dollar(click_info$data$VALUE_MILLIONS[2]), " Million <br>",
+        dollar(click_info$data$VALUE[2]), " <br>",
         tooltip_color_icon(balance_colors[3]), tooltip_subheading, "Trade Balance</span>:<br>",
-        dollar(click_info$data$VALUE_MILLIONS[3]), " Million <br>"
+        dollar(click_info$data$VALUE[3]), " <br>"
       ))
     )
   })
@@ -4981,15 +4981,15 @@ server <- function(input, output, session) {
         tooltip_heading, 
         click_info$data$COUNTRY_NAME[1], "<br>",
         tooltip_color_icon(top5_colors[1]), tooltip_subheading, "2020</span>: ",
-        dollar(click_info$data$NET_VALUE_MILLIONS[1]), " Million <br>",
+        dollar(click_info$data$NET_VALUE[1]), "<br>",
         tooltip_color_icon(top5_colors[2]), tooltip_subheading, "2021</span>: ",
-        dollar(click_info$data$NET_VALUE_MILLIONS[2]), " Million <br>",
+        dollar(click_info$data$NET_VALUE[2]), "<br>",
         tooltip_color_icon(top5_colors[3]), tooltip_subheading, "2022</span>: ",
-        dollar(click_info$data$NET_VALUE_MILLIONS[3]), " Million <br>",
+        dollar(click_info$data$NET_VALUE[3]), "<br>",
         tooltip_color_icon(top5_colors[4]), tooltip_subheading, "2023</span>: ",
-        dollar(click_info$data$NET_VALUE_MILLIONS[4]), " Million <br>",
+        dollar(click_info$data$NET_VALUE[4]), "<br>",
         tooltip_color_icon(top5_colors[5]), tooltip_subheading, "2024</span>: ",
-        dollar(click_info$data$NET_VALUE_MILLIONS[5]), " Million <br>")))
+        dollar(click_info$data$NET_VALUE[5]), "<br>")))
   })
   
   
@@ -5063,7 +5063,7 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$data$YEAR, "<br>",
         tooltip_color_icon(export_color), tooltip_subheading, "Export Value</span>:<br>",
-        dollar(click_info$data$EXP_VALUE_MILLIONS), " Million<br>",
+        dollar(click_info$data$EXP_VALUE), "<br>",
         tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Export Price</span>:<br>",
         dollar(click_info$data$EXP_PRICE), ifelse(selected_units() == 'METRIC', 
                                                   " per kilogram", 
@@ -5128,7 +5128,7 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$data$YEAR, "<br>",
         tooltip_color_icon(import_color), tooltip_subheading, "Import Value</span>:<br>",
-        dollar(click_info$data$IMP_VALUE_MILLIONS), " Million<br>",
+        dollar(click_info$data$IMP_VALUE), "<br>",
         tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Import Price</span>:<br>",
         dollar(click_info$data$IMP_PRICE), ifelse(selected_units() == 'METRIC', 
                                                   " per kilogram", 
@@ -5820,7 +5820,7 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$data$YEAR, "<br>", 
         tooltip_color_icon(landings_colors[1]), tooltip_subheading, "Ex-Vessel Value</span>:<br>",
-        dollar(click_info$data$COM_VALUE_MILLIONS), " Million<br>",
+        dollar(click_info$data$COM_VALUE), "<br>",
         tooltip_line_icon(landings_colors[2], 16), tooltip_subheading, "Ex-Vessel Price</span>:<br>",
         dollar(click_info$data$COM_PRICE), ifelse(selected_units() == 'METRIC', 
                                                   " per kilogram", 
@@ -5948,7 +5948,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        dollar(filtered_data$PP_VALUE_MILLIONS[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), " Million <br>")
+        dollar(filtered_data$PP_VALUE[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), "<br>")
       
       pp_val_tooltip <- paste0(pp_val_tooltip, tooltip_color, tooltip_text, tooltip_data)
     }
@@ -6482,7 +6482,7 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
         tooltip_color_icon(export_color), tooltip_subheading, "Export Value</span>:<br>",
-        dollar(click_info$EXP_VALUE_MILLIONS), " Million<br>",
+        dollar(click_info$EXP_VALUE), "<br>",
         tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Export Price</span>:<br>",
         dollar(click_info$EXP_PRICE), ifelse(selected_units() == 'METRIC',
                                                   " per kilogram",
@@ -6545,7 +6545,7 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$YEAR, ": ", click_info$COAST, "<br>",
         tooltip_color_icon(import_color), tooltip_subheading, "Import Value</span>:<br>",
-        dollar(click_info$IMP_VALUE_MILLIONS), " Million<br>",
+        dollar(click_info$IMP_VALUE), "<br>",
         tooltip_line_icon(trade_price_color, 16), tooltip_subheading, "Import Price</span>:<br>",
         dollar(click_info$IMP_PRICE), ifelse(selected_units() == 'METRIC',
                                              " per kilogram",
@@ -6733,7 +6733,7 @@ server <- function(input, output, session) {
       HTML(paste0(
         tooltip_heading, click_info$YEAR,  ": ", click_info$COAST, "<br>", 
         tooltip_color_icon(landings_colors[1]), tooltip_subheading, "Ex-Vessel Value</span>:<br>",
-        dollar(click_info$COM_VALUE_MILLIONS), " Million<br>",
+        dollar(click_info$COM_VALUE), "<br>",
         tooltip_line_icon(landings_colors[2], 16), tooltip_subheading, "Ex-Vessel Price</span>:<br>",
         dollar(click_info$COM_PRICE), ifelse(selected_units() == 'METRIC', 
                                                   " per kilogram", 
@@ -6850,7 +6850,7 @@ server <- function(input, output, session) {
       tooltip_text <- paste0(tooltip_subheading, names(plot_colors)[i], "</span>: ")
       
       tooltip_data <- paste0(
-        dollar(filtered_data$PP_VALUE_MILLIONS[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), " Million <br>")
+        dollar(filtered_data$PP_VALUE[which(filtered_data$PRODUCT_FORM == names(plot_colors)[i])]), "<br>")
       
       coast_pp_val_tooltip <- paste0(coast_pp_val_tooltip, tooltip_color, tooltip_text, tooltip_data)
     }
